@@ -22,7 +22,6 @@ repos:
     hooks:
       - id: autopep8
         alias: python
-        name: Python Format
         args:
           - "--ignore-local-config"
           - "--in-place"
