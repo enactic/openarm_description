@@ -17,3 +17,12 @@ repos:
     rev: v0.6.13
     hooks:
       - id: cmake-format
+  - repo: https://github.com/hhatto/autopep8
+    rev: v2.3.2
+    hooks:
+      - id: autopep8
+        alias: python
+        name: Python Format
+        args:
+          - "--ignore-local-config"
+          - "--in-place"

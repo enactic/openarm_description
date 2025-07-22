@@ -56,13 +56,13 @@ def robot_state_publisher_spawner(context: LaunchContext, arm_type, ee_type, bim
 
 def rviz_spawner(context: LaunchContext, bimanual):
     bimanual_str = context.perform_substitution(bimanual)
-    
+
     rviz_config_file = "bimanual.rviz" if bimanual_str.lower() == "true" else "arm_only.rviz"
     rviz_config_path = os.path.join(
         get_package_share_directory("openarm_description"),
         "rviz", rviz_config_file
     )
-    
+
     return [
         Node(
             package="rviz2",
