@@ -30,7 +30,6 @@ if(BUILD_TESTING)
 endif()
 
 install(DIRECTORY launch meshes rviz urdf
-                  # worlds
                   config DESTINATION share/${PROJECT_NAME})
 
 ament_package()
