@@ -24,6 +24,12 @@ URDF_NAME=openarm_bimanual.urdf
 xacro ~/ros2_ws/src/openarm_description/urdf/robot/v10.urdf.xacro arm_type:=v10 bimanual:=true > $URDF_NAME
 ```
 
+## Related links
+
+- 📚 Read the [documentation](https://docs.openarm.dev/software/description)
+- 💬 Join the community on [Discord](https://discord.gg/FsZaZ4z3We)
+- 📬 Contact us through <openarm@enactic.ai>
+
 ## License
 
 Licensed under the Apache License 2.0. See `LICENSE.txt` for details.
