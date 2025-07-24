@@ -41,6 +41,8 @@
 
   <xacro:arg name="bimanual" default="false" />
 
+  <xacro:arg name="mesh_ext" default="dae" />
+
   <xacro:arg name="right_arm_base_xyz" default="0.0 -0.031 0.698" />
   <xacro:arg name="right_arm_base_rpy" default="1.5708 0 0" />
 
@@ -75,6 +77,7 @@
   arm_connected_to="base"
   body_connected_to="world"
   bimanual="$(arg bimanual)"
+  mesh_ext="$(arg mesh_ext)"
   right_arm_base_xyz="$(arg right_arm_base_xyz)"
   left_arm_base_xyz="$(arg left_arm_base_xyz)"
   right_arm_base_rpy="$(arg right_arm_base_rpy)"

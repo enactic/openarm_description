@@ -35,8 +35,8 @@
             right_can_interface:='can0'
             left_arm_prefix:='left_'
             right_arm_prefix:='right_'
-            "
-            >
+            mesh_ext:='dae'
+            ">
 
     <xacro:include filename="$(find openarm_description)/urdf/arm/openarm_macro.xacro" />
     <xacro:include filename="$(find openarm_description)/urdf/arm/openarm_arm.xacro" />
@@ -65,7 +65,8 @@
         rpy="${rpy}"
         inertials="${body_inertials}"
         kinematics="${body_kinematics}"
-        kinematics_link="${body_kinematics_link}" />
+        kinematics_link="${body_kinematics_link}"
+        mesh_ext="${mesh_ext}" />
 
         <!-- left arm -->
         <xacro:openarm_arm
@@ -80,7 +81,8 @@
         inertials="${inertials}"
         kinematics="${kinematics}"
         kinematics_link="${kinematics_link}"
-        kinematics_offset="${kinematics_offset}" />
+        kinematics_offset="${kinematics_offset}" 
+        mesh_ext="${mesh_ext}" />
 
         <!-- right arm -->
         <xacro:openarm_arm
@@ -95,7 +97,8 @@
         inertials="${inertials}"
         kinematics="${kinematics}"
         kinematics_link="${kinematics_link}"
-        kinematics_offset="${kinematics_offset}" />
+        kinematics_offset="${kinematics_offset}" 
+        mesh_ext="${mesh_ext}" />
 
         <!-- ros2_control hardware interfaces for bimanual setup -->
         <xacro:if value="${ros2_control}">
@@ -107,7 +110,8 @@
             fake_sensor_commands="${fake_sensor_commands}"
             left_arm_prefix="${left_arm_prefix}"
             right_arm_prefix="${right_arm_prefix}"
-            hand="${hand}"/>
+            hand="${hand}"
+            mesh_ext="${mesh_ext}"/>
         </xacro:if>
 
         <xacro:if value="$(eval hand and ee_type == 'openarm_hand')">
@@ -123,6 +127,7 @@
                 tcp_xyz="$(arg tcp_xyz)"
                 tcp_rpy="$(arg tcp_rpy)"
                 description_pkg="$(arg description_pkg)"
+                mesh_ext="${mesh_ext}"
             />
             <xacro:openarm_hand
                 connected_to="openarm_right_link8"
@@ -136,6 +141,7 @@
                 tcp_xyz="$(arg tcp_xyz)"
                 tcp_rpy="$(arg tcp_rpy)"
                 description_pkg="$(arg description_pkg)"
+                mesh_ext="${mesh_ext}"
             />
           </xacro:if>
     </xacro:if>
@@ -153,6 +159,7 @@
         kinematics_link="${kinematics_link}"
         inertials="${inertials}"
         connected_to=""
+        mesh_ext="${mesh_ext}"
         />
 
         <xacro:if value="${ros2_control}">
@@ -164,7 +171,8 @@
             use_fake_hardware="${use_fake_hardware}"
             fake_sensor_commands="${fake_sensor_commands}"
             hand="${hand}"
-            bimanual="false"/>
+            bimanual="false"
+            mesh_ext="${mesh_ext}"/>
         </xacro:if>
 
         <xacro:if value="${hand and ee_type == 'openarm_hand'}">
@@ -185,7 +193,8 @@
             xyz_ee="$(arg xyz_ee)"
             tcp_xyz="$(arg tcp_xyz)"
             tcp_rpy="$(arg tcp_rpy)"
-            description_pkg="$(arg description_pkg)"/>
+            description_pkg="$(arg description_pkg)"
+            mesh_ext="${mesh_ext}"/>
         </xacro:if>
         </xacro:if>
 

@@ -14,7 +14,9 @@
               rpy:='0 0 0'
               inertials
               kinematics
-              kinematics_link">
+              kinematics_link
+              mesh_ext:='dae'
+              ">
 
     <!-- <xacro:property name="prefix" value="${'' if no_prefix else body_prefix + 'body_'}" /> -->
     <xacro:property name="prefix" value="${'' if no_prefix else 'openarm_' + 'body_'}" />

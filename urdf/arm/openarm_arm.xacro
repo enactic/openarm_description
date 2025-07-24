@@ -3,7 +3,7 @@
 
   <xacro:include filename="$(find openarm_description)/urdf/arm/openarm_macro.xacro" />
 
-  <xacro:macro name="openarm_arm" params="arm_type arm_prefix:='' no_prefix:=false description_pkg:='openarm_description' connected_to:='base' xyz:='0 0 0' rpy:='0 0 0' joint_limits inertials kinematics kinematics_link kinematics_offset:=none " >
+  <xacro:macro name="openarm_arm" params="arm_type arm_prefix:='' no_prefix:=false description_pkg:='openarm_description' connected_to:='base' xyz:='0 0 0' rpy:='0 0 0' joint_limits inertials kinematics kinematics_link kinematics_offset:=none mesh_ext:='dae'" >
 
     <xacro:property name="prefix" value="${'' if no_prefix else 'openarm' + '_' + arm_prefix}" />
 

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="hand">
+
   <!-- safety_distance: Minimum safety distance in [m] by which the collision volumes are expanded and which is enforced during robot motions -->
-  <xacro:macro name="openarm_hand" params="connected_to:='' arm_type arm_prefix:='' ee_type ee_inertials ee_kinematics_link rpy_ee:='0 0 0' xyz_ee:='0 0 0' tcp_xyz:='0 0 0' tcp_rpy:='0 0 0' description_pkg:=openarm_description">
+  <xacro:macro name="openarm_hand" params="connected_to:='' arm_type arm_prefix:='' ee_type ee_inertials ee_kinematics_link rpy_ee:='0 0 0' xyz_ee:='0 0 0' tcp_xyz:='0 0 0' tcp_rpy:='0 0 0' description_pkg:=openarm_description mesh_ext:='dae'">
 
     <xacro:property name="ee_prefix" default=""/>
 
@@ -9,7 +10,6 @@
       <!-- <xacro:property name="ee_prefix" value="${arm_prefix}${arm_type}_" /> -->
       <xacro:property name="ee_prefix" value="openarm_${arm_prefix}" />
     </xacro:unless>
-
 
     <xacro:ee_link_with_sc name="hand" prefix="${ee_prefix}" ee_kinematics_link="${ee_kinematics_link}"/>
     <!-- <link name="${ee_prefix}hand"/> -->
@@ -36,7 +36,7 @@
       <visual name="${ee_prefix}left_finger_visual">
         <xacro:openarm-ee-kinematics-link config="${ee_kinematics_link}" name="left_finger" />
         <geometry>
-          <mesh filename="package://${description_pkg}/meshes/ee/${ee_type}/visual/finger.dae" scale="0.001 0.001 0.001"/>
+          <mesh filename="package://${description_pkg}/meshes/ee/${ee_type}/visual/finger.${mesh_ext}" scale="0.001 0.001 0.001"/>
         </geometry>
       </visual>
       <collision name="${ee_prefix}left_finger_collision">
@@ -52,7 +52,7 @@
       <visual name="${ee_prefix}right_finger_visual">
         <xacro:openarm-ee-kinematics-link config="${ee_kinematics_link}" name="right_finger" />
         <geometry>
-          <mesh filename="package://${description_pkg}/meshes/ee/${ee_type}/visual/finger.dae" scale="0.001 -0.001 0.001"/>
+          <mesh filename="package://${description_pkg}/meshes/ee/${ee_type}/visual/finger.${mesh_ext}" scale="0.001 -0.001 0.001"/>
         </geometry>
       </visual>
       <collision name="${ee_prefix}right_finger_collision">

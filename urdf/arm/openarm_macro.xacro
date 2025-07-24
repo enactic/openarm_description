@@ -28,7 +28,7 @@
       <visual name="${prefix}${name}_visual">
         <xacro:openarm-kinematics-link config="${kinematics_link}" name="${name}" />
         <geometry>
-          <mesh filename="package://${description_pkg}/meshes/arm/${arm_type}/visual/${name}.dae" scale="0.001 ${0.001*reflect} 0.001" />
+          <mesh filename="package://${description_pkg}/meshes/arm/${arm_type}/visual/${name}.${mesh_ext}" scale="0.001 ${0.001*reflect} 0.001" />
         </geometry>
       </visual>
       <collision name="${prefix}${name}_collision">
