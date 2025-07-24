@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-
   <xacro:macro name="ee-inertials" params="name ee_inertials:=^">
     <xacro:unless value="${name in ee_inertials}">
       ${xacro.warning('No inertia properties defined for: ' + name)}
@@ -27,7 +26,7 @@
       <visual name="${prefix}${name}_visual">
         <xacro:openarm-ee-kinematics-link config="${ee_kinematics_link}" name="${name}" />
         <geometry>
-          <mesh filename="package://${description_pkg}/meshes/ee/${ee_type}/visual/${name}.dae" scale="0.001 0.001 0.001" />
+          <mesh filename="package://${description_pkg}/meshes/ee/${ee_type}/visual/${name}.${mesh_ext}" scale="0.001 0.001 0.001" />
         </geometry>
       </visual>
       <collision name="${prefix}${name}_collision">
