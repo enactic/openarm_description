@@ -37,6 +37,8 @@
 
   <xacro:arg name="use_fake_hardware" default="false" />
 
+  <xacro:arg name="use_sim_hardware" default="false" />
+
   <xacro:arg name="fake_sensor_commands" default="false" />
 
   <xacro:arg name="bimanual" default="false" />
@@ -68,6 +70,7 @@
   left_arm_prefix="$(arg left_arm_prefix)"
   right_arm_prefix="$(arg right_arm_prefix)"
   use_fake_hardware="$(arg use_fake_hardware)"
+  use_sim_hardware="$(arg use_sim_hardware)"
   fake_sensor_commands="$(arg fake_sensor_commands)"
   no_prefix="$(arg no_prefix)"
   arm_prefix=""
