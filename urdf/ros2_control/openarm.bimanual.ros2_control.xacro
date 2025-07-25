@@ -5,7 +5,9 @@
          params="arm_type
              left_can_interface:=^|can1
              right_can_interface:=^|can0
-             use_fake_hardware:=^|false
+             hardware_type:=^|real
+             left_websocket_port:=^|1337
+             right_websocket_port:=^|1338
              fake_sensor_commands:=^|false
              hand:=^|false
              left_arm_prefix:=^|left_
@@ -16,18 +18,22 @@
     <ros2_control name="openarm_left_hardware_interface" type="system">
         <hardware>
           <param name="arm_type">${arm_type}</param>
-          <xacro:if value="${use_fake_hardware}">
+          <xacro:if value="${hardware_type == 'mujoco'}">
+            <plugin>openarm_mujoco_hardware/MujocoHardware</plugin>
+            <param name="websocket_port">${left_websocket_port}</param>
+          </xacro:if>
+          <xacro:if value="${hardware_type == 'mock'}">
             <plugin>fake_components/GenericSystem</plugin>
             <param name="fake_sensor_commands">${fake_sensor_commands}</param>
             <param name="state_following_offset">0.0</param>
           </xacro:if>
-          <xacro:unless value="${use_fake_hardware}">
+          <xacro:if value="${hardware_type == 'real'}">
             <plugin>openarm_hardware/OpenArm_v10HW</plugin>
             <param name="can_interface">${left_can_interface}</param>
             <param name="arm_prefix">${left_arm_prefix}</param>
             <param name="hand">${hand}</param>
             <param name="can_fd">${can_fd}</param>
-          </xacro:unless>
+          </xacro:if>
         </hardware>
 
       <xacro:macro name="configure_joint" params="joint_name initial_position">
@@ -67,18 +73,22 @@
     <ros2_control name="openarm_right_hardware_interface" type="system">
         <hardware>
           <param name="arm_type">${arm_type}</param>
-          <xacro:if value="${use_fake_hardware}">
+          <xacro:if value="${hardware_type == 'mujoco'}">
+            <plugin>openarm_mujoco_hardware/MujocoHardware</plugin>
+            <param name="websocket_port">${right_websocket_port}</param>
+          </xacro:if>
+          <xacro:if value="${hardware_type == 'mock'}">
             <plugin>fake_components/GenericSystem</plugin>
             <param name="fake_sensor_commands">${fake_sensor_commands}</param>
             <param name="state_following_offset">0.0</param>
           </xacro:if>
-          <xacro:unless value="${use_fake_hardware}">
+          <xacro:if value="${hardware_type == 'real'}">
             <plugin>openarm_hardware/OpenArm_v10HW</plugin>
             <param name="can_interface">${right_can_interface}</param>
             <param name="arm_prefix">${right_arm_prefix}</param>
             <param name="hand">${hand}</param>
             <param name="can_fd">${can_fd}</param>
-          </xacro:unless>
+          </xacro:if>
         </hardware>
 
       <xacro:configure_joint joint_name="openarm_${right_arm_prefix}joint1" initial_position="0.0"/>
