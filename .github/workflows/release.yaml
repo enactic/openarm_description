@@ -14,12 +14,49 @@
 
 name: Release
 on:
-  push:
-    tags:
-      - '**'
+  - push
+  - pull_request
 jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    env:
+      LANG: en_US.UTF-8
+    steps:
+      - name: Install ROS 2
+        run: |
+          sudo apt install -y -V curl software-properties-common
+          sudo add-apt-repository universe
+          export ROS_APT_SOURCE_VERSION=$(
+            curl -s https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest |
+              grep -F "tag_name" |
+              awk -F\" '{print $4}')
+          curl -L -o /tmp/ros2-apt-source.deb \
+            "https://github.com/ros-infrastructure/ros-apt-source/releases/download/${ROS_APT_SOURCE_VERSION}/ros2-apt-source_${ROS_APT_SOURCE_VERSION}.$(. /etc/os-release && echo $VERSION_CODENAME)_all.deb"
+          sudo dpkg -i /tmp/ros2-apt-source.deb
+          sudo apt update
+          sudo apt install -y -V ros-dev-tools ros-kilted-ros-base ros-kilted-xacro
+      - uses: actions/checkout@v5
+      - name: Build URDF files
+        run: |
+          source /opt/ros/kilted/setup.bash
+          colcon build
+          source install/setup.bash
+          for file in $(find urdf -name "*.xacro"); do
+            xacro "${file}" bimanual:=true > "${file%.*}_bimanual.urdf"
+            xacro "${file}" bimanual:=false > "${file%.*}.urdf"
+          done
+          find urdf -name "*.urdf" |
+            tar -czf openarm-description-urdf-${GITHUB_REF_NAME}.tar.gz -T -
+      - uses: actions/upload-artifact@v4
+        env:
+          GH_TOKEN: ${{ github.token }}
+        with:
+          name: urdf
+          path: openarm-description-urdf-*.tar.gz
   publish:
     name: Publish
+    needs: build
     runs-on: ubuntu-latest
     environment: release
     permissions:
@@ -38,7 +75,14 @@ jobs:
           sha512sum \
             openarm-description-${GITHUB_REF_NAME}.tar.gz > \
             openarm-description-${GITHUB_REF_NAME}.tar.gz.sha512
+      - uses: actions/download-artifact@v5
+        env:
+          GH_TOKEN: ${{ github.token }}
+        with:
+          name: urdf
+          path: artifact
       - name: Create GitHub Release
+        if: github.ref_type == 'tag'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -49,4 +93,5 @@ jobs:
             --repo ${GITHUB_REPOSITORY} \
             --title "OpenArm Description ${version}" \
             --verify-tag \
-            openarm-description-${GITHUB_REF_NAME}.tar.gz*
+            openarm-description-${GITHUB_REF_NAME}.tar.gz* \
+            artifact/openarm-description-urdf-${GITHUB_REF_NAME}.tar.gz
