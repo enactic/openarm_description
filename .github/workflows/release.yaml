@@ -20,43 +20,33 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    env:
-      LANG: en_US.UTF-8
+    strategy:
+      matrix:
+        id:
+          - "rolling"
+          - "kilted"
+          - "jazzy"
+          - "humble"
     steps:
-      - name: Set environments
-        run: |
-          echo "VERSION=${GITHUB_REF_NAME//\//-}" >> ${GITHUB_ENV}
-      - name: Install ROS 2
-        run: |
-          sudo apt install -y -V curl software-properties-common
-          sudo add-apt-repository universe
-          export ROS_APT_SOURCE_VERSION=$(
-            curl -s https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest |
-              grep -F "tag_name" |
-              awk -F\" '{print $4}')
-          curl -L -o /tmp/ros2-apt-source.deb \
-            "https://github.com/ros-infrastructure/ros-apt-source/releases/download/${ROS_APT_SOURCE_VERSION}/ros2-apt-source_${ROS_APT_SOURCE_VERSION}.$(. /etc/os-release && echo $VERSION_CODENAME)_all.deb"
-          sudo dpkg -i /tmp/ros2-apt-source.deb
-          sudo apt update
-          sudo apt install -y -V ros-dev-tools ros-kilted-ros-base ros-kilted-xacro
       - uses: actions/checkout@v5
       - name: Build URDF files
         run: |
-          source /opt/ros/kilted/setup.bash
-          colcon build
-          source install/setup.bash
-          for file in $(find urdf -name "*.xacro"); do
-            xacro "${file}" bimanual:=true > "${file%.*}_bimanual.urdf"
-            xacro "${file}" bimanual:=false > "${file%.*}.urdf"
-          done
-          find urdf -name "*.urdf" |
-            tar -czf openarm-description-urdf-${VERSION}.tar.gz -T -
+          docker container run \
+            --rm \
+            --volume ${PWD}:/build \
+            osrf/ros:${{ matrix.id }}-desktop-full \
+            bash -c '
+              cd /build
+              colcon build
+              source install/setup.bash
+              for file in $(find urdf -name "*.xacro"); do
+                xacro "${file}" bimanual:=true > "${file%.*}_${{ matrix.id }}_bimanual.urdf"
+                xacro "${file}" bimanual:=false > "${file%.*}_${{ matrix.id }}.urdf"
+              done'
       - uses: actions/upload-artifact@v4
-        env:
-          GH_TOKEN: ${{ github.token }}
         with:
-          name: urdf
-          path: openarm-description-urdf-*.tar.gz
+          name: urdf-${{ matrix.id }}
+          path: urdf/**/*.urdf
   publish:
     name: Publish
     needs: build
@@ -68,31 +58,40 @@ jobs:
     steps:
       - name: Set environments
         run: |
-          echo "VERSION=${GITHUB_REF_NAME//\//-}" >> ${GITHUB_ENV}
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            echo "VERSION=${GITHUB_REF_NAME}" >> ${GITHUB_ENV}
+          else
+            echo "VERSION=x.y.z" >> ${GITHUB_ENV}
+          fi
           if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
             echo "REF=${GITHUB_SHA}" >> ${GITHUB_ENV}
           else
             echo "REF=${GITHUB_REF_NAME}" >> ${GITHUB_ENV}
           fi
       - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v5
+        with:
+          pattern: urdf-*
+          path: artifacts
+          merge-multiple: true
       - name: Create source archive
         run: |
           name="openarm-description-${VERSION}"
-          git archive ${REF} \
+          git archive --format=tar ${REF} \
             --prefix "${name}/" \
-            --output "${name}.tar.gz"
+            --output "${name}.tar"
+
+          mkdir "${name}"
+          mv artifacts "${name}/urdf"
+          find "${name}/urdf" -type f | tar -rf "${name}.tar" -T -
+          gzip "${name}.tar"
+
           sha256sum \
             "${name}.tar.gz" > \
             "${name}.tar.gz.sha256"
           sha512sum \
             "${name}.tar.gz" > \
             "${name}.tar.gz.sha512"
-      - uses: actions/download-artifact@v5
-        env:
-          GH_TOKEN: ${{ github.token }}
-        with:
-          name: urdf
-          path: artifact
       - name: Create GitHub Release
         if: github.ref_type == 'tag'
         env:
@@ -104,5 +103,4 @@ jobs:
             --repo ${GITHUB_REPOSITORY} \
             --title "OpenArm Description ${VERSION}" \
             --verify-tag \
-            openarm-description-${VERSION}.tar.gz* \
-            artifact/openarm-description-urdf-${VERSION}.tar.gz
+            openarm-description-${VERSION}.tar.gz*
