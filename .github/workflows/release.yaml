@@ -69,11 +69,16 @@ jobs:
       - name: Set environments
         run: |
           echo "VERSION=${GITHUB_REF_NAME//\//-}" >> ${GITHUB_ENV}
+          if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
+            echo "REF=${GITHUB_SHA}" >> ${GITHUB_ENV}
+          else
+            echo "REF=${GITHUB_REF_NAME}" >> ${GITHUB_ENV}
+          fi
       - uses: actions/checkout@v4
       - name: Create source archive
         run: |
           name="openarm-description-${VERSION}"
-          git archive ${GITHUB_REF_NAME} \
+          git archive ${REF} \
             --prefix "${name}/" \
             --output "${name}.tar.gz"
           sha256sum \
