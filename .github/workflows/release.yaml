@@ -23,6 +23,9 @@ jobs:
     env:
       LANG: en_US.UTF-8
     steps:
+      - name: Set environments
+        run: |
+          echo "VERSION=${GITHUB_REF_NAME//\//-}" >> ${GITHUB_ENV}
       - name: Install ROS 2
         run: |
           sudo apt install -y -V curl software-properties-common
@@ -47,7 +50,7 @@ jobs:
             xacro "${file}" bimanual:=false > "${file%.*}.urdf"
           done
           find urdf -name "*.urdf" |
-            tar -czf openarm-description-urdf-${GITHUB_REF_NAME}.tar.gz -T -
+            tar -czf openarm-description-urdf-${VERSION}.tar.gz -T -
       - uses: actions/upload-artifact@v4
         env:
           GH_TOKEN: ${{ github.token }}
@@ -63,18 +66,22 @@ jobs:
       contents: write
       discussions: write
     steps:
+      - name: Set environments
+        run: |
+          echo "VERSION=${GITHUB_REF_NAME//\//-}" >> ${GITHUB_ENV}
       - uses: actions/checkout@v4
       - name: Create source archive
         run: |
+          name="openarm-description-${VERSION}"
           git archive ${GITHUB_REF_NAME} \
-            --prefix openarm-description-${GITHUB_REF_NAME}/ \
-            --output openarm-description-${GITHUB_REF_NAME}.tar.gz
+            --prefix "${name}/" \
+            --output "${name}.tar.gz"
           sha256sum \
-            openarm-description-${GITHUB_REF_NAME}.tar.gz > \
-            openarm-description-${GITHUB_REF_NAME}.tar.gz.sha256
+            "${name}.tar.gz" > \
+            "${name}.tar.gz.sha256"
           sha512sum \
-            openarm-description-${GITHUB_REF_NAME}.tar.gz > \
-            openarm-description-${GITHUB_REF_NAME}.tar.gz.sha512
+            "${name}.tar.gz" > \
+            "${name}.tar.gz.sha512"
       - uses: actions/download-artifact@v5
         env:
           GH_TOKEN: ${{ github.token }}
@@ -86,12 +93,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          version=${GITHUB_REF_NAME}
           gh release create ${GITHUB_REF_NAME} \
             --discussion-category Announcements \
             --generate-notes \
             --repo ${GITHUB_REPOSITORY} \
-            --title "OpenArm Description ${version}" \
+            --title "OpenArm Description ${VERSION}" \
             --verify-tag \
-            openarm-description-${GITHUB_REF_NAME}.tar.gz* \
-            artifact/openarm-description-urdf-${GITHUB_REF_NAME}.tar.gz
+            openarm-description-${VERSION}.tar.gz* \
+            artifact/openarm-description-urdf-${VERSION}.tar.gz
