@@ -88,6 +88,10 @@ jobs:
 
           sha256sum "${name}.tar.gz" > "${name}.tar.gz.sha256"
           sha512sum "${name}.tar.gz" > "${name}.tar.gz.sha512"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: source-archive
+          path: openarm-description-*.tar.gz*
       - name: Create GitHub Release
         if: github.ref_type == 'tag'
         env:
