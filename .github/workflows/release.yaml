@@ -86,12 +86,8 @@ jobs:
           find "${name}/urdf" -type f | tar -rf "${name}.tar" -T -
           gzip "${name}.tar"
 
-          sha256sum \
-            "${name}.tar.gz" > \
-            "${name}.tar.gz.sha256"
-          sha512sum \
-            "${name}.tar.gz" > \
-            "${name}.tar.gz.sha512"
+          sha256sum "${name}.tar.gz" > "${name}.tar.gz.sha256"
+          sha512sum "${name}.tar.gz" > "${name}.tar.gz.sha512"
       - name: Create GitHub Release
         if: github.ref_type == 'tag'
         env:
