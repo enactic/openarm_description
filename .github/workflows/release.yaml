@@ -33,10 +33,10 @@ jobs:
         run: |
           docker container run \
             --rm \
-            --volume ${PWD}:/build \
+            --volume ${PWD}:/source \
             osrf/ros:${{ matrix.id }}-desktop-full \
             bash -c '
-              cd /build
+              cd /source
               colcon build
               source install/setup.bash
               for file in $(find urdf -name "*.xacro"); do
