@@ -24,10 +24,13 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 
-def robot_state_publisher_spawner(context: LaunchContext, arm_type, ee_type, bimanual):
+def robot_state_publisher_spawner(context: LaunchContext, arm_type, ee_type, bimanual, mesh_ext):
     arm_type_str = context.perform_substitution(arm_type)
     ee_type_str = context.perform_substitution(ee_type)
     bimanual_str = context.perform_substitution(bimanual)
+    mesh_ext_str = context.perform_substitution(mesh_ext)
+    print("[DEBUG] Spawning robot with params:", arm_type_str, ee_type_str, bimanual_str, mesh_ext_str)
+
 
     xacro_path = os.path.join(
         get_package_share_directory("openarm_description"),
@@ -40,6 +43,7 @@ def robot_state_publisher_spawner(context: LaunchContext, arm_type, ee_type, bim
             "arm_type": arm_type_str,
             "ee_type": ee_type_str,
             "bimanual": bimanual_str,
+            "mesh_ext": mesh_ext_str
         }
     ).toprettyxml(indent="  ")
 
@@ -92,13 +96,21 @@ def generate_launch_description():
         description="Whether to use bimanual configuration"
     )
 
+    mesh_ext_arg = DeclareLaunchArgument(
+        "mesh_ext",
+        default_value="dae",
+        description="Extension for mesh files (dae, stl, or obj)"
+    )
+
+
     arm_type = LaunchConfiguration("arm_type")
     ee_type = LaunchConfiguration("ee_type")
     bimanual = LaunchConfiguration("bimanual")
+    mesh_ext = LaunchConfiguration("mesh_ext")
 
     robot_state_publisher_loader = OpaqueFunction(
         function=robot_state_publisher_spawner,
-        args=[arm_type, ee_type, bimanual]
+        args=[arm_type, ee_type, bimanual, mesh_ext]
     )
 
     rviz_loader = OpaqueFunction(
@@ -110,6 +122,7 @@ def generate_launch_description():
         arm_type_arg,
         ee_type_arg,
         bimanual_arg,
+        mesh_ext_arg, 
         robot_state_publisher_loader,
         Node(
             package="joint_state_publisher_gui",
