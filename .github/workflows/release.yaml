@@ -69,7 +69,7 @@ jobs:
             echo "REF=${GITHUB_REF_NAME}" >> ${GITHUB_ENV}
           fi
       - uses: actions/checkout@v5
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v6
         with:
           pattern: urdf-*
           path: artifacts
