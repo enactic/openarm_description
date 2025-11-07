@@ -36,7 +36,7 @@
           <mesh filename="package://openarm_description/meshes/ee/${ee_type}/collision/${name}.stl" scale="0.001 0.001 0.001" />
         </geometry>
       </collision>
-      <xacro:ee-inertials name="${name}" />
+      <xacro:ee-inertials name="${name}" ee_inertials="${ee_inertials}" />
     </link>
   </xacro:macro>
 

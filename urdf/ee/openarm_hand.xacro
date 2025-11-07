@@ -45,7 +45,7 @@
           <mesh filename="package://${description_pkg}/meshes/ee/${ee_type}/collision/finger.stl" scale="0.001 0.001 0.001" />
         </geometry>
       </collision>
-      <xacro:ee-inertials name="left_finger"/>
+      <xacro:ee-inertials name="left_finger" ee_inertials="${ee_inertials}"/>
     </link>
 
     <link name="${ee_prefix}right_finger">
@@ -61,7 +61,7 @@
           <mesh filename="package://${description_pkg}/meshes/ee/${ee_type}/collision/finger.stl" scale="0.001 -0.001 0.001" />
         </geometry>
       </collision>
-      <xacro:ee-inertials name="right_finger"/>
+      <xacro:ee-inertials name="right_finger" ee_inertials="${ee_inertials}"/>
     </link>
 
     <joint name="${ee_prefix}finger_joint1" type="prismatic">
