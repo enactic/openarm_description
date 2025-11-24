@@ -28,7 +28,7 @@ jobs:
           - "jazzy"
           - "humble"
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Build URDF files
         run: |
           docker container run \
@@ -68,7 +68,7 @@ jobs:
           else
             echo "REF=${GITHUB_REF_NAME}" >> ${GITHUB_ENV}
           fi
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: actions/download-artifact@v6
         with:
           pattern: urdf-*
