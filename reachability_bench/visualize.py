@@ -23,13 +23,16 @@ from plainmp.robot_spec import OpenArmV10RarmSpec
 from skrobot.model.primitives import Box
 from skrobot.viewers import PyrenderViewer
 
+from bench import OpenArmV12RarmSpec
+
 
 def main(
-    htable: float = 0.29,
+    htable: float = 0.1,
     hmin: float | None = None,
     hmax: float | None = None,
     animate: bool = False,
     direction: Literal["forward1", "forward2", "down1", "down2"] = "forward1",
+    use_v12: bool = False,
 ):
     feasible_pointss = []
     qss = []
@@ -38,7 +41,13 @@ def main(
     if hmax is None:
         hmax = np.inf
     z_point_max = -np.inf
-    for result_path in Path("result").iterdir():
+
+    if use_v12:
+        result_dir = Path("result_v12")
+    else:
+        result_dir = Path("result_v10")
+
+    for result_path in result_dir.iterdir():
         if not str(result_path.stem).startswith(direction):
             continue
         npz = np.load(result_path, allow_pickle=True)
@@ -55,7 +64,10 @@ def main(
     qs = np.vstack(qss)
 
     v = PyrenderViewer()
-    spec = OpenArmV10RarmSpec()
+    if use_v12:
+        spec = OpenArmV12RarmSpec()
+    else:
+        spec = OpenArmV10RarmSpec()
     model = spec.get_robot_model(with_mesh=True)
     v.add(model)
     table_thickness = 0.03
