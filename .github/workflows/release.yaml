@@ -43,7 +43,7 @@ jobs:
                 xacro "${file}" bimanual:=true > "${file%.*}_${{ matrix.id }}_bimanual.urdf"
                 xacro "${file}" bimanual:=false > "${file%.*}_${{ matrix.id }}.urdf"
               done'
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: urdf-${{ matrix.id }}
           path: urdf/**/*.urdf
@@ -88,7 +88,7 @@ jobs:
 
           sha256sum "${name}.tar.gz" > "${name}.tar.gz.sha256"
           sha512sum "${name}.tar.gz" > "${name}.tar.gz.sha512"
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: source-archive
           path: openarm-description-*.tar.gz*
