@@ -52,7 +52,8 @@
   <xacro:openarm_robot
   arm_type="v10"
   body_type="v10"
-  joint_limits="${xacro.load_yaml('$(find openarm_description)/config//arm/v10/joint_limits.yaml')}"
+  joint_limits="${xacro.load_yaml('$(find openarm_description)/config/arm/v10/joint_limits.yaml')}"
+  control_gains="${xacro.load_yaml('$(find openarm_description)/config/arm/v10/control_gains.yaml')}"
   inertials="${xacro.load_yaml('$(find openarm_description)/config/arm/v10/inertials.yaml')}"
   kinematics="${xacro.load_yaml('$(find openarm_description)/config/arm/v10/kinematics.yaml')}"
   kinematics_link="${xacro.load_yaml('$(find openarm_description)/config/arm/v10/kinematics_link.yaml')}"

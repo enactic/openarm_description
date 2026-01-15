@@ -3,6 +3,7 @@
 
 <xacro:macro name="openarm_arm_ros2_control"
          params="arm_type
+             control_gains
              can_interface
              use_fake_hardware:=^|false
              fake_sensor_commands:=^|false
@@ -27,6 +28,20 @@
             <param name="arm_prefix">${arm_prefix}</param>
             <param name="hand">${hand}</param>
             <param name="can_fd">${can_fd}</param>
+            <param name="kp1">${control_gains['joint1']['kp']}</param>
+            <param name="kp2">${control_gains['joint2']['kp']}</param>
+            <param name="kp3">${control_gains['joint3']['kp']}</param>
+            <param name="kp4">${control_gains['joint4']['kp']}</param>
+            <param name="kp5">${control_gains['joint5']['kp']}</param>
+            <param name="kp6">${control_gains['joint6']['kp']}</param>
+            <param name="kp7">${control_gains['joint7']['kp']}</param>
+            <param name="kd1">${control_gains['joint1']['kd']}</param>
+            <param name="kd2">${control_gains['joint2']['kd']}</param>
+            <param name="kd3">${control_gains['joint3']['kd']}</param>
+            <param name="kd4">${control_gains['joint4']['kd']}</param>
+            <param name="kd5">${control_gains['joint5']['kd']}</param>
+            <param name="kd6">${control_gains['joint6']['kd']}</param>
+            <param name="kd7">${control_gains['joint7']['kd']}</param>
           </xacro:if>
         </hardware>
 

@@ -3,6 +3,7 @@
     <xacro:macro name="openarm_robot"
     params="arm_type
             joint_limits
+            control_gains
             kinematics
             kinematics_link
             kinematics_offset
@@ -102,6 +103,7 @@
         <xacro:if value="${ros2_control}">
             <xacro:openarm_bimanual_ros2_control
             arm_type="${arm_type}"
+            control_gains="${control_gains}"
             left_can_interface="${left_can_interface}"
             right_can_interface="${right_can_interface}"
             use_fake_hardware="${use_fake_hardware}"
@@ -160,6 +162,7 @@
 
         <xacro:openarm_arm_ros2_control
             arm_type="${arm_type}"
+            control_gains="${control_gains}"
             arm_prefix="${arm_prefix_modified}"
             can_interface="${can_interface}"
             use_fake_hardware="${use_fake_hardware}"
