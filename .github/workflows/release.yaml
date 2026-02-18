@@ -104,3 +104,24 @@ jobs:
             --title "OpenArm Description ${VERSION}" \
             --verify-tag \
             openarm-description-${VERSION}.tar.gz*
+      - name: Post to Discord
+        if: github.ref_type == 'tag'
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/releases/generate-notes" \
+                    --raw-field tag_name="${GITHUB_REF_NAME}" \
+                    --raw-field configuration_file_path=.github/release-notification.yml \
+                    --jq .body |
+                    sed 's/<!--[^>]*-->//g' |
+                    tee content.md
+
+          echo "## Help and Feedback" | tee -a content.md
+          echo "If you have any URDF related problems or improvements, please file them to https://github.com/enactic/openarm_description/issues and/or https://github.com/enactic/openarm_description/pulls !" | tee -a content.md
+
+          curl --request POST "${DISCORD_WEBHOOK_URL}" \
+             --header "Content-Type: application/json" \
+             --data "$(jq --null-input \
+                         --arg thread_name "OpenArm Description ${VERSION}" \
+                         --arg content "$(cat content.md)" \
+                         '{thread_name: $thread_name, content: $content}')"
