@@ -108,6 +108,7 @@ jobs:
         if: github.ref_type == 'tag'
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh api "repos/${GITHUB_REPOSITORY}/releases/generate-notes" \
                     --raw-field tag_name="${GITHUB_REF_NAME}" \
