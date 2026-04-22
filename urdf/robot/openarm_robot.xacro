@@ -20,6 +20,7 @@
             ee_type:=''
             ros2_control:=false
             can_interface:=''
+            hardware_type:=''
             use_fake_hardware:=false
             fake_sensor_commands:=false
             no_prefix:='false'
@@ -54,6 +55,9 @@
 
     <xacro:property name="arm_prefix_modified" value="${'' if arm_prefix == '' else arm_prefix + '_'}" />
     <xacro:property name="body_prefix_modified" value="${'' if body_prefix == '' else body_prefix + '_'}" />
+    <xacro:property
+        name="hardware"
+        value="${hardware_type if hardware_type != '' else ('mock' if use_fake_hardware else 'real')}" />
 
     <xacro:if value="${bimanual}">
 
@@ -106,7 +110,7 @@
             control_gains="${control_gains}"
             left_can_interface="${left_can_interface}"
             right_can_interface="${right_can_interface}"
-            use_fake_hardware="${use_fake_hardware}"
+            hardware_type="${hardware}"
             fake_sensor_commands="${fake_sensor_commands}"
             left_arm_prefix="${left_arm_prefix}"
             right_arm_prefix="${right_arm_prefix}"
@@ -165,7 +169,7 @@
             control_gains="${control_gains}"
             arm_prefix="${arm_prefix_modified}"
             can_interface="${can_interface}"
-            use_fake_hardware="${use_fake_hardware}"
+            hardware_type="${hardware}"
             fake_sensor_commands="${fake_sensor_commands}"
             hand="${hand}"
             bimanual="false"

@@ -35,6 +35,7 @@
 
   <xacro:arg name="right_arm_prefix" default="right_" />
 
+  <xacro:arg name="hardware_type" default="" />
   <xacro:arg name="use_fake_hardware" default="false" />
 
   <xacro:arg name="fake_sensor_commands" default="false" />
@@ -70,6 +71,7 @@
   right_can_interface="$(arg right_can_interface)"
   left_arm_prefix="$(arg left_arm_prefix)"
   right_arm_prefix="$(arg right_arm_prefix)"
+  hardware_type="$(arg hardware_type)"
   use_fake_hardware="$(arg use_fake_hardware)"
   fake_sensor_commands="$(arg fake_sensor_commands)"
   no_prefix="$(arg no_prefix)"

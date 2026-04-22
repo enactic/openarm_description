@@ -24,10 +24,21 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 
-def robot_state_publisher_spawner(context: LaunchContext, arm_type, ee_type, bimanual):
+def robot_state_publisher_spawner(
+    context: LaunchContext,
+    arm_type,
+    ee_type,
+    bimanual,
+    ros2_control,
+    hardware_type,
+    use_fake_hardware,
+):
     arm_type_str = context.perform_substitution(arm_type)
     ee_type_str = context.perform_substitution(ee_type)
     bimanual_str = context.perform_substitution(bimanual)
+    ros2_control_str = context.perform_substitution(ros2_control)
+    hardware_type_str = context.perform_substitution(hardware_type)
+    use_fake_hardware_str = context.perform_substitution(use_fake_hardware)
 
     xacro_path = os.path.join(
         get_package_share_directory("openarm_description"),
@@ -40,6 +51,9 @@ def robot_state_publisher_spawner(context: LaunchContext, arm_type, ee_type, bim
             "arm_type": arm_type_str,
             "ee_type": ee_type_str,
             "bimanual": bimanual_str,
+            "ros2_control": ros2_control_str,
+            "hardware_type": hardware_type_str,
+            "use_fake_hardware": use_fake_hardware_str,
         }
     ).toprettyxml(indent="  ")
 
@@ -92,13 +106,35 @@ def generate_launch_description():
         description="Whether to use bimanual configuration"
     )
 
+    ros2_control_arg = DeclareLaunchArgument(
+        "ros2_control",
+        default_value="false",
+        description="Use ros2_control hardware interfaces in the robot description."
+    )
+
+    hardware_type_arg = DeclareLaunchArgument(
+        "hardware_type",
+        default_value="",
+        description="Hardware backend to use (real/mock/mujoco)."
+    )
+
+    use_fake_hardware_arg = DeclareLaunchArgument(
+        "use_fake_hardware",
+        default_value="false",
+        description="Deprecated flag for backwards compatibility."
+    )
+
     arm_type = LaunchConfiguration("arm_type")
     ee_type = LaunchConfiguration("ee_type")
     bimanual = LaunchConfiguration("bimanual")
+    ros2_control = LaunchConfiguration("ros2_control")
+    hardware_type = LaunchConfiguration("hardware_type")
+    use_fake_hardware = LaunchConfiguration("use_fake_hardware")
 
     robot_state_publisher_loader = OpaqueFunction(
         function=robot_state_publisher_spawner,
-        args=[arm_type, ee_type, bimanual]
+        args=[arm_type, ee_type, bimanual, ros2_control,
+              hardware_type, use_fake_hardware]
     )
 
     rviz_loader = OpaqueFunction(
@@ -110,6 +146,9 @@ def generate_launch_description():
         arm_type_arg,
         ee_type_arg,
         bimanual_arg,
+        ros2_control_arg,
+        hardware_type_arg,
+        use_fake_hardware_arg,
         robot_state_publisher_loader,
         Node(
             package="joint_state_publisher_gui",
