@@ -43,8 +43,8 @@
             <param name="kd6">${control_gains['joint6']['kd']}</param>
             <param name="kd7">${control_gains['joint7']['kd']}</param>
             <xacro:if value="${hand}">
-              <param name="kph">${control_gains['hand']['kp']}</param>
-              <param name="kdh">${control_gains['hand']['kd']}</param>
+              <param name="kp_hand">${control_gains['hand']['kp']}</param>
+              <param name="kd_hand">${control_gains['hand']['kd']}</param>
             </xacro:if>
           </xacro:if>
         </hardware>
