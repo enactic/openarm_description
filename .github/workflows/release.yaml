@@ -51,7 +51,7 @@ jobs:
               xacro assets/robot/openarm_v2.0/urdf/openarm_v20.urdf.xacro \
                 robot_preset:=default_bimanual \
                 > urdf_output/openarm_v20_bimanual_${{ matrix.id }}.urdf'
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: urdf-${{ matrix.id }}
           path: urdf_output/*.urdf
@@ -96,7 +96,7 @@ jobs:
 
           sha256sum "${name}.tar.gz" > "${name}.tar.gz.sha256"
           sha512sum "${name}.tar.gz" > "${name}.tar.gz.sha512"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: source-archive
           path: openarm-description-*.tar.gz*
