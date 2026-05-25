@@ -21,7 +21,7 @@ limitations under the License.
              right_can_interface:=^|can0
              use_fake_hardware:=^|true
              fake_sensor_commands:=^|false
-             hand:=^|false
+             hand:=^|true
              ee_type:=^|parallel_link
              left_arm_prefix:=^|left_
              right_arm_prefix:=^|right_
@@ -112,6 +112,7 @@ limitations under the License.
             <param name="arm_prefix">${right_arm_prefix}</param>
             <param name="hand">${hand}</param>
             <param name="can_fd">${can_fd}</param>
+            <param name="ee_type">${ee_type}</param>
             <param name="kp1">${control_gains['joint1']['kp']}</param>
             <param name="kp2">${control_gains['joint2']['kp']}</param>
             <param name="kp3">${control_gains['joint3']['kp']}</param>
