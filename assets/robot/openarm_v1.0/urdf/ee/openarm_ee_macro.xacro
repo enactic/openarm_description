@@ -35,7 +35,7 @@ limitations under the License.
   </xacro:macro>
 
   <xacro:macro name="ee_link_with_sc" params="name prefix rpy:='0 0 0' ee_kinematics_link reflect:=1">
-    <xacro:property name="ee_mesh_root" value="${'package://' + description_pkg + '/assets/end_effector/parallel_link/mesh' if ee_type == 'parallel_link' else 'package://' + description_pkg + '/assets/end_effector/pinch_gripper/meshes/old'}" />
+    <xacro:property name="ee_mesh_root" value="${'package://' + description_pkg + '/assets/end_effector/parallel_link/meshes' if ee_type == 'parallel_link' else 'package://' + description_pkg + '/assets/end_effector/pinch_gripper/meshes'}" />
     <link name="${prefix}${name}">
       <visual name="${prefix}${name}_visual">
         <xacro:openarm-ee-kinematics-link config="${ee_kinematics_link}" name="${name}" />
@@ -68,7 +68,7 @@ limitations under the License.
 
 
   <xacro:macro name="ee_finger_link_with_sc" params="name prefix ee_kinematics_link arm_reflect:=1 finger_reflect:=1">
-    <xacro:property name="ee_mesh_root" value="${'package://' + description_pkg + '/assets/end_effector/parallel_link/mesh' if ee_type == 'parallel_link' else 'package://' + description_pkg + '/assets/end_effector/pinch_gripper/meshes/old'}" />
+    <xacro:property name="ee_mesh_root" value="${'package://' + description_pkg + '/assets/end_effector/parallel_link/meshes' if ee_type == 'parallel_link' else 'package://' + description_pkg + '/assets/end_effector/pinch_gripper/meshes'}" />
     <link name="${prefix}${name}">
       <visual name="${prefix}${name}_visual">
         <xacro:openarm-ee-kinematics-link config="${ee_kinematics_link}" name="${name}" />
