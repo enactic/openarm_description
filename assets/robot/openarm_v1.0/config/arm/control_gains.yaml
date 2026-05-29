@@ -39,3 +39,7 @@ joint6:
 joint7:
   kp: 10.0
   kd: 0.5
+
+hand:
+  kp: 5.0
+  kd: 0.1
