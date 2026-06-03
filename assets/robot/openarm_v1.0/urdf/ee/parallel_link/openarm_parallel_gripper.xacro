@@ -14,13 +14,35 @@ limitations under the License.
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="parallel_gripper">
 
-  <xacro:macro name="openarm_parallel_gripper" params="connected_to:='' arm_type arm_prefix:='' ee_type ee_inertials ee_kinematics ee_kinematics_link ee_joints_limits rpy_ee:='0 0 0' xyz_ee:='0 0 0' tcp_xyz:='0 0 0' tcp_rpy:='0 0 0' description_pkg:=openarm_description">
+  <xacro:macro name="openarm_parallel_gripper" params="connected_to:='' arm_type arm_prefix:='' ee_type ee_inertials ee_kinematics ee_kinematics_link ee_joints_limits rpy_ee:='0 0 0' xyz_ee:='0 0 0' tcp_xyz:='0 0 0.1801' tcp_rpy:='0 0 0' description_pkg:=openarm_description">
 
     <xacro:property name="ee_prefix" default=""/>
 
     <xacro:unless value="${arm_type == ''}">
       <xacro:property name="ee_prefix" value="openarm_${arm_prefix}" />
     </xacro:unless>
+
+    <link name="${ee_prefix}hand">
+      <visual name="${ee_prefix}hand_visual">
+        <xacro:openarm-ee-kinematics-link config="${ee_kinematics_link}" name="hand" />
+        <geometry>
+          <mesh filename="package://${description_pkg}/assets/end_effector/parallel_link/meshes/visual/hand.dae" scale="0.001 0.001 0.001"/>
+        </geometry>
+      </visual>
+      <collision name="${ee_prefix}hand_collision">
+        <xacro:openarm-ee-kinematics-link config="${ee_kinematics_link}" name="hand" />
+        <geometry>
+          <mesh filename="package://${description_pkg}/assets/end_effector/parallel_link/meshes/collision/hand.stl" scale="0.001 0.001 0.001" />
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${ee_prefix}hand_joint" type="fixed">
+      <xacro:property name="fj" value="${ee_kinematics['finger_joint']['kinematic']}" />
+      <origin xyz="0 0 ${fj.z}" rpy="0 0 0" />
+      <parent link="${connected_to}" />
+      <child link="${ee_prefix}hand" />
+    </joint>
 
     <link name="${ee_prefix}hand_tcp" />
 

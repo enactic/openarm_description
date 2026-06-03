@@ -15,7 +15,7 @@
 finger_joint:
   kinematic:
     x: 0.0
-    y: 0.0
+    y: -0.005
     z: 0.1025
     roll: 0
     pitch: 0

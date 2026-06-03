@@ -12,11 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+hand:
+  kinematic:
+    x: 0.0
+    y: 0.0
+    z: -0.661001
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+
 left_finger:
   kinematic:
     x: 0.0
     y: -0.05
-    z: -0.673001
+    z: -0.661001
     roll: 0.0
     pitch: 0.0
     yaw: 0.0
@@ -25,7 +34,7 @@ right_finger:
   kinematic:
     x: 0.0
     y: 0.05
-    z: -0.673001
+    z: -0.661001
     roll: 0.0
     pitch: 0.0
     yaw: 0.0
