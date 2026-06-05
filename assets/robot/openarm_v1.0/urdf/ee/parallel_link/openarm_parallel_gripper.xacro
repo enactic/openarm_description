@@ -35,11 +35,11 @@ limitations under the License.
           <mesh filename="package://${description_pkg}/assets/end_effector/parallel_link/meshes/collision/hand.stl" scale="0.001 0.001 0.001" />
         </geometry>
       </collision>
+      <xacro:ee-inertials name="hand"/>
     </link>
 
     <joint name="${ee_prefix}hand_joint" type="fixed">
-      <xacro:property name="fj" value="${ee_kinematics['finger_joint']['kinematic']}" />
-      <origin xyz="0 0 ${fj.z}" rpy="0 0 0" />
+      <xacro:openarm-ee-kinematics config="${ee_kinematics}" name="hand" />
       <parent link="${connected_to}" />
       <child link="${ee_prefix}hand" />
     </joint>

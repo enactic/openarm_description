@@ -12,6 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+hand:
+  origin:
+    x: 0.000001
+    y: 0.0
+    z: -0.000549
+    roll: 0
+    pitch: 0
+    yaw: 0
+  mass: 0.127
+  inertia:
+    xx: 1.65558e-04
+    yy: 1.74660e-05
+    zz: 1.73524e-04
+    xy: 0.0
+    xz: 0.0
+    yz: 0.0
+
 left_finger:
   origin:
     x: 0.0064528
