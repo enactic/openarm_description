@@ -14,7 +14,12 @@ limitations under the License.
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="parallel_gripper">
 
-  <xacro:macro name="openarm_parallel_gripper" params="connected_to:='' arm_type arm_prefix:='' ee_type ee_inertials ee_kinematics ee_kinematics_link ee_joints_limits rpy_ee:='0 0 0' xyz_ee:='0 0 0' tcp_xyz:='0 0 0.1801' tcp_rpy:='0 0 0' description_pkg:=openarm_description">
+  <!--
+    tcp_xyz default: 0 0 0.186 m along +Z of connected_to (link7).
+    Calibrated to place hand_tcp at the fingertip centre.
+    Units: metres. Override explicitly when mounting at a different offset.
+  -->
+  <xacro:macro name="openarm_parallel_gripper" params="connected_to:='' arm_type arm_prefix:='' ee_type ee_inertials ee_kinematics ee_kinematics_link ee_joints_limits rpy_ee:='0 0 0' xyz_ee:='0 0 0' tcp_xyz:='0 0 0.186' tcp_rpy:='0 0 0' description_pkg:=openarm_description">
 
     <xacro:property name="ee_prefix" default=""/>
 
