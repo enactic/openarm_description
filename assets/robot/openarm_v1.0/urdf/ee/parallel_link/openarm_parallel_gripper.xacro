@@ -15,11 +15,11 @@ limitations under the License.
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="parallel_gripper">
 
   <!--
-    tcp_xyz default: 0 0 0.186 m along +Z of connected_to (link7).
-    Calibrated to place hand_tcp at the fingertip centre.
-    Units: metres. Override explicitly when mounting at a different offset.
+    tcp_xyz: offset from hand link to hand_tcp along +Z of hand (metres).
+    Default 0 0 0.0835 is the calibrated fingertip-centre offset for the
+    parallel-link gripper — measured from the hand frame origin.
   -->
-  <xacro:macro name="openarm_parallel_gripper" params="connected_to:='' arm_type arm_prefix:='' ee_type ee_inertials ee_kinematics ee_kinematics_link ee_joints_limits rpy_ee:='0 0 0' xyz_ee:='0 0 0' tcp_xyz:='0 0 0.186' tcp_rpy:='0 0 0' description_pkg:=openarm_description">
+  <xacro:macro name="openarm_parallel_gripper" params="connected_to:='' arm_type arm_prefix:='' ee_type ee_inertials ee_kinematics ee_kinematics_link ee_joints_limits rpy_ee:='0 0 0' xyz_ee:='0 0 0' tcp_xyz:='0 0 0.0835' tcp_rpy:='0 0 0' description_pkg:=openarm_description">
 
     <xacro:property name="ee_prefix" default=""/>
 
@@ -53,7 +53,7 @@ limitations under the License.
 
     <joint name="${ee_prefix}hand_tcp_joint" type="fixed">
       <origin xyz="${tcp_xyz}" rpy="${tcp_rpy}" />
-      <parent link="${connected_to}" /> <child link="${ee_prefix}hand_tcp" />
+      <parent link="${ee_prefix}hand" /> <child link="${ee_prefix}hand_tcp" />
     </joint>
 
     <link name="${ee_prefix}left_finger">
