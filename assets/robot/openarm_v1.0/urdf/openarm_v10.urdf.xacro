@@ -36,8 +36,9 @@ limitations under the License.
   <xacro:arg name="left_arm_base_xyz" default="0.0 0.031 0.698" />
   <xacro:arg name="left_arm_base_rpy" default="-1.5708 0 0" />
   <xacro:arg name="can_fd" default="true" />
-  <xacro:if value="${'$(arg arm_type)' != 'v10'}">
-    ${xacro.error('assets/robot/openarm_v1.0 only supports arm_type:=v10. Use assets/robot/openarm_v2.0 for newer hardware variants.')}
+  <xacro:property name="accepted_arm_types" value="${('v10', 'v1.0', 'v1_0', 'openarm_v10', 'openarm_v1.0', 'openarm_v1_0')}" />
+  <xacro:if value="${'$(arg arm_type)' not in accepted_arm_types}">
+    ${xacro.error('assets/robot/openarm_v1.0 supports arm_type in ' + str(accepted_arm_types) + ' (got: $(arg arm_type)). Use assets/robot/openarm_v2.0 for newer hardware variants.')}
   </xacro:if>
   <xacro:if value="${'$(arg body_type)' != 'v10'}">
     ${xacro.error('assets/robot/openarm_v1.0 only supports body_type:=v10.')}
@@ -47,7 +48,7 @@ limitations under the License.
   <xacro:property name="parallel_link_cfg_root" value="$(find openarm_description)/assets/end_effector/parallel_link/config" />
 
   <xacro:openarm_robot
-  arm_type="$(arg arm_type)"
+  arm_type="v10"
   body_type="$(arg body_type)"
   joint_limits="${xacro.load_yaml(arm_cfg_root + '/joint_limits.yaml')}"
   control_gains="${xacro.load_yaml(arm_cfg_root + '/control_gains.yaml')}"
