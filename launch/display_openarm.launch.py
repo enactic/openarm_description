@@ -36,7 +36,7 @@ def resolve_arm_config(arm_type_str: str) -> tuple[str, str]:
     if arm_type_str not in VALID_ARM_TYPES:
         raise ValueError(
             f"Invalid arm_type: '{arm_type_str}'. "
-            f"Please specify openarm_v1.0 or openarm_v2.0."
+            f"Accepted values: {sorted(VALID_ARM_TYPES)}"
         )
     if any(x in arm_type_str for x in ("1.0", "10", "1_0")):
         return "openarm_v1.0", "openarm_v10.urdf.xacro"
