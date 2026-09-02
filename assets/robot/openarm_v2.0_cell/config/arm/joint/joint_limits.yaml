@@ -50,7 +50,7 @@ joint6:
     velocity: 20.944
 joint7:
   limit:
-    lower: -0.03 #-1.5708
-    upper:  3.138 #1.5708
+    lower: -3.138 #-1.5708
+    upper:  0.03 #1.5708
     effort: 7
     velocity: 20.944
