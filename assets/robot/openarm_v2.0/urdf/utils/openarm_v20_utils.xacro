@@ -104,14 +104,12 @@ limitations under the License.
           <xacro:unless value="${frame_shift != 'none'}">
             <xacro:openarm_v20_emit_origin origin="${visual_cfg.origin}" reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}" />
           </xacro:unless>
+          <!-- Preserve the mesh's embedded materials. -->
           <geometry>
             <mesh
               filename="${visual_cfg.geometry.mesh}"
               scale="${reflect_x * visual_cfg.geometry.scale.x} ${reflect_y * visual_cfg.geometry.scale.y} ${reflect_z * visual_cfg.geometry.scale.z}" />
           </geometry>
-          <material name="${link_name}_material">
-            <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
-          </material>
         </visual>
       </xacro:if>
 
