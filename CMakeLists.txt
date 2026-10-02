@@ -35,4 +35,6 @@ foreach(install_dir assets launch rviz scripts)
   endif()
 endforeach()
 
+install(PROGRAMS script/export_urdf DESTINATION lib/${PROJECT_NAME})
+
 ament_package()
