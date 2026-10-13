@@ -25,7 +25,10 @@ limitations under the License.
              gazebo_effort:=^|false
              arm_prefix:=''
              bimanual:=false
-             can_fd:=^|true">
+             can_fd:=^|true
+             no_prefix:=false">
+
+    <xacro:property name="joint_prefix" value="${'' if no_prefix else 'openarm_' + arm_prefix}" />
 
     <ros2_control name="openarm_hardware_interface" type="system">
         <hardware>
@@ -87,16 +90,16 @@ limitations under the License.
         </joint>
       </xacro:macro>
 
-      <xacro:configure_joint joint_name="openarm_${arm_prefix}joint1" initial_position="0.0"/>
-      <xacro:configure_joint joint_name="openarm_${arm_prefix}joint2" initial_position="0.0"/>
-      <xacro:configure_joint joint_name="openarm_${arm_prefix}joint3" initial_position="0.0"/>
-      <xacro:configure_joint joint_name="openarm_${arm_prefix}joint4" initial_position="0.0"/>
-      <xacro:configure_joint joint_name="openarm_${arm_prefix}joint5" initial_position="0.0"/>
-      <xacro:configure_joint joint_name="openarm_${arm_prefix}joint6" initial_position="0.0"/>
-      <xacro:configure_joint joint_name="openarm_${arm_prefix}joint7" initial_position="0.0"/>
+      <xacro:configure_joint joint_name="${joint_prefix}joint1" initial_position="0.0"/>
+      <xacro:configure_joint joint_name="${joint_prefix}joint2" initial_position="0.0"/>
+      <xacro:configure_joint joint_name="${joint_prefix}joint3" initial_position="0.0"/>
+      <xacro:configure_joint joint_name="${joint_prefix}joint4" initial_position="0.0"/>
+      <xacro:configure_joint joint_name="${joint_prefix}joint5" initial_position="0.0"/>
+      <xacro:configure_joint joint_name="${joint_prefix}joint6" initial_position="0.0"/>
+      <xacro:configure_joint joint_name="${joint_prefix}joint7" initial_position="0.0"/>
 
       <xacro:if value="${hand}">
-        <xacro:configure_joint joint_name="openarm_${arm_prefix}finger_joint1" initial_position="0.0" />
+        <xacro:configure_joint joint_name="${joint_prefix}finger_joint1" initial_position="0.0" />
       </xacro:if>
 
     </ros2_control>
