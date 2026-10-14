@@ -29,14 +29,13 @@ limitations under the License.
               kinematics
               kinematics_link">
 
-    <!-- <xacro:property name="prefix" value="${'' if no_prefix else body_prefix + 'body_'}" /> -->
-    <xacro:property name="prefix" value="${'' if no_prefix else 'openarm_' + 'body_'}" />
+    <xacro:property name="prefix" value="${'' if no_prefix else 'openarm_' + body_prefix}" />
 
     <xacro:unless value="${not connected_to}">
     <link name="${connected_to}" />
-    <joint name="${prefix}${connected_to}_joint" type="fixed">
+    <joint name="${prefix}body_${connected_to}_joint" type="fixed">
     <parent link="${connected_to}" />
-    <child link="${prefix}link0" />
+    <child link="${prefix}body_link0" />
     <origin xyz="${xyz}" rpy="${rpy}" />
     </joint>
     </xacro:unless>

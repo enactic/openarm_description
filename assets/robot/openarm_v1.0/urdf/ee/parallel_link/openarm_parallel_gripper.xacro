@@ -19,13 +19,9 @@ limitations under the License.
     Default 0 0 0.0835 is the calibrated fingertip-centre offset for the
     parallel-link gripper — measured from the hand frame origin.
   -->
-  <xacro:macro name="openarm_parallel_gripper" params="connected_to:='' arm_type arm_prefix:='' ee_type ee_inertials ee_kinematics ee_kinematics_link ee_joints_limits rpy_ee:='0 0 0' xyz_ee:='0 0 0' tcp_xyz:='0 0 0.0835' tcp_rpy:='0 0 0' description_pkg:=openarm_description">
+  <xacro:macro name="openarm_parallel_gripper" params="connected_to:='' arm_type arm_prefix:='' ee_type ee_inertials ee_kinematics ee_kinematics_link ee_joints_limits rpy_ee:='0 0 0' xyz_ee:='0 0 0' tcp_xyz:='0 0 0.0835' tcp_rpy:='0 0 0' description_pkg:=openarm_description no_prefix:=false">
 
-    <xacro:property name="ee_prefix" default=""/>
-
-    <xacro:unless value="${arm_type == ''}">
-      <xacro:property name="ee_prefix" value="openarm_${arm_prefix}" />
-    </xacro:unless>
+    <xacro:property name="ee_prefix" value="${'' if no_prefix or arm_type == '' else 'openarm_' + arm_prefix}" />
 
     <link name="${ee_prefix}hand">
       <visual name="${ee_prefix}hand_visual">
