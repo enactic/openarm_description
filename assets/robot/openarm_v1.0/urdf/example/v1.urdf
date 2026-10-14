@@ -539,16 +539,16 @@ limitations under the License.
     </inertial>
   </link>
   <joint name="openarm_left_finger_joint1" type="prismatic">
-    <parent link="openarm_left_hand"/>
+    <parent link="openarm_left_link7"/>
     <child link="openarm_left_right_finger"/>
-    <origin rpy="0 0 0" xyz="0.0 -0.005 0.015"/>
+    <origin rpy="0 0 0" xyz="0.0 -0.005 0.1151"/>
     <axis xyz="0 -1 0"/>
     <limit effort="150.75" lower="0.0" upper="0.044" velocity="0.661"/>
   </joint>
   <joint name="openarm_left_finger_joint2" type="prismatic">
-    <parent link="openarm_left_hand"/>
+    <parent link="openarm_left_link7"/>
     <child link="openarm_left_left_finger"/>
-    <origin rpy="0 0 0" xyz="0.0 0.005 0.015"/>
+    <origin rpy="0 0 0" xyz="0.0 0.005 0.1151"/>
     <axis xyz="0 1 0"/>
     <limit effort="150.75" lower="0.0" upper="0.044" velocity="0.661"/>
     <mimic joint="openarm_left_finger_joint1" multiplier="1" offset="0"/>
@@ -622,16 +622,16 @@ limitations under the License.
     </inertial>
   </link>
   <joint name="openarm_right_finger_joint1" type="prismatic">
-    <parent link="openarm_right_hand"/>
+    <parent link="openarm_right_link7"/>
     <child link="openarm_right_right_finger"/>
-    <origin rpy="0 0 0" xyz="0.0 -0.005 0.015"/>
+    <origin rpy="0 0 0" xyz="0.0 -0.005 0.1151"/>
     <axis xyz="0 -1 0"/>
     <limit effort="150.75" lower="0.0" upper="0.044" velocity="0.661"/>
   </joint>
   <joint name="openarm_right_finger_joint2" type="prismatic">
-    <parent link="openarm_right_hand"/>
+    <parent link="openarm_right_link7"/>
     <child link="openarm_right_left_finger"/>
-    <origin rpy="0 0 0" xyz="0.0 0.005 0.015"/>
+    <origin rpy="0 0 0" xyz="0.0 0.005 0.1151"/>
     <axis xyz="0 1 0"/>
     <limit effort="150.75" lower="0.0" upper="0.044" velocity="0.661"/>
     <mimic joint="openarm_right_finger_joint1" multiplier="1" offset="0"/>
