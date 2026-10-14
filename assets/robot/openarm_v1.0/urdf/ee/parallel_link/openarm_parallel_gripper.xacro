@@ -19,22 +19,23 @@ limitations under the License.
     Default 0 0 0.0835 is the calibrated fingertip-centre offset for the
     parallel-link gripper — measured from the hand frame origin.
   -->
-  <xacro:macro name="openarm_parallel_gripper" params="connected_to:='' arm_type arm_prefix:='' ee_type ee_inertials ee_kinematics ee_kinematics_link ee_joints_limits rpy_ee:='0 0 0' xyz_ee:='0 0 0' tcp_xyz:='0 0 0.0835' tcp_rpy:='0 0 0' description_pkg:=openarm_description no_prefix:=false">
+  <xacro:macro name="openarm_parallel_gripper" params="connected_to:='' arm_type arm_prefix:='' ee_type ee_inertials ee_kinematics ee_kinematics_link ee_joints_limits rpy_ee:='0 0 0' xyz_ee:='0 0 0' tcp_xyz:='0 0 0.0835' tcp_rpy:='0 0 0' description_pkg:=openarm_description no_prefix:=false mesh_root:=''">
 
     <xacro:property name="ee_prefix" value="${'' if no_prefix or arm_type == '' else 'openarm_' + arm_prefix}" />
+    <xacro:property name="ee_mesh_root" value="${mesh_root if mesh_root != '' else 'package://' + description_pkg + '/assets/end_effector/parallel_link/meshes'}" />
     <xacro:property name="finger_limits" value="${ee_joints_limits['finger_joint']['limit']}" />
 
     <link name="${ee_prefix}hand">
       <visual name="${ee_prefix}hand_visual">
         <xacro:openarm-ee-kinematics-link config="${ee_kinematics_link}" name="hand" />
         <geometry>
-          <mesh filename="package://${description_pkg}/assets/end_effector/parallel_link/meshes/visual/hand.dae" scale="0.001 0.001 0.001"/>
+          <mesh filename="${ee_mesh_root}/visual/hand.dae" scale="0.001 0.001 0.001"/>
         </geometry>
       </visual>
       <collision name="${ee_prefix}hand_collision">
         <xacro:openarm-ee-kinematics-link config="${ee_kinematics_link}" name="hand" />
         <geometry>
-          <mesh filename="package://${description_pkg}/assets/end_effector/parallel_link/meshes/collision/hand.stl" scale="0.001 0.001 0.001" />
+          <mesh filename="${ee_mesh_root}/collision/hand.stl" scale="0.001 0.001 0.001" />
         </geometry>
       </collision>
       <xacro:ee-inertials name="hand"/>
@@ -57,13 +58,13 @@ limitations under the License.
       <visual name="${ee_prefix}left_finger_visual">
         <xacro:openarm-ee-kinematics-link config="${ee_kinematics_link}" name="left_finger" />
         <geometry>
-          <mesh filename="package://${description_pkg}/assets/end_effector/parallel_link/meshes/visual/finger.dae" scale="0.001 0.001 0.001"/>
+          <mesh filename="${ee_mesh_root}/visual/finger.dae" scale="0.001 0.001 0.001"/>
         </geometry>
       </visual>
       <collision name="${ee_prefix}left_finger_collision">
         <xacro:openarm-ee-kinematics-link config="${ee_kinematics_link}" name="left_finger" />
         <geometry>
-          <mesh filename="package://${description_pkg}/assets/end_effector/parallel_link/meshes/collision/finger.stl" scale="0.001 0.001 0.001" />
+          <mesh filename="${ee_mesh_root}/collision/finger.stl" scale="0.001 0.001 0.001" />
         </geometry>
       </collision>
       <xacro:ee-inertials name="left_finger"/>
@@ -73,13 +74,13 @@ limitations under the License.
       <visual name="${ee_prefix}right_finger_visual">
         <xacro:openarm-ee-kinematics-link config="${ee_kinematics_link}" name="right_finger" />
         <geometry>
-          <mesh filename="package://${description_pkg}/assets/end_effector/parallel_link/meshes/visual/finger.dae" scale="0.001 -0.001 0.001"/>
+          <mesh filename="${ee_mesh_root}/visual/finger.dae" scale="0.001 -0.001 0.001"/>
         </geometry>
       </visual>
       <collision name="${ee_prefix}right_finger_collision">
         <xacro:openarm-ee-kinematics-link config="${ee_kinematics_link}" name="right_finger" />
         <geometry>
-          <mesh filename="package://${description_pkg}/assets/end_effector/parallel_link/meshes/collision/finger.stl" scale="0.001 -0.001 0.001" />
+          <mesh filename="${ee_mesh_root}/collision/finger.stl" scale="0.001 -0.001 0.001" />
         </geometry>
       </collision>
       <xacro:ee-inertials name="right_finger"/>
