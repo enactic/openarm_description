@@ -521,19 +521,19 @@ limitations under the License.
   </link>
   <link name="openarm_left_right_finger">
     <visual name="openarm_left_right_finger_visual">
-      <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.05 -0.673001"/>
+      <origin rpy="0.0 0.0 3.141592653589793" xyz="0.0 0.05 -0.673001"/>
       <geometry>
         <mesh filename="package://openarm_description/assets/end_effector/parallel_link/meshes/visual/finger.dae" scale="0.001 0.001 0.001"/>
       </geometry>
     </visual>
     <collision name="openarm_left_right_finger_collision">
-      <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.05 -0.673001"/>
+      <origin rpy="0.0 0.0 3.141592653589793" xyz="0.0 0.05 -0.673001"/>
       <geometry>
         <mesh filename="package://openarm_description/assets/end_effector/parallel_link/meshes/collision/finger.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
-      <origin rpy="0 0 0" xyz="0.0064528 0.01702 0.0219685"/>
+      <origin rpy="0 0 0" xyz="-0.0064528 -0.01702 0.0219685"/>
       <mass value="0.03602545343277134"/>
       <inertia ixx="2.3749999999999997e-06" ixy="0.0" ixz="0.0" iyy="2.3749999999999997e-06" iyz="0.0" izz="7.5e-07"/>
     </inertial>
@@ -541,8 +541,8 @@ limitations under the License.
   <joint name="openarm_left_finger_joint1" type="prismatic">
     <parent link="openarm_left_hand"/>
     <child link="openarm_left_right_finger"/>
-    <origin rpy="0 0 3.141592653589793" xyz="0.0 -0.005 0.015"/>
-    <axis xyz="0 1 0"/>
+    <origin rpy="0 0 0" xyz="0.0 -0.005 0.015"/>
+    <axis xyz="0 -1 0"/>
     <limit effort="150.75" lower="0.0" upper="0.044" velocity="0.661"/>
   </joint>
   <joint name="openarm_left_finger_joint2" type="prismatic">
@@ -604,19 +604,19 @@ limitations under the License.
   </link>
   <link name="openarm_right_right_finger">
     <visual name="openarm_right_right_finger_visual">
-      <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.05 -0.673001"/>
+      <origin rpy="0.0 0.0 3.141592653589793" xyz="0.0 0.05 -0.673001"/>
       <geometry>
         <mesh filename="package://openarm_description/assets/end_effector/parallel_link/meshes/visual/finger.dae" scale="0.001 0.001 0.001"/>
       </geometry>
     </visual>
     <collision name="openarm_right_right_finger_collision">
-      <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.05 -0.673001"/>
+      <origin rpy="0.0 0.0 3.141592653589793" xyz="0.0 0.05 -0.673001"/>
       <geometry>
         <mesh filename="package://openarm_description/assets/end_effector/parallel_link/meshes/collision/finger.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
-      <origin rpy="0 0 0" xyz="0.0064528 0.01702 0.0219685"/>
+      <origin rpy="0 0 0" xyz="-0.0064528 -0.01702 0.0219685"/>
       <mass value="0.03602545343277134"/>
       <inertia ixx="2.3749999999999997e-06" ixy="0.0" ixz="0.0" iyy="2.3749999999999997e-06" iyz="0.0" izz="7.5e-07"/>
     </inertial>
@@ -624,8 +624,8 @@ limitations under the License.
   <joint name="openarm_right_finger_joint1" type="prismatic">
     <parent link="openarm_right_hand"/>
     <child link="openarm_right_right_finger"/>
-    <origin rpy="0 0 3.141592653589793" xyz="0.0 -0.005 0.015"/>
-    <axis xyz="0 1 0"/>
+    <origin rpy="0 0 0" xyz="0.0 -0.005 0.015"/>
+    <axis xyz="0 -1 0"/>
     <limit effort="150.75" lower="0.0" upper="0.044" velocity="0.661"/>
   </joint>
   <joint name="openarm_right_finger_joint2" type="prismatic">

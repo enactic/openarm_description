@@ -86,7 +86,7 @@ limitations under the License.
         <parent link="${ee_prefix}hand" />
         <child link="${ee_prefix}right_finger" />
         <xacro:openarm-ee-kinematics config="${ee_kinematics}" name="finger_joint" />
-        <axis xyz="0 1 0" />
+        <axis xyz="0 -1 0" />
         <limit effort="${finger_limits.effort}" lower="${finger_limits.lower}"
                upper="${finger_limits.upper}" velocity="${finger_limits.velocity}" />
     </joint>

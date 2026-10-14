@@ -46,4 +46,12 @@ left_finger: &finger
     xz: 0.0
     yz: 0.0
 
-right_finger: *finger
+right_finger:
+  <<: *finger
+  origin:
+    x: -0.0064528
+    y: -0.017020
+    z: 0.0219685
+    roll: 0
+    pitch: 0
+    yaw: 0
