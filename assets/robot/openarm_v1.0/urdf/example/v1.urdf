@@ -496,7 +496,7 @@ limitations under the License.
   </joint>
   <link name="openarm_left_hand_tcp"/>
   <joint name="openarm_left_hand_tcp_joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0.0859"/>
+    <origin rpy="0 0 0" xyz="0 0 0.093"/>
     <parent link="openarm_left_hand"/>
     <child link="openarm_left_hand_tcp"/>
   </joint>
@@ -579,7 +579,7 @@ limitations under the License.
   </joint>
   <link name="openarm_right_hand_tcp"/>
   <joint name="openarm_right_hand_tcp_joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0.0859"/>
+    <origin rpy="0 0 0" xyz="0 0 0.093"/>
     <parent link="openarm_right_hand"/>
     <child link="openarm_right_hand_tcp"/>
   </joint>
