@@ -15,7 +15,7 @@ limitations under the License.
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
   <xacro:include filename="$(find openarm_description)/assets/robot/openarm_v1.0/urdf/ee/parallel_link/openarm_parallel_gripper.xacro" />
 
-  <xacro:macro name="openarm_ee" params="ee_type connected_to arm_type arm_prefix ee_kinematics ee_kinematics_link ee_inertials ee_joints_limits rpy_ee:='0 0 0' xyz_ee:='0 0 0' tcp_xyz:='0 0 0' tcp_rpy:='0 0 0' description_pkg:=openarm_description">
+  <xacro:macro name="openarm_ee" params="ee_type connected_to arm_type arm_prefix ee_kinematics ee_kinematics_link ee_inertials ee_joints_limits rpy_ee:='0 0 0' xyz_ee:='0 0 0' tcp_xyz:='0 0 0' tcp_rpy:='0 0 0' description_pkg:=openarm_description no_prefix:=false">
     <xacro:if value="${ee_type == 'parallel_link'}">
       <xacro:openarm_parallel_gripper
         connected_to="${connected_to}"
@@ -26,6 +26,8 @@ limitations under the License.
         ee_kinematics_link="${ee_kinematics_link}"
         ee_inertials="${ee_inertials}"
         ee_joints_limits="${ee_joints_limits}"
+        description_pkg="${description_pkg}"
+        no_prefix="${no_prefix}"
       />
     </xacro:if>
     <xacro:unless value="${ee_type == 'parallel_link'}">
