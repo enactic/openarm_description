@@ -37,9 +37,9 @@ limitations under the License.
       </geometry>
     </collision>
     <inertial>
-      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.296442186206"/>
-      <mass value="13.89"/>
-      <inertia ixx="0.432375" ixy="0.0" ixz="0.0" iyy="0.432375" iyz="0.0" izz="0.051"/>
+      <origin rpy="0.0 0.0 0.0" xyz="-0.016206894902 0 0.244091987626"/>
+      <mass value="3.74"/>
+      <inertia ixx="0.248946829107" ixy="0.0" ixz="0.0" iyy="0.253033907704" iyz="0.0" izz="0.0140271775534"/>
     </inertial>
   </link>
   <joint name="openarm_left_openarm_body_link0_joint" type="fixed">
