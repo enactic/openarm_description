@@ -16,7 +16,7 @@ hand:
   origin:
     x: 0.000001
     y: 0.0
-    z: -0.000549
+    z: 0.001851
     roll: 0
     pitch: 0
     yaw: 0

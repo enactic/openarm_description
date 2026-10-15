@@ -19,7 +19,7 @@ limitations under the License.
 
   <xacro:arg name="ee_config_dir" default="$(find openarm_description)/assets/end_effector/parallel_link/config" />
   <xacro:arg name="mesh_root" default="$(find openarm_description)/assets/end_effector/parallel_link/meshes" />
-  <xacro:arg name="tcp_xyz" default="0 0 0.0835" />
+  <xacro:arg name="tcp_xyz" default="0 0 0.0859" />
   <xacro:arg name="tcp_rpy" default="0 0 0" />
 
   <link name="base_link" />
