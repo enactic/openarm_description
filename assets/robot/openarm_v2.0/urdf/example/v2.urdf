@@ -55,7 +55,7 @@
     </inertial>
   </link>
   <joint name="openarm_left_base_link_mount_joint" type="fixed">
-    <origin rpy="0.0 0.0 0.0" xyz="0.0 0.031 0.698"/>
+    <origin rpy="0.0 0.0 0.0" xyz="0.0 0.03 0.697"/>
     <parent link="openarm_body_link0"/>
     <child link="openarm_left_base_link"/>
   </joint>
@@ -345,7 +345,7 @@
     </inertial>
   </link>
   <joint name="openarm_right_base_link_mount_joint" type="fixed">
-    <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.031 0.698"/>
+    <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.03 0.697"/>
     <parent link="openarm_body_link0"/>
     <child link="openarm_right_base_link"/>
   </joint>
