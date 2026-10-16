@@ -20,11 +20,11 @@ limitations under the License.
 
     <xacro:property name="prefix" value="${'' if no_prefix else 'openarm' + '_' + arm_prefix}" />
 
-    <xacro:if value="${arm_prefix == 'right_'}">
+    <xacro:if value="${arm_prefix == '' or arm_prefix == 'right_'}">
       <xacro:property name="reflect" value="1" />
     </xacro:if>
 
-    <xacro:unless value="${arm_prefix == 'right_'}">
+    <xacro:unless value="${arm_prefix == '' or arm_prefix == 'right_'}">
       <xacro:property name="reflect" value="-1" />
     </xacro:unless>
 
