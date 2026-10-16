@@ -14,12 +14,8 @@ limitations under the License.
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="parallel_gripper">
 
-  <!--
-    tcp_xyz: offset from hand link to hand_tcp along +Z of hand (metres).
-    Default 0 0 0.0835 is the calibrated fingertip-centre offset for the
-    parallel-link gripper — measured from the hand frame origin.
-  -->
-  <xacro:macro name="openarm_parallel_gripper" params="connected_to:='' arm_type arm_prefix:='' ee_type ee_inertials ee_kinematics ee_kinematics_link ee_joints_limits rpy_ee:='0 0 0' xyz_ee:='0 0 0' tcp_xyz:='0 0 0.0835' tcp_rpy:='0 0 0' description_pkg:=openarm_description no_prefix:=false mesh_root:=''">
+  <!-- tcp_xyz: offset from hand to hand_tcp (metres). -->
+  <xacro:macro name="openarm_parallel_gripper" params="connected_to:='' arm_type arm_prefix:='' ee_type ee_inertials ee_kinematics ee_kinematics_link ee_joints_limits rpy_ee:='0 0 0' xyz_ee:='0 0 0' tcp_xyz:='0 0 0.0859' tcp_rpy:='0 0 0' description_pkg:=openarm_description no_prefix:=false mesh_root:=''">
 
     <xacro:property name="ee_prefix" value="${'' if no_prefix or arm_type == '' else 'openarm_' + arm_prefix}" />
     <xacro:property name="ee_mesh_root" value="${mesh_root if mesh_root != '' else 'package://' + description_pkg + '/assets/end_effector/parallel_link/meshes'}" />
@@ -87,7 +83,7 @@ limitations under the License.
     </link>
 
     <joint name="${ee_prefix}finger_joint1" type="prismatic">
-        <parent link="${connected_to}" />
+        <parent link="${ee_prefix}hand" />
         <child link="${ee_prefix}right_finger" />
         <xacro:openarm-ee-kinematics config="${ee_kinematics}" name="finger_joint" />
         <axis xyz="0 -1 0" />
@@ -96,7 +92,7 @@ limitations under the License.
     </joint>
 
     <joint name="${ee_prefix}finger_joint2" type="prismatic">
-        <parent link="${connected_to}" />
+        <parent link="${ee_prefix}hand" />
         <child link="${ee_prefix}left_finger" />
         <xacro:property name="fj" value="${ee_kinematics['finger_joint']['kinematic']}" />
         <origin xyz="${fj.x} ${-fj.y} ${fj.z}" rpy="0 0 0" />
@@ -105,21 +101,6 @@ limitations under the License.
                upper="${finger_limits.upper}" velocity="${finger_limits.velocity}" />
         <mimic joint="${ee_prefix}finger_joint1" />
     </joint>
-
-    <!-- <joint name="${ee_prefix}finger_joint1" type="prismatic">
-      <parent link="${connected_to}" /> <child link="${ee_prefix}right_finger" />
-      <origin xyz="0 -0.006 0.115" rpy="0 0 0" />
-      <axis xyz="0 -1 0" />
-      <limit effort="333" lower="0.0" upper="0.044" velocity="10.0" />
-    </joint>
-
-    <joint name="${ee_prefix}finger_joint2" type="prismatic">
-      <parent link="${connected_to}" /> <child link="${ee_prefix}left_finger" />
-      <origin xyz="0 0.006 0.115" rpy="0 0 0" />
-      <axis xyz="0 1 0" />
-      <limit effort="333" lower="0.0" upper="0.044" velocity="10.0" />
-      <mimic joint="${ee_prefix}finger_joint1" />
-    </joint> -->
 
   </xacro:macro>
 </robot>
