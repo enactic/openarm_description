@@ -69,6 +69,8 @@ limitations under the License.
 
     <xacro:property name="arm_prefix_modified" value="${'' if arm_prefix == '' else arm_prefix + '_'}" />
     <xacro:property name="body_prefix_modified" value="${'' if body_prefix == '' else body_prefix + '_'}" />
+    <xacro:property name="arm_link_prefix" value="${'' if no_prefix else 'openarm_' + arm_prefix_modified}" />
+    <xacro:property name="body_link_prefix" value="${'' if no_prefix else 'openarm_' + body_prefix_modified}" />
 
     <xacro:if value="${bimanual}">
 
@@ -90,7 +92,7 @@ limitations under the License.
         arm_prefix="left_"
         no_prefix="false"
         description_pkg="openarm_description"
-        connected_to="openarm_body_link0"
+        connected_to="${body_link_prefix}body_link0"
         xyz="${left_arm_base_xyz}"
         rpy="${left_arm_base_rpy}"
         joint_limits="${joint_limits}"
@@ -105,7 +107,7 @@ limitations under the License.
         arm_prefix="right_"
         no_prefix="false"
         description_pkg="openarm_description"
-        connected_to="openarm_body_link0"
+        connected_to="${body_link_prefix}body_link0"
         xyz="${right_arm_base_xyz}"
         rpy="${right_arm_base_rpy}"
         joint_limits="${joint_limits}"
@@ -168,8 +170,9 @@ limitations under the License.
         />
 
         <xacro:openarm_ee
-            connected_to="openarm_${arm_prefix_modified}link7" arm_type="${arm_type}"
+            connected_to="${arm_link_prefix}link7" arm_type="${arm_type}"
             arm_prefix="${arm_prefix_modified}"
+            no_prefix="${no_prefix}"
             ee_type="${ee_type}"
             ee_kinematics="${ee_kinematics}"
             ee_kinematics_link="${ee_kinematics_link}"
@@ -182,6 +185,7 @@ limitations under the License.
                 arm_type="${arm_type}"
                 control_gains="${control_gains}"
                 arm_prefix="${arm_prefix_modified}"
+                no_prefix="${no_prefix}"
                 can_interface="${can_interface}"
                 use_fake_hardware="${use_fake_hardware}"
                 fake_sensor_commands="${fake_sensor_commands}"
