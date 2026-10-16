@@ -29,7 +29,7 @@ hand:
     xz: 0.0
     yz: 0.0
 
-left_finger:
+left_finger: &finger
   origin:
     x: 0.0064528
     y: 0.017020
@@ -47,18 +47,11 @@ left_finger:
     yz: 0.0
 
 right_finger:
+  <<: *finger
   origin:
-    x: 0.0064528
+    x: -0.0064528
     y: -0.017020
     z: 0.0219685
     roll: 0
     pitch: 0
     yaw: 0
-  mass: 0.03602545343277134
-  inertia:
-    xx: 2.3749999999999997e-06
-    yy: 2.3749999999999997e-06
-    zz: 7.5e-07
-    xy: 0.0
-    xz: 0.0
-    yz: 0.0
