@@ -106,20 +106,5 @@ limitations under the License.
         <mimic joint="${ee_prefix}finger_joint1" />
     </joint>
 
-    <!-- <joint name="${ee_prefix}finger_joint1" type="prismatic">
-      <parent link="${connected_to}" /> <child link="${ee_prefix}right_finger" />
-      <origin xyz="0 -0.006 0.115" rpy="0 0 0" />
-      <axis xyz="0 -1 0" />
-      <limit effort="333" lower="0.0" upper="0.044" velocity="10.0" />
-    </joint>
-
-    <joint name="${ee_prefix}finger_joint2" type="prismatic">
-      <parent link="${connected_to}" /> <child link="${ee_prefix}left_finger" />
-      <origin xyz="0 0.006 0.115" rpy="0 0 0" />
-      <axis xyz="0 1 0" />
-      <limit effort="333" lower="0.0" upper="0.044" velocity="10.0" />
-      <mimic joint="${ee_prefix}finger_joint1" />
-    </joint> -->
-
   </xacro:macro>
 </robot>

@@ -553,20 +553,6 @@ limitations under the License.
     <limit effort="150.75" lower="0.0" upper="0.044" velocity="0.661"/>
     <mimic joint="openarm_left_finger_joint1"/>
   </joint>
-  <!-- <joint name="${ee_prefix}finger_joint1" type="prismatic">
-      <parent link="${connected_to}" /> <child link="${ee_prefix}right_finger" />
-      <origin xyz="0 -0.006 0.115" rpy="0 0 0" />
-      <axis xyz="0 -1 0" />
-      <limit effort="333" lower="0.0" upper="0.044" velocity="10.0" />
-    </joint>
-
-    <joint name="${ee_prefix}finger_joint2" type="prismatic">
-      <parent link="${connected_to}" /> <child link="${ee_prefix}left_finger" />
-      <origin xyz="0 0.006 0.115" rpy="0 0 0" />
-      <axis xyz="0 1 0" />
-      <limit effort="333" lower="0.0" upper="0.044" velocity="10.0" />
-      <mimic joint="${ee_prefix}finger_joint1" />
-    </joint> -->
   <link name="openarm_right_hand">
     <visual name="openarm_right_hand_visual">
       <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 -0.661001"/>
@@ -650,18 +636,4 @@ limitations under the License.
     <limit effort="150.75" lower="0.0" upper="0.044" velocity="0.661"/>
     <mimic joint="openarm_right_finger_joint1"/>
   </joint>
-  <!-- <joint name="${ee_prefix}finger_joint1" type="prismatic">
-      <parent link="${connected_to}" /> <child link="${ee_prefix}right_finger" />
-      <origin xyz="0 -0.006 0.115" rpy="0 0 0" />
-      <axis xyz="0 -1 0" />
-      <limit effort="333" lower="0.0" upper="0.044" velocity="10.0" />
-    </joint>
-
-    <joint name="${ee_prefix}finger_joint2" type="prismatic">
-      <parent link="${connected_to}" /> <child link="${ee_prefix}left_finger" />
-      <origin xyz="0 0.006 0.115" rpy="0 0 0" />
-      <axis xyz="0 1 0" />
-      <limit effort="333" lower="0.0" upper="0.044" velocity="10.0" />
-      <mimic joint="${ee_prefix}finger_joint1" />
-    </joint> -->
 </robot>
