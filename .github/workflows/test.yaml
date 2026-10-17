@@ -41,3 +41,27 @@ jobs:
       - name: Run pre-commit
         run: |
           pre-commit run --show-diff-on-failure --color=always --all-files
+  example-urdf:
+    name: Example URDF
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - name: Regenerate example URDFs
+        run: |
+          docker container run \
+            --rm \
+            --volume ${PWD}:/source \
+            ros:jazzy \
+            bash -c '
+              set -ex
+              apt-get update
+              apt-get install -y --no-install-recommends ros-jazzy-xacro
+              source /opt/ros/jazzy/setup.bash
+              cd /source
+              colcon build
+              source install/setup.bash
+              dev/update-example-urdfs.sh'
+      - name: Check example URDFs are up to date
+        run: |
+          git diff --exit-code -- '*.urdf'
