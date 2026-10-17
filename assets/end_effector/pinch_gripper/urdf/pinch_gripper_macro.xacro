@@ -28,8 +28,8 @@ limitations under the License.
     <xacro:property name="use_base_frame_shift" value="${base_frame_shift != 'none'}" lazy_eval="false" />
     <xacro:property name="base_link_reflects" value="${component_reflects and base_link_name in reflect_include_links}" lazy_eval="false" />
     <!-- Finger numbering stays semantic; handedness is handled by reflect_* and the joint config. -->
-    <xacro:property name="finger1_source" value="link1" />
-    <xacro:property name="finger2_source" value="link2" />
+    <xacro:property name="finger1_source" value="${topology['joints']['joint1']['child']}" />
+    <xacro:property name="finger2_source" value="${topology['joints']['joint2']['child']}" />
     <xacro:property name="finger1_joint_source" value="joint1" />
     <xacro:property name="finger2_joint_source" value="joint2" />
     <xacro:property name="finger1_link_reflects" value="${component_reflects and finger1_source in reflect_include_links}" lazy_eval="false" />
@@ -44,67 +44,16 @@ limitations under the License.
     <xacro:property name="finger2_mimic_target_name" value="${prefix + ('finger_joint1' if finger2_mimic_target_source == finger1_joint_source else 'finger_joint2')}" />
     <xacro:property name="finger1_mimic_override" value="${dict(joint=finger1_mimic_target_name, multiplier=joint_mimics[finger1_joint_source]['multiplier'], offset=joint_mimics[finger1_joint_source]['offset']) if finger1_has_mimic else 'none'}" />
     <xacro:property name="finger2_mimic_override" value="${dict(joint=finger2_mimic_target_name, multiplier=joint_mimics[finger2_joint_source]['multiplier'], offset=joint_mimics[finger2_joint_source]['offset']) if finger2_has_mimic else 'none'}" />
-    <!-- The base link is emitted inline because its naming and frame-shift behavior differ from the finger links. -->
-    <link name="${base_link_full_name}">
-      <xacro:if value="${base_link_name in visuals}">
-        <visual name="${base_link_full_name}_visual">
-          <xacro:property name="base_visual_cfg" value="${visuals[base_link_name]}" lazy_eval="false" />
-          <xacro:if value="${use_base_frame_shift}">
-            <xacro:openarm_emit_composed_origin first="${resolved_base_frame_shift}" second="${base_visual_cfg.origin}" reflect_x="${reflect_x if base_link_reflects else 1}" reflect_y="${reflect_y if base_link_reflects else 1}" reflect_z="${reflect_z if base_link_reflects else 1}" />
-          </xacro:if>
-          <xacro:unless value="${use_base_frame_shift}">
-            <xacro:openarm_emit_origin origin="${base_visual_cfg.origin}" reflect_x="${reflect_x if base_link_reflects else 1}" reflect_y="${reflect_y if base_link_reflects else 1}" reflect_z="${reflect_z if base_link_reflects else 1}" />
-          </xacro:unless>
-          <!-- Preserve the mesh's embedded materials. -->
-          <geometry>
-            <mesh
-              filename="${base_visual_cfg.geometry.mesh}"
-              scale="${(reflect_x if base_link_reflects else 1) * base_visual_cfg.geometry.scale.x} ${(reflect_y if base_link_reflects else 1) * base_visual_cfg.geometry.scale.y} ${(reflect_z if base_link_reflects else 1) * base_visual_cfg.geometry.scale.z}" />
-          </geometry>
-        </visual>
-      </xacro:if>
-
-      <xacro:if value="${base_link_name in collisions}">
-        <collision name="${base_link_full_name}_collision">
-          <xacro:property name="base_collision_cfg" value="${collisions[base_link_name]}" lazy_eval="false" />
-          <xacro:if value="${use_base_frame_shift}">
-            <xacro:openarm_emit_composed_origin first="${resolved_base_frame_shift}" second="${base_collision_cfg.origin}" reflect_x="${reflect_x if base_link_reflects else 1}" reflect_y="${reflect_y if base_link_reflects else 1}" reflect_z="${reflect_z if base_link_reflects else 1}" />
-          </xacro:if>
-          <xacro:unless value="${use_base_frame_shift}">
-            <xacro:openarm_emit_origin origin="${base_collision_cfg.origin}" reflect_x="${reflect_x if base_link_reflects else 1}" reflect_y="${reflect_y if base_link_reflects else 1}" reflect_z="${reflect_z if base_link_reflects else 1}" />
-          </xacro:unless>
-          <geometry>
-            <mesh
-              filename="${base_collision_cfg.geometry.mesh}"
-              scale="${(reflect_x if base_link_reflects else 1) * base_collision_cfg.geometry.scale.x} ${(reflect_y if base_link_reflects else 1) * base_collision_cfg.geometry.scale.y} ${(reflect_z if base_link_reflects else 1) * base_collision_cfg.geometry.scale.z}" />
-          </geometry>
-        </collision>
-      </xacro:if>
-
-      <xacro:if value="${base_link_name in inertials}">
-        <xacro:property name="base_inertial_cfg" value="${inertials[base_link_name]}" lazy_eval="false" />
-        <xacro:property name="base_inertia_terms" value="${base_inertial_cfg.inertia}" lazy_eval="false" />
-        <inertial>
-          <xacro:if value="${use_base_frame_shift}">
-            <xacro:openarm_emit_composed_origin first="${resolved_base_frame_shift}" second="${base_inertial_cfg.origin}" reflect_x="${reflect_x if base_link_reflects else 1}" reflect_y="${reflect_y if base_link_reflects else 1}" reflect_z="${reflect_z if base_link_reflects else 1}" />
-          </xacro:if>
-          <xacro:unless value="${use_base_frame_shift}">
-            <xacro:openarm_emit_origin origin="${base_inertial_cfg.origin}" reflect_x="${reflect_x if base_link_reflects else 1}" reflect_y="${reflect_y if base_link_reflects else 1}" reflect_z="${reflect_z if base_link_reflects else 1}" />
-          </xacro:unless>
-          <mass value="${base_inertial_cfg.mass}" />
-          <inertia
-            ixx="${base_inertia_terms.xx}"
-            ixy="${(reflect_x if base_link_reflects else 1) * (reflect_y if base_link_reflects else 1) * base_inertia_terms.xy}"
-            ixz="${(reflect_x if base_link_reflects else 1) * (reflect_z if base_link_reflects else 1) * base_inertia_terms.xz}"
-            iyy="${base_inertia_terms.yy}"
-            iyz="${(reflect_y if base_link_reflects else 1) * (reflect_z if base_link_reflects else 1) * base_inertia_terms.yz}"
-            izz="${base_inertia_terms.zz}" />
-        </inertial>
-      </xacro:if>
-    </link>
+    <xacro:openarm_emit_link
+      link_name="${base_link_full_name}" source_name="${base_link_name}"
+      inertials="${inertials}" visuals="${visuals}" collisions="${collisions}"
+      reflect_x="${reflect_x if base_link_reflects else 1}"
+      reflect_y="${reflect_y if base_link_reflects else 1}"
+      reflect_z="${reflect_z if base_link_reflects else 1}"
+      frame_shift="${base_frame_shift}" />
 
     <xacro:openarm_emit_link
-      link_name="${prefix}ee_link1"
+      link_name="${prefix}ee_${finger1_source}"
       source_name="${finger1_source}"
       inertials="${inertials}"
       visuals="${visuals}"
@@ -114,7 +63,7 @@ limitations under the License.
       reflect_z="${reflect_z if finger1_link_reflects else 1}" />
 
     <xacro:openarm_emit_link
-      link_name="${prefix}ee_link2"
+      link_name="${prefix}ee_${finger2_source}"
       source_name="${finger2_source}"
       inertials="${inertials}"
       visuals="${visuals}"
@@ -171,15 +120,16 @@ limitations under the License.
       value="${finger2_joint_limit_override if finger2_joint_limit_override != 'none' else (dict(lower=(-finger2_joint_limit_cfg['upper']), upper=(-finger2_joint_limit_cfg['lower']), effort=finger2_joint_limit_cfg['effort'], velocity=finger2_joint_limit_cfg['velocity']) if finger2_limit_should_mirror else finger2_joint_limit_cfg)}"
       lazy_eval="false" />
 
-    <joint name="${prefix}finger_joint1" type="revolute">
+    <joint name="${prefix}finger_joint1" type="${topology['joints'][finger1_joint_source]['type']}">
       <xacro:if value="${use_base_frame_shift}">
         <xacro:openarm_emit_composed_origin first="${resolved_base_frame_shift}" second="${finger1_joint_origin_cfg}" reflect_x="${reflect_x if finger1_joint_reflects else 1}" reflect_y="${reflect_y if finger1_joint_reflects else 1}" reflect_z="${reflect_z if finger1_joint_reflects else 1}" />
       </xacro:if>
       <xacro:unless value="${use_base_frame_shift}">
         <xacro:openarm_emit_origin origin="${finger1_joint_origin_cfg}" reflect_x="${reflect_x if finger1_joint_reflects else 1}" reflect_y="${reflect_y if finger1_joint_reflects else 1}" reflect_z="${reflect_z if finger1_joint_reflects else 1}" />
       </xacro:unless>
-      <parent link="${base_link_full_name}" />
-      <child link="${prefix}ee_link1" />
+      <parent link="${prefix}ee_${topology['joints'][finger1_joint_source]['parent']}" />
+      <child link="${prefix}ee_${finger1_source}" />
+      <xacro:if value="${topology['joints'][finger1_joint_source]['type'] != 'fixed'}">
       <axis xyz="${finger1_joint_axis_reflect_sign * finger1_joint_axis_cfg.x} ${finger1_joint_axis_reflect_sign * finger1_joint_axis_cfg.y} ${finger1_joint_axis_reflect_sign * finger1_joint_axis_cfg.z}" />
       <xacro:openarm_emit_limit limit="${finger1_joint_limit_effective}" />
       <xacro:if value="${finger1_mimic_override != 'none'}">
@@ -188,17 +138,19 @@ limitations under the License.
           multiplier="${finger1_mimic_override['multiplier']}"
           offset="${finger1_mimic_override['offset']}" />
       </xacro:if>
+          </xacro:if>
     </joint>
 
-    <joint name="${prefix}finger_joint2" type="revolute">
+    <joint name="${prefix}finger_joint2" type="${topology['joints'][finger2_joint_source]['type']}">
       <xacro:if value="${use_base_frame_shift}">
         <xacro:openarm_emit_composed_origin first="${resolved_base_frame_shift}" second="${finger2_joint_origin_cfg}" reflect_x="${reflect_x if finger2_joint_reflects else 1}" reflect_y="${reflect_y if finger2_joint_reflects else 1}" reflect_z="${reflect_z if finger2_joint_reflects else 1}" />
       </xacro:if>
       <xacro:unless value="${use_base_frame_shift}">
         <xacro:openarm_emit_origin origin="${finger2_joint_origin_cfg}" reflect_x="${reflect_x if finger2_joint_reflects else 1}" reflect_y="${reflect_y if finger2_joint_reflects else 1}" reflect_z="${reflect_z if finger2_joint_reflects else 1}" />
       </xacro:unless>
-      <parent link="${base_link_full_name}" />
-      <child link="${prefix}ee_link2" />
+      <parent link="${prefix}ee_${topology['joints'][finger2_joint_source]['parent']}" />
+      <child link="${prefix}ee_${finger2_source}" />
+      <xacro:if value="${topology['joints'][finger2_joint_source]['type'] != 'fixed'}">
       <axis xyz="${finger2_joint_axis_reflect_sign * finger2_joint_axis_cfg.x} ${finger2_joint_axis_reflect_sign * finger2_joint_axis_cfg.y} ${finger2_joint_axis_reflect_sign * finger2_joint_axis_cfg.z}" />
       <xacro:openarm_emit_limit limit="${finger2_joint_limit_effective}" />
       <xacro:if value="${finger2_mimic_override != 'none'}">
@@ -207,6 +159,7 @@ limitations under the License.
           multiplier="${finger2_mimic_override['multiplier']}"
           offset="${finger2_mimic_override['offset']}" />
       </xacro:if>
+          </xacro:if>
     </joint>
 
     <xacro:openarm_emit_reference_frames
