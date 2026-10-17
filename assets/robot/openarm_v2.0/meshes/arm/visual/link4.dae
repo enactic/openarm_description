@@ -249,35 +249,17 @@
     <effect id="0ec108db923f4e2da9953aecf36428a3" name="0ec108db923f4e2da9953aecf36428a3">
       <profile_COMMON>
         <technique sid="common">
-          <phong>
+          <lambert>
             <emission>
-              <color>0.0 0.0 0.0 1.0</color>
+              <color sid="emission">0 0 0 1</color>
             </emission>
-            <ambient>
-              <color>0.5019607843137255 0.5019607843137255 0.5019607843137255 1.0</color>
-            </ambient>
             <diffuse>
-              <color>0.5019607843137255 0.5019607843137255 0.5019607843137255 1.0</color>
+              <color sid="diffuse">0.247 0.247 0.247 1</color>
             </diffuse>
-            <specular>
-              <color>0.0 0.0 0.0 1.0</color>
-            </specular>
-            <shininess>
-              <float>0.0</float>
-            </shininess>
-            <reflective>
-              <color>0.0 0.0 0.0 1.0</color>
-            </reflective>
-            <reflectivity>
-              <float>0.0</float>
-            </reflectivity>
-            <transparent>
-              <color>0.0 0.0 0.0 1.0</color>
-            </transparent>
-            <transparency>
-              <float>1.0</float>
-            </transparency>
-          </phong>
+            <index_of_refraction>
+              <float sid="ior">1.5</float>
+            </index_of_refraction>
+          </lambert>
         </technique>
         <extra>
           <technique profile="GOOGLEEARTH">
@@ -489,35 +471,17 @@
     <effect id="265ca50ef3a940aca6eeb2b19904d8b8" name="265ca50ef3a940aca6eeb2b19904d8b8">
       <profile_COMMON>
         <technique sid="common">
-          <phong>
+          <lambert>
             <emission>
-              <color>0.0 0.0 0.0 1.0</color>
+              <color sid="emission">0 0 0 1</color>
             </emission>
-            <ambient>
-              <color>0.5019607843137255 0.5019607843137255 0.5019607843137255 1.0</color>
-            </ambient>
             <diffuse>
-              <color>0.5019607843137255 0.5019607843137255 0.5019607843137255 1.0</color>
+              <color sid="diffuse">0.247 0.247 0.247 1</color>
             </diffuse>
-            <specular>
-              <color>0.0 0.0 0.0 1.0</color>
-            </specular>
-            <shininess>
-              <float>0.0</float>
-            </shininess>
-            <reflective>
-              <color>0.0 0.0 0.0 1.0</color>
-            </reflective>
-            <reflectivity>
-              <float>0.0</float>
-            </reflectivity>
-            <transparent>
-              <color>0.0 0.0 0.0 1.0</color>
-            </transparent>
-            <transparency>
-              <float>1.0</float>
-            </transparency>
-          </phong>
+            <index_of_refraction>
+              <float sid="ior">1.5</float>
+            </index_of_refraction>
+          </lambert>
         </technique>
         <extra>
           <technique profile="GOOGLEEARTH">
@@ -529,35 +493,17 @@
     <effect id="6d92d4e9f84c45cc97462b07af648814" name="6d92d4e9f84c45cc97462b07af648814">
       <profile_COMMON>
         <technique sid="common">
-          <phong>
+          <lambert>
             <emission>
-              <color>0.0 0.0 0.0 1.0</color>
+              <color sid="emission">0 0 0 1</color>
             </emission>
-            <ambient>
-              <color>0.5019607843137255 0.5019607843137255 0.5019607843137255 1.0</color>
-            </ambient>
             <diffuse>
-              <color>0.5019607843137255 0.5019607843137255 0.5019607843137255 1.0</color>
+              <color sid="diffuse">0.247 0.247 0.247 1</color>
             </diffuse>
-            <specular>
-              <color>0.0 0.0 0.0 1.0</color>
-            </specular>
-            <shininess>
-              <float>0.0</float>
-            </shininess>
-            <reflective>
-              <color>0.0 0.0 0.0 1.0</color>
-            </reflective>
-            <reflectivity>
-              <float>0.0</float>
-            </reflectivity>
-            <transparent>
-              <color>0.0 0.0 0.0 1.0</color>
-            </transparent>
-            <transparency>
-              <float>1.0</float>
-            </transparency>
-          </phong>
+            <index_of_refraction>
+              <float sid="ior">1.5</float>
+            </index_of_refraction>
+          </lambert>
         </technique>
         <extra>
           <technique profile="GOOGLEEARTH">

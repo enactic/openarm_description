@@ -85,7 +85,7 @@ origin:
 - 安装座：`ZED_mount.SLDASM/meshes/base_link_base_link.dae`。
 - 夹爪参考点：`end-efector_follower_4310_v1.0_urdf_with_cam_view.SLDASM` 的 URDF。
 
-这些新视觉模型使用米制坐标。底座 visual 的 scale 从 0.001 改为 1，link4 保持 scale 1。DAE 中的材质随导出文件一起保留。
+这些新视觉模型使用米制坐标。底座 visual 的 scale 从 0.001 改为 1，link4 保持 scale 1。link4 外罩、两侧排线罩、Head_Cover 和 chest_cover_v2.0 的材质与已有 link3 对齐：使用 Lambert 哑光材质，diffuse 为 `(0.247, 0.247, 0.247, 1)`。这些塑料件原先使用 CAD 导出的灰色 `0.502`；其余材质保留导出值。调整只涉及 DAE 的材质定义，几何、法线与装配变换保持一致。
 
 link4 与底座继续使用现有 collision mesh。新安装座的 collision 配置为空，等待后续生成；ZED 相机使用官方 collision mesh。其他手臂关节、限位、质量和惯量沿用既有定义。
 

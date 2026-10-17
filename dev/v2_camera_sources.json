@@ -20,5 +20,28 @@
     0.007723415,
     -8.746e-05
   ],
-  "camera_adapter_source": "Geometric alignment to the bottom screw-pair features of the official zedm.stl, including the camera_center Z offset of 0.01325 m."
+  "camera_adapter_source": "Geometric alignment to the bottom screw-pair features of the official zedm.stl, including the camera_center Z offset of 0.01325 m.",
+  "plastic_material_correction": {
+    "reference": "assets/robot/openarm_v2.0/meshes/arm/visual/link3.dae",
+    "shader": "lambert",
+    "diffuse_rgba": [
+      0.247,
+      0.247,
+      0.247,
+      1.0
+    ],
+    "effects_by_asset": {
+      "assets/robot/openarm_v2.0/meshes/arm/visual/link4.dae": {
+        "0ec108db923f4e2da9953aecf36428a3": "J4-J5_Cover_v1.0",
+        "265ca50ef3a940aca6eeb2b19904d8b8": "cable_holder_J4 (negative Y)",
+        "6d92d4e9f84c45cc97462b07af648814": "cable_holder_J4 (positive Y)"
+      },
+      "assets/accessory/zed_mount/meshes/visual/zed_mount.dae": {
+        "3071eb5fd9314940b22b963e96d886ab": "Head_Cover"
+      },
+      "assets/robot/openarm_v2.0/meshes/body/visual/body_link0.dae": {
+        "bf8c2ba0ab8e4b4085a6e124f2443409": "chest_cover_v2.0"
+      }
+    }
+  }
 }
