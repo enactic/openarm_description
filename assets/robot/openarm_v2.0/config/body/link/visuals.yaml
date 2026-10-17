@@ -23,6 +23,6 @@ body_link0:
   geometry:
     mesh: "package://openarm_description/assets/robot/openarm_v2.0/meshes/body/visual/body_link0.dae"
     scale:
-      x: 0.001
-      y: 0.001
-      z: 0.001
+      x: 1.0
+      y: 1.0
+      z: 1.0

@@ -112,7 +112,7 @@ def generate_launch_description():
     robot_preset_arg = DeclareLaunchArgument(
         "robot_preset",
         default_value="default_bimanual",
-        description="Robot preset for v2.0 (e.g. default_bimanual, right_arm, left_arm, right_arm_with_pinch_gripper, left_arm_with_pinch_gripper).",
+        description="Robot preset for v2.0 (e.g. default_bimanual, bimanual_with_camera_mount, bimanual_with_zed, right_arm, left_arm).",
     )
     rviz_config_arg = DeclareLaunchArgument(
         "rviz_config",

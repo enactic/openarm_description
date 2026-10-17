@@ -18,6 +18,12 @@ Recommended starting point:
 - for all new robot assembly, presets, xacro, and URDF generation work, start with `assets/robot/openarm_v2.0`
 - only use `assets/robot/openarm_v1.0` when you need the old `v10 + parallel_link` compatibility path -->
 
+## V2 camera assembly
+
+Use `robot_preset:=bimanual_with_zed` for the bimanual model with a removable camera mount and the official ZED Mini model. `bimanual_with_camera_mount` adds only the mount; `default_bimanual` provides the updated pedestal and arms.
+
+See [V2 visual models and camera assembly](dev/v2_camera_assembly.md) for the source geometry, mounting frames, measured pedestal parameters, and visualization commands.
+
 ## Related links
 
 - 📚 Read the [documentation](https://docs.openarm.dev/software/description)

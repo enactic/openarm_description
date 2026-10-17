@@ -106,12 +106,23 @@ limitations under the License.
           lazy_eval="false" />
       </xacro:if>
 
+      <xacro:if value="${source_type == 'accessory'}">
+        <xacro:property name="component_type" value="accessory" lazy_eval="false" />
+        <xacro:property name="component_cfg_root" value="${'$(find openarm_description)/assets/accessory/' + product + '/config'}" lazy_eval="false" />
+      </xacro:if>
+
       <xacro:property name="component_link_prefix" value="${component_prefix + ('ee_' if component_type == 'end_effector' else '')}" lazy_eval="false" />
       <xacro:property name="component_topology" value="${xacro.load_yaml(component_cfg_root + '/struct/topology.yaml')}" lazy_eval="false" />
       <xacro:property name="component_reference_points" value="${xacro.load_yaml(component_cfg_root + '/struct/reference_points.yaml')}" lazy_eval="false" />
-      <xacro:property name="component_joint_origins" value="${xacro.load_yaml(component_cfg_root + '/joint/joint_origins.yaml') if component_type != 'body' else empty_dict}" lazy_eval="false" />
-      <xacro:property name="component_joint_axes" value="${xacro.load_yaml(component_cfg_root + '/joint/joint_axes.yaml') if component_type != 'body' else empty_dict}" lazy_eval="false" />
-      <xacro:property name="component_joint_limits" value="${xacro.load_yaml(component_cfg_root + '/joint/joint_limits.yaml') if component_type != 'body' else empty_dict}" lazy_eval="false" />
+      <xacro:if value="${component_type == 'accessory'}">
+        <xacro:openarm_v20_require
+          condition="${len(component_topology['links']) == 1 and len(component_topology['joints']) == 0}"
+          message="${'Accessory `%s` must define one rigid link and no internal joints.' % component_name}" />
+      </xacro:if>
+
+      <xacro:property name="component_joint_origins" value="${xacro.load_yaml(component_cfg_root + '/joint/joint_origins.yaml') if component_type not in ['body', 'accessory'] else empty_dict}" lazy_eval="false" />
+      <xacro:property name="component_joint_axes" value="${xacro.load_yaml(component_cfg_root + '/joint/joint_axes.yaml') if component_type not in ['body', 'accessory'] else empty_dict}" lazy_eval="false" />
+      <xacro:property name="component_joint_limits" value="${xacro.load_yaml(component_cfg_root + '/joint/joint_limits.yaml') if component_type not in ['body', 'accessory'] else empty_dict}" lazy_eval="false" />
       <xacro:property name="component_joint_mimics" value="${xacro.load_yaml(component_cfg_root + '/joint/joint_mimics.yaml') if component_type == 'end_effector' else empty_dict}" lazy_eval="false" />
       <xacro:property name="component_inertials" value="${xacro.load_yaml(component_cfg_root + '/inertials/' + component_cfg['inertials'] + '.yaml')}" lazy_eval="false" />
       <xacro:property name="component_visuals" value="${xacro.load_yaml(component_cfg_root + '/link/visuals.yaml')}" lazy_eval="false" />
@@ -171,7 +182,7 @@ limitations under the License.
         condition="${robot_preset[attach_to]['enabled']}"
         message="${'Invalid robot preset: component `%s` attaches to disabled parent `%s`.' % (component_name, attach_to)}" />
       <xacro:openarm_v20_require
-        condition="${robot_preset[attach_to]['type'] in ['robot', 'end_effector', 'sensor']}"
+        condition="${robot_preset[attach_to]['type'] in ['robot', 'end_effector', 'sensor', 'accessory']}"
         message="${'Invalid robot preset: component `%s` attaches to unsupported parent type `%s` on `%s`.' % (component_name, robot_preset[attach_to]['type'], attach_to)}" />
 
       <xacro:openarm_v20_validate_component_lineage
@@ -202,7 +213,7 @@ limitations under the License.
       <xacro:property name="reflect_cfg" value="${component_cfg['reflect'] if 'reflect' in component_cfg else dict(x=1, y=1, z=1)}" lazy_eval="false" />
 
       <xacro:openarm_v20_require
-        condition="${component_type in ['robot', 'end_effector', 'sensor']}"
+        condition="${component_type in ['robot', 'end_effector', 'sensor', 'accessory']}"
         message="${'Invalid robot preset: component `%s` has unsupported type `%s`.' % (component_name, component_type)}" />
       <xacro:openarm_v20_require
         condition="${'product' in component_cfg}"
@@ -336,6 +347,11 @@ limitations under the License.
                      pitch=parent_ref['origin']['pitch'],
                      yaw=parent_ref['origin']['yaw'])}"
         lazy_eval="false" />
+      <xacro:if value="${parent_ref.get('emit', False)}">
+        <xacro:property name="reference_prefix" value="${parent_desc['root_link_actual'] + '_' if parent_desc['component_type'] == 'body' else parent_desc['prefix']}" lazy_eval="false" />
+        <xacro:property name="resolved_connected_to" value="${reference_prefix + parent_ref_name}" lazy_eval="false" />
+        <xacro:property name="resolved_mount_origin" value="${zero_origin}" lazy_eval="false" />
+      </xacro:if>
     </xacro:if>
 
     <xacro:if value="${has_parent_override}">
@@ -426,7 +442,7 @@ limitations under the License.
 
     <xacro:property name="component_type" value="${component_runtime['component_type']}" lazy_eval="false" />
 
-    <xacro:if value="${component_type == 'body'}">
+    <xacro:if value="${component_type in ['body', 'accessory']}">
       <xacro:openarm_v20_body
         link_name="${component_desc['root_link_actual']}"
         connected_to="${component_runtime['resolved_connected_to']}"
@@ -503,6 +519,19 @@ limitations under the License.
         mount_origin="${component_runtime['resolved_mount_origin']}"
         prefix="${component_desc['prefix']}" />
     </xacro:if>
+    <xacro:unless value="${component_type == 'end_effector'}">
+      <xacro:openarm_v20_emit_reference_frames
+        reference_points="${component_desc['reference_points']}"
+        prefix="${component_desc['root_link_actual'] + '_' if component_type == 'body' else component_desc['prefix']}"
+        link_prefix="${component_desc['link_prefix']}"
+        link_name_map="${component_desc['link_name_map']}"
+        base_link_name="${component_desc['topology']['links'][0]}"
+        reflect_x="${component_runtime['reflect_x']}"
+        reflect_y="${component_runtime['reflect_y']}"
+        reflect_z="${component_runtime['reflect_z']}"
+        reflect_include_reference_points="${component_runtime['reflect_include_reference_points']}"
+        frame_shift="${component_runtime['base_frame_shift']}" />
+    </xacro:unless>
   </xacro:macro>
 
   <!-- Per-component orchestration: descriptor -> runtime resolution -> emission -> child recursion. -->

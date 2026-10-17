@@ -1,0 +1,24 @@
+{
+  "source_root": "openarm_real_to_sim_toolset/openarm_v2_urdf_additional",
+  "sha256": {
+    "openarm_v2.0_no_gripper_urdf_with_cable_cover.SLDASM/meshes/link4_link4.dae": "9f661852ef873602af6723e321dba958f7cb2740eeaca5891fb22f07d27704e1",
+    "openarmv2.0bimanualURDF.SLDASM/meshes/base_link_base_link.dae": "8a418812d027f3479f2dc3b4d6f7af41d3740da553d4b0385658621c6f9c00d2",
+    "ZED_mount.SLDASM/meshes/base_link_base_link.dae": "ff4791e2ebde44b2b8a1ee54b0371033f3faa065b796469aa5cd314aea384281",
+    "ZED_mount.SLDASM/urdf/ZED_mount.SLDASM.urdf": "6c10edbe57b9ae3e0ce6540851d53e5b3e8114a1753c6eaa423bf44fed89abd4",
+    "openarmv2.0bimanualURDF.SLDASM/urdf/openarmv2.0bimanualURDF.SLDASM.urdf": "f2f228561145ad8b88714f9c68bf14e82564cb9e04818d1e2ac0e90636acfd87",
+    "openarmv2.0bimanualURDF_with_cam_mount.SLDASM/urdf/openarmv2.0bimanualURDF_with_cam_mount.SLDASM.urdf": "168a81c79d2ce571221db5cde69c74859d57bc17de29dbe29f2f3ac616b5ab41",
+    "end-efector_follower_4310_v1.0_urdf_with_cam_view.SLDASM/urdf/end-efector_follower_4310_v1.0_urdf_with_cam_view.SLDASM.urdf": "ca1af20a3d88403803fe6efd705d9a30e3a84e73b411cc8ef6ed7566859701c5"
+  },
+  "zed_description_version": "0.1.3",
+  "zed_model": "zedm",
+  "zed_mesh_sha256": "bf0193e6b2f36a348e1cbe3c19e18adc3e90e4b054f4fce47286482380cd149c",
+  "zed_macro_sha256": "672c05fd529a4382ec3079ba45cf9257f328e847b81d401e5df024899bbace52",
+  "measured_body_mass_kg": 3.74,
+  "camera_mount_mass_from_cad_kg": 0.13704,
+  "screw_midpoint_in_camera_link_m": [
+    -0.00119247,
+    0.007723415,
+    -8.746e-05
+  ],
+  "camera_adapter_source": "Geometric alignment to the bottom screw-pair features of the official zedm.stl, including the camera_center Z offset of 0.01325 m."
+}

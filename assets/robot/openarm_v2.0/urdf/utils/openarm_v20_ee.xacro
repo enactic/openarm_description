@@ -222,6 +222,15 @@ limitations under the License.
         reflect_z="${reflect_z if grasp_ref_reflects else 1}"
         frame_shift="${resolved_base_frame_shift if use_base_frame_shift else 'none'}" />
     </xacro:if>
+    <xacro:openarm_v20_emit_reference_frames
+      reference_points="${ee_reference_points}"
+      prefix="${prefix}" link_prefix="${prefix + 'ee_'}"
+      base_link_name="${base_link_name}"
+      reflect_x="${reflect_x if component_reflects else 1}"
+      reflect_y="${reflect_y if component_reflects else 1}"
+      reflect_z="${reflect_z if component_reflects else 1}"
+      reflect_include_reference_points="${reflect_include_reference_points}"
+      frame_shift="${resolved_base_frame_shift if use_base_frame_shift else 'none'}" />
   </xacro:macro>
 
 </robot>
