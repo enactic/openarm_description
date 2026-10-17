@@ -124,7 +124,7 @@ limitations under the License.
 
     <xacro:unless value="${skip_mount_joint}">
       <joint name="${prefix}ee_mount_joint" type="fixed">
-        <xacro:openarm_v20_emit_origin origin="${resolved_mount_origin}" reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}" />
+        <xacro:openarm_v20_emit_origin origin="${resolved_mount_origin}" />
         <parent link="${connected_to}" />
         <child link="${base_link_full_name}" />
       </joint>
@@ -208,22 +208,9 @@ limitations under the License.
       </xacro:if>
     </joint>
 
-    <!-- Optionally expose a grasp helper frame from EE reference_points.yaml. -->
-    <xacro:if value="${emit_grasp_frame and grasp_reference_point in ee_reference_points}">
-      <xacro:property name="grasp_ref" value="${ee_reference_points[grasp_reference_point]}" lazy_eval="false" />
-      <xacro:property name="grasp_ref_parent" value="${prefix + 'ee_' + grasp_ref['parent']}" lazy_eval="false" />
-      <xacro:property name="grasp_ref_reflects" value="${component_reflects and grasp_reference_point in reflect_include_reference_points}" lazy_eval="false" />
-      <xacro:openarm_v20_emit_reference_link
-        link_name="${prefix + grasp_reference_point}"
-        parent_link="${grasp_ref_parent}"
-        origin="${grasp_ref['origin']}"
-        reflect_x="${reflect_x if grasp_ref_reflects else 1}"
-        reflect_y="${reflect_y if grasp_ref_reflects else 1}"
-        reflect_z="${reflect_z if grasp_ref_reflects else 1}"
-        frame_shift="${resolved_base_frame_shift if use_base_frame_shift else 'none'}" />
-    </xacro:if>
     <xacro:openarm_v20_emit_reference_frames
       reference_points="${ee_reference_points}"
+      force_emit_reference="${grasp_reference_point if emit_grasp_frame else ''}"
       prefix="${prefix}" link_prefix="${prefix + 'ee_'}"
       base_link_name="${base_link_name}"
       reflect_x="${reflect_x if component_reflects else 1}"
