@@ -54,7 +54,7 @@ limitations under the License.
                      collisions=empty_dict,
                      link_name_map=empty_dict,
                      default_mount_parent=sensor_root_link,
-                     supports_tip_collapse=False)}"
+                     collapse_empty_end=False)}"
         scope="parent"
         lazy_eval="false" />
     </xacro:if>
@@ -97,7 +97,7 @@ limitations under the License.
       <xacro:property name="component_link_name_map" value="${dict(body_link0=component_cfg['link_name']) if component_type == 'body' else empty_dict}" lazy_eval="false" />
       <xacro:property name="component_root_link_actual" value="${component_cfg['link_name'] if component_type == 'body' else (component_link_prefix + component_topology['links'][0])}" lazy_eval="false" />
       <xacro:property name="component_default_mount_parent" value="${component_cfg['link_name'] if component_type == 'body' else (component_link_prefix + component_topology['links'][-1])}" lazy_eval="false" />
-      <xacro:property name="component_supports_tip_collapse" value="${component_type == 'arm' and len([j for j in component_topology['joints'] if component_topology['joints'][j]['parent'] == component_topology['links'][-1]]) == 0}" lazy_eval="false" />
+      <xacro:property name="component_collapse_empty_end" value="${component_type == 'arm' and component_topology.get('collapse_empty_end', False) and len([j for j in component_topology['joints'] if component_topology['joints'][j]['parent'] == component_topology['links'][-1]]) == 0}" lazy_eval="false" />
 
       <xacro:property
         name="${out_name}"
@@ -121,7 +121,7 @@ limitations under the License.
                      collisions=component_collisions,
                      link_name_map=component_link_name_map,
                      default_mount_parent=component_default_mount_parent,
-                     supports_tip_collapse=component_supports_tip_collapse)}"
+                     collapse_empty_end=component_collapse_empty_end)}"
         scope="parent"
         lazy_eval="false" />
     </xacro:unless>

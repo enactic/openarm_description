@@ -60,21 +60,29 @@ def poses(robot):
 
 
 @lru_cache(maxsize=None)
-def expand(preset, collapse=True):
+def expand(preset, collapse=None):
     original = packages.get_package_share_directory
+    symbols = xacro._global_symbols['xacro']
+    original_load = symbols['load_yaml']
+
+    def load_yaml(filename):
+        value = original_load(filename)
+        if collapse is not None and str(filename).endswith('config/arm/struct/topology.yaml'):
+            value['collapse_empty_end'] = collapse
+        return value
 
     def package_share(name):
         return str(ROOT) if name == 'openarm_description' else original(name)
 
     with patch.object(packages, 'get_package_share_directory', package_share):
-        document = xacro.process_file(
-            str(ENTRY),
-            mappings={
-                'robot_preset': preset,
-                'collapse_internal_empty_links': str(collapse).lower(),
-                'emit_grasp_frame': 'true',
-            },
-        )
+        with patch.dict(symbols, {'load_yaml': load_yaml}):
+            document = xacro.process_file(
+                str(ENTRY),
+                mappings={
+                    'robot_preset': preset,
+                    'emit_grasp_frame': 'true',
+                },
+            )
     robot = ET.fromstring(document.toxml())
     names = [link.get('name') for link in robot.findall('link')]
     if len(names) != len(set(names)):

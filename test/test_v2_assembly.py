@@ -10,7 +10,7 @@ from test_v2_camera_components import ENTRY, poses, ROOT
 import xacro
 
 
-def expand_modified(changes=None, **mappings):
+def expand_modified(changes=None, collapse_empty_end=None, **mappings):
     original_share = packages.get_package_share_directory
     symbols = xacro._global_symbols['xacro']
     original_load = symbols['load_yaml']
@@ -23,6 +23,9 @@ def expand_modified(changes=None, **mappings):
         for suffix, change in (changes or {}).items():
             if str(filename).endswith(suffix):
                 value = change(copy.deepcopy(value))
+        if (collapse_empty_end is not None
+                and str(filename).endswith('config/arm/struct/topology.yaml')):
+            value['collapse_empty_end'] = collapse_empty_end
         return value
 
     arguments = {
@@ -113,7 +116,7 @@ class AssemblyTest(unittest.TestCase):
                             'camera_view_frame', emit
                         ),
                     },
-                    collapse_internal_empty_links=collapse,
+                    collapse_empty_end=collapse,
                 )
                 for emit in [False, True]
             ]
@@ -128,7 +131,7 @@ class AssemblyTest(unittest.TestCase):
                             'ee_mount_point', emit
                         ),
                     },
-                    collapse_internal_empty_links=collapse,
+                    collapse_empty_end=collapse,
                 )
                 for emit in [False, True]
             ]
@@ -341,6 +344,50 @@ class AssemblyTest(unittest.TestCase):
             self.assertEqual(params['can_interface'], side + '_test')
             self.assertEqual(params['ee_type'], None)
             self.assertEqual(len(systems[0].findall('joint')), 7)
+
+    def test_arm_topology_selects_empty_tip_collapse(self):
+        enabled = expand_modified()
+        disabled = expand_modified(collapse_empty_end=False)
+        for side in ['left', 'right']:
+            self.assertIsNone(enabled.find(
+                f"link[@name='openarm_{side}_link7']"))
+            self.assertIsNotNone(disabled.find(
+                f"link[@name='openarm_{side}_link7']"))
+            joint = enabled.find(f"joint[@name='openarm_{side}_joint7']")
+            self.assertEqual(joint.find('child').get('link'),
+                             f'openarm_{side}_ee_base_link')
+            self.assertIsNotNone(disabled.find(
+                f"joint[@name='openarm_{side}_ee_mount_joint']"))
+
+    def test_omitted_arm_collapse_flag_keeps_tip(self):
+        def omit(value):
+            value.pop('collapse_empty_end', None)
+            return value
+        robot = expand_modified({'config/arm/struct/topology.yaml': omit})
+        for side in ['left', 'right']:
+            self.assertIsNotNone(robot.find(
+                f"link[@name='openarm_{side}_link7']"))
+
+    def test_collapse_requires_an_empty_tip_and_attached_child(self):
+        standalone = expand_modified(
+            robot_preset='right_arm', collapse_empty_end=True)
+        self.assertIsNotNone(standalone.find(
+            "link[@name='openarm_right_link7']"))
+
+        def add_mass(value):
+            value['link7'] = {
+                'origin': {'x': 0, 'y': 0, 'z': 0, 'roll': 0, 'pitch': 0, 'yaw': 0},
+                'mass': 0.1,
+                'inertia': {'xx': 1e-5, 'yy': 1e-5, 'zz': 1e-5, 'xy': 0, 'xz': 0, 'yz': 0},
+            }
+            return value
+        robot = expand_modified({'config/arm/inertials/nominal.yaml': add_mass},
+                                collapse_empty_end=True)
+        for side in ['left', 'right']:
+            tip = robot.find(f"link[@name='openarm_{side}_link7']")
+            self.assertIsNotNone(tip)
+            self.assertEqual(
+                float(tip.find('inertial/mass').get('value')), 0.1)
 
 
 if __name__ == '__main__':

@@ -8,7 +8,6 @@ PRESET_DIR="${ROOT_DIR}/assets/robot/openarm_v2.0/config/robot_presets"
 XACRO_FILE="${ROOT_DIR}/assets/robot/openarm_v2.0/urdf/openarm_v20.urdf.xacro"
 BUILD_DIR="${ROOT_DIR}/urdf"
 
-COLLAPSE_ARG="true"
 ROS2_CONTROL_ARG="true"
 PRESET_NAME=""
 GRASP_FRAME_ONLY="false"
@@ -20,9 +19,6 @@ generate_one() {
   local suffix=""
   local output_file=""
 
-  if [[ "${COLLAPSE_ARG}" == "false" ]]; then
-    suffix="${suffix}_no_collapse"
-  fi
   if [[ "${emit_grasp}" == "true" ]]; then
     suffix="${suffix}_grasp"
   fi
@@ -30,7 +26,6 @@ generate_one() {
   output_file="${BUILD_DIR}/openarm_${preset_name}${suffix}.urdf"
   xacro "${XACRO_FILE}" \
     robot_preset:="${preset_name}" \
-    collapse_internal_empty_links:="${COLLAPSE_ARG}" \
     emit_grasp_frame:="${emit_grasp}" \
     ros2_control:="${ROS2_CONTROL_ARG}" \
     > "${output_file}"
@@ -59,28 +54,23 @@ while [[ $# -gt 0 ]]; do
       ROS2_CONTROL_ARG="false"
       shift
       ;;
-    --keep-empty-links)
-      COLLAPSE_ARG="false"
-      shift
-      ;;
     -h|--help)
       cat <<'EOF'
 Usage:
   bash openarm_description/scripts/generate_v20_urdfs.sh
-  bash openarm_description/scripts/generate_v20_urdfs.sh --preset <preset_name> [--grasp-frame] [--keep-empty-links] [--no-ros2-control]
-  bash openarm_description/scripts/generate_v20_urdfs.sh [--all] [--grasp-frame] [--keep-empty-links] [--no-ros2-control]
+  bash openarm_description/scripts/generate_v20_urdfs.sh --preset <preset_name> [--grasp-frame] [--no-ros2-control]
+  bash openarm_description/scripts/generate_v20_urdfs.sh [--all] [--grasp-frame] [--no-ros2-control]
 
 Options:
   --preset <name>     Generate only the selected robot preset.
   --all               Generate every real preset instead of the default dual-arm preset only.
   --grasp-frame       Generate only the grasp-frame variant.
-  --keep-empty-links  Keep the arm tip link and its fixed EE mount joint.
   --no-ros2-control   Omit control interfaces from exported URDFs.
 
 Behavior:
   With no arguments, generate only default_bimanual in both standard and grasp variants.
   With --all, generate all real presets in both standard and grasp variants.
-  With --preset only, generate the standard collapsed variant for that preset.
+  With --preset only, generate the standard variant using the arm topology settings.
 EOF
       exit 0
       ;;

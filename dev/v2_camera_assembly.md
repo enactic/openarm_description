@@ -141,7 +141,7 @@ V1 保留原入口和实现。V2 入口为 `assets/robot/openarm_v2.0/urdf/opena
 
 `connection.origin` 始终相对于选中的安装基准；省略时为零位姿。参考点设置 `emit: true` 时生成一个固定 frame，子组件连接到这个 frame；不输出 frame 时，将参考点与 `origin` 的变换相乘，直接连接父 link。两种表达保持同一世界位姿，没有新增 `offset` 字段。
 
-`emit_grasp_frame` 保留原入口参数，并使用同一个参考坐标生成器。`collapse_internal_empty_links` 默认 `true`：当手臂末端 link 没有 visual、collision、inertial 且有一个合适的子组件时，将它折叠到子组件根 link。当前 V2 是将空 `link7` 折叠到 `ee_base_link`，并将 20.5 mm 安装变换传递给几何、COM、手指关节和参考点。折叠后同名 `ee_base_link` 的坐标原点改变，实体及参考点的世界位姿保持一致。
+`emit_grasp_frame` 保留原入口参数，并使用同一个参考坐标生成器。`assets/robot/openarm_v2.0/config/arm/struct/topology.yaml` 中的 `collapse_empty_end: true` 控制手臂末端折叠，左右臂共用该设置；省略该字段或设置为 `false` 时保留末端 link。开启时，当手臂末端 link 没有 visual、collision、inertial 且有一个合适的子组件时，将它折叠到子组件根 link。当前 V2 是将空 `link7` 折叠到 `ee_base_link`，并将 20.5 mm 安装变换传递给几何、COM、手指关节和参考点。折叠后同名 `ee_base_link` 的坐标原点改变，实体及参考点的世界位姿保持一致。
 
 关节名称、类型和父子关系从 `topology.yaml` 读取；`links` 的首项是组件根 link，末项用于选择默认连接端。Pinch gripper 的基座与手指共用公共 link 输出宏。
 
@@ -155,4 +155,4 @@ V2 Xacro 的 `ros2_control` 默认 `true`；RViz launch 的该参数默认 `fals
 bash scripts/generate_v20_urdfs.sh --all --no-ros2-control
 ```
 
-`--keep-empty-links` 保留末端空 link；`--grasp-frame` 输出抓取参考坐标。现有 V1 入口、配置和控制实现保持独立。
+需要保留末端空 link 时，将 arm topology 中的 `collapse_empty_end` 改为 `false`；Xacro、launch 和导出脚本不再提供折叠参数。`--grasp-frame` 输出抓取参考坐标。现有 V1 入口、配置和控制实现保持独立。
