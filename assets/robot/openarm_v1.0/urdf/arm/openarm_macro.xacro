@@ -39,13 +39,13 @@ limitations under the License.
     <xacro:property name="prefix" value="${'' if no_prefix else 'openarm' + '_' +  arm_prefix}" />
     <link name="${prefix}${name}">
       <visual name="${prefix}${name}_visual">
-        <xacro:openarm-kinematics-link config="${kinematics_link}" name="${name}" />
+        <xacro:openarm-kinematics-link config="${kinematics_link}" name="${name}" reflect="${reflect}" />
         <geometry>
           <mesh filename="package://${description_pkg}/assets/robot/openarm_v1.0/mesh/arm/visual/${name}.dae" scale="0.001 ${0.001*reflect} 0.001" />
         </geometry>
       </visual>
       <collision name="${prefix}${name}_collision">
-        <xacro:openarm-kinematics-link config="${kinematics_link}" name="${name}" />
+        <xacro:openarm-kinematics-link config="${kinematics_link}" name="${name}" reflect="${reflect}" />
         <geometry>
           <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/collision/${name}_symp.stl" scale="0.001 ${0.001*reflect} 0.001" />
           <!-- <mesh filename="package://openarm_description/meshes/arm/${arm_type}/collision/${name}.stl" scale="0.001 0.001 0.001" /> -->
@@ -131,20 +131,20 @@ limitations under the License.
     <xacro:if value="${offset != 'none'}">
       <xacro:property name="offset" value="${offset[name]['kinematic_offset']}" lazy_eval="false" />
       <origin
-        xyz="${kinematics.x + offset.x} ${kinematics.y + offset.y} ${kinematics.z + offset.z}"
+        xyz="${kinematics.x + offset.x} ${reflect*(kinematics.y + offset.y)} ${kinematics.z + offset.z}"
         rpy="${reflect*(kinematics.roll + offset.roll)} ${reflect*(kinematics.pitch + offset.pitch)} ${reflect*(kinematics.yaw + offset.yaw)}" />
     </xacro:if>
     <xacro:unless value="${offset != 'none'}">
       <origin
-        xyz="${kinematics.x} ${kinematics.y} ${kinematics.z}"
+        xyz="${kinematics.x} ${reflect*kinematics.y} ${kinematics.z}"
         rpy="${reflect*kinematics.roll} ${reflect*kinematics.pitch} ${reflect*kinematics.yaw}" />
     </xacro:unless>
   </xacro:macro>
 
-  <xacro:macro name="openarm-kinematics-link" params="config name">
+  <xacro:macro name="openarm-kinematics-link" params="config name reflect:=1">
     <xacro:property name="kinematics_link" value="${config[name]['kinematic']}" lazy_eval="false" />
-    <origin rpy="${kinematics_link.roll} ${kinematics_link.pitch} ${kinematics_link.yaw}"
-            xyz="${kinematics_link.x} ${kinematics_link.y} ${kinematics_link.z}" />
+    <origin rpy="${reflect*kinematics_link.roll} ${kinematics_link.pitch} ${reflect*kinematics_link.yaw}"
+            xyz="${kinematics_link.x} ${reflect*kinematics_link.y} ${kinematics_link.z}" />
   </xacro:macro>
 
 </robot>

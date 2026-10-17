@@ -44,7 +44,7 @@ limitations under the License.
       <xacro:openarm-kinematics name="joint1" config="${kinematics}" reflect="${reflect}"/>
       <parent link="${prefix}link0" />
       <child link="${prefix}link1" />
-      <axis xyz="0 0 1" />
+      <axis xyz="0 ${-reflect} 0" />
       <xacro:openarm-limits name="joint1" config="${joint_limits}" offset="${-2.094396 if arm_prefix=='left_' else 0}"/>
     </joint>
 
@@ -75,7 +75,7 @@ limitations under the License.
       <xacro:openarm-kinematics name="joint3" config="${kinematics}" />
       <parent link="${prefix}link2" />
       <child link="${prefix}link3" />
-      <axis xyz="0 0 1" />
+      <axis xyz="0 0 -1" />
       <xacro:openarm-limits name="joint3" config="${joint_limits}" />
     </joint>
 
@@ -85,7 +85,7 @@ limitations under the License.
       <xacro:openarm-kinematics name="joint4" config="${kinematics}" />
       <parent link="${prefix}link3" />
       <child link="${prefix}link4" />
-      <axis xyz="0 1 0" />
+      <axis xyz="0 -1 0" />
       <xacro:openarm-limits name="joint4" config="${joint_limits}" />
     </joint>
 
@@ -95,7 +95,7 @@ limitations under the License.
       <xacro:openarm-kinematics name="joint5" config="${kinematics}" reflect="${reflect}"/>
       <parent link="${prefix}link4" />
       <child link="${prefix}link5" />
-      <axis xyz="0 0 1" />
+      <axis xyz="0 0 -1" />
       <xacro:openarm-limits name="joint5" config="${joint_limits}" />
     </joint>
 
@@ -115,7 +115,7 @@ limitations under the License.
       <xacro:openarm-kinematics name="joint7" config="${kinematics}" />
       <parent link="${prefix}link6"/>
       <child link="${prefix}link7"/>
-      <axis xyz="0 ${reflect} 0"/>
+      <axis xyz="0 ${-reflect} 0"/>
       <xacro:openarm-limits name="joint7" config="${joint_limits}" />
     </joint>
 

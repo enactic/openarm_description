@@ -121,6 +121,7 @@ limitations under the License.
             arm_type="${arm_type}"
             arm_prefix="left_"
             ee_type="${ee_type}"
+            rpy_ee="${pi} 0 0"
             ee_kinematics="${ee_kinematics}"
             ee_kinematics_link="${ee_kinematics_link}"
             ee_inertials="${ee_inertials}"
@@ -131,6 +132,7 @@ limitations under the License.
             arm_type="${arm_type}"
             arm_prefix="right_"
             ee_type="${ee_type}"
+            rpy_ee="${pi} 0 0"
             ee_kinematics="${ee_kinematics}"
             ee_kinematics_link="${ee_kinematics_link}"
             ee_inertials="${ee_inertials}"
@@ -156,17 +158,19 @@ limitations under the License.
 
     <xacro:if value="${not bimanual}">
 
+        <link name="world" />
+
         <xacro:openarm_arm
             arm_type="${arm_type}"
             arm_prefix="${arm_prefix_modified}"
             no_prefix="${no_prefix}"
-            xyz="${xyz}"
-            rpy="${rpy}"
+            xyz="0 0 0"
+            rpy="${-pi/2 if arm_prefix_modified in ['', 'right_'] else pi/2} 0 0"
             joint_limits="${joint_limits}"
             kinematics="${kinematics}"
             kinematics_link="${kinematics_link}"
             inertials="${inertials}"
-            connected_to=""
+            connected_to="world"
         />
 
         <xacro:openarm_ee
@@ -174,6 +178,7 @@ limitations under the License.
             arm_prefix="${arm_prefix_modified}"
             no_prefix="${no_prefix}"
             ee_type="${ee_type}"
+            rpy_ee="${pi} 0 0"
             ee_kinematics="${ee_kinematics}"
             ee_kinematics_link="${ee_kinematics_link}"
             ee_inertials="${ee_inertials}"

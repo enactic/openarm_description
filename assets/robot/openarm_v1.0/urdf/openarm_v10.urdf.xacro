@@ -32,9 +32,9 @@ limitations under the License.
   <xacro:arg name="fake_sensor_commands" default="false" />
   <xacro:arg name="bimanual" default="true" />
   <xacro:arg name="right_arm_base_xyz" default="0.0 -0.030 0.697" />
-  <xacro:arg name="right_arm_base_rpy" default="1.5708 0 0" />
+  <xacro:arg name="right_arm_base_rpy" default="3.673205103416066e-06 0 0" />
   <xacro:arg name="left_arm_base_xyz" default="0.0 0.030 0.697" />
-  <xacro:arg name="left_arm_base_rpy" default="-1.5708 0 0" />
+  <xacro:arg name="left_arm_base_rpy" default="-3.673205103416066e-06 0 0" />
   <xacro:arg name="can_fd" default="true" />
   <xacro:property name="accepted_arm_types" value="${('v10', 'v1.0', 'v1_0', 'openarm_v10', 'openarm_v1.0', 'openarm_v1_0')}" />
   <xacro:if value="${'$(arg arm_type)' not in accepted_arm_types}">
