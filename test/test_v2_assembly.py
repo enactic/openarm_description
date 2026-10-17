@@ -26,7 +26,7 @@ def expand_modified(changes=None, **mappings):
         return value
 
     arguments = {
-        'robot_preset': 'bimanual_with_zed',
+        'robot_preset': 'default_bimanual',
         'emit_grasp_frame': 'true',
     }
     arguments.update(
@@ -79,7 +79,8 @@ class AssemblyTest(unittest.TestCase):
         ]:
             off, on = [
                 expand_modified(
-                    {parent_file: set_reference_emit('camera_mount_point', emit)}
+                    {parent_file: set_reference_emit(
+                        'camera_mount_point', emit)}
                 )
                 for emit in [False, True]
             ]
@@ -107,7 +108,7 @@ class AssemblyTest(unittest.TestCase):
             robots = [
                 expand_modified(
                     {
-                        'robot_presets/bimanual_with_zed.yaml': camera_on_gripper,
+                        'robot_presets/default_bimanual.yaml': camera_on_gripper,
                         'pinch_gripper/config/struct/reference_points.yaml': set_reference_emit(
                             'camera_view_frame', emit
                         ),
@@ -144,7 +145,8 @@ class AssemblyTest(unittest.TestCase):
                 emit_grasp_frame=enabled,
             )
             self.assertEqual(
-                len(robot.findall("link[@name='openarm_right_grasp_frame']")), 1
+                len(robot.findall(
+                    "link[@name='openarm_right_grasp_frame']")), 1
             )
 
     def test_conflicting_parent_selectors_rejected(self):
@@ -159,7 +161,7 @@ class AssemblyTest(unittest.TestCase):
         with self.assertRaisesRegex(
             xacro.XacroException, 'choose parent or parent_reference_point'
         ):
-            expand_modified({'robot_presets/bimanual_with_zed.yaml': conflict})
+            expand_modified({'robot_presets/default_bimanual.yaml': conflict})
 
     def test_controls_reference_existing_active_joints(self):
         preset_dir = ROOT / 'assets/robot/openarm_v2.0/config/robot_presets'
@@ -194,12 +196,15 @@ class AssemblyTest(unittest.TestCase):
                 value[name] = component
             return value
 
-        robot = expand_modified({'robot_presets/bimanual_with_zed.yaml': rename})
-        controlled = {j.get('name') for j in robot.findall('ros2_control/joint')}
+        robot = expand_modified(
+            {'robot_presets/default_bimanual.yaml': rename})
+        controlled = {j.get('name')
+                      for j in robot.findall('ros2_control/joint')}
         self.assertIn('custom_arm_joint1', controlled)
         self.assertIn('custom_tool_finger_joint1', controlled)
         self.assertNotIn('openarm_left_joint1', controlled)
-        self.assertTrue(controlled <= {j.get('name') for j in robot.findall('joint')})
+        self.assertTrue(controlled <= {j.get('name')
+                        for j in robot.findall('joint')})
 
     def test_real_hardware_parameters_are_preserved(self):
         robot = expand_modified(
@@ -218,7 +223,8 @@ class AssemblyTest(unittest.TestCase):
                 f"ros2_control[@name='openarm_{side}_hardware_interface']"
             )
             hardware = system.find('hardware')
-            self.assertEqual(hardware.find('plugin').text, 'openarm_hardware/OpenArmHW')
+            self.assertEqual(hardware.find('plugin').text,
+                             'openarm_hardware/OpenArmHW')
             params = {p.get('name'): p.text for p in hardware.findall('param')}
             self.assertEqual(params['arm_type'], 'v20')
             self.assertEqual(params['arm_prefix'], side + '_')
@@ -237,7 +243,8 @@ class AssemblyTest(unittest.TestCase):
             return value
 
         original = expand_modified()
-        reordered = expand_modified({'config/arm/struct/topology.yaml': reorder})
+        reordered = expand_modified(
+            {'config/arm/struct/topology.yaml': reorder})
         self.assert_common_poses(original, reordered)
 
     def test_arm_joint_names_come_from_topology(self):
@@ -276,7 +283,8 @@ class AssemblyTest(unittest.TestCase):
         )
         joint = robot.find("joint[@name='openarm_right_joint7']")
         self.assertEqual(joint.get('type'), 'fixed')
-        self.assertEqual(joint.find('parent').get('link'), 'openarm_right_link5')
+        self.assertEqual(joint.find('parent').get(
+            'link'), 'openarm_right_link5')
         self.assertIsNone(joint.find('axis'))
         self.assertIsNone(joint.find('limit'))
 
@@ -290,7 +298,8 @@ class AssemblyTest(unittest.TestCase):
             value['joints'] = joints
             return value
 
-        robot = expand_modified({'pinch_gripper/config/struct/topology.yaml': change})
+        robot = expand_modified(
+            {'pinch_gripper/config/struct/topology.yaml': change})
         for side in ['left', 'right']:
             for index in [1, 2]:
                 self.assertEqual(
@@ -311,6 +320,27 @@ class AssemblyTest(unittest.TestCase):
 
         with self.assertRaisesRegex(xacro.XacroException, 'unknown link'):
             expand_modified({'config/arm/struct/topology.yaml': change})
+
+    def test_single_arm_control_uses_selected_side(self):
+        for side in ['left', 'right']:
+            robot = expand_modified(
+                robot_preset=side + '_arm',
+                use_fake_hardware=False,
+                left_can_interface='left_test',
+                right_can_interface='right_test',
+            )
+            systems = robot.findall('ros2_control')
+            self.assertEqual(len(systems), 1)
+            self.assertEqual(
+                systems[0].get('name'), 'openarm_' +
+                side + '_hardware_interface'
+            )
+            params = {
+                p.get('name'): p.text for p in systems[0].findall('hardware/param')
+            }
+            self.assertEqual(params['can_interface'], side + '_test')
+            self.assertEqual(params['ee_type'], None)
+            self.assertEqual(len(systems[0].findall('joint')), 7)
 
 
 if __name__ == '__main__':

@@ -86,20 +86,25 @@ def expand(preset, collapse=True):
 class CameraAssemblyTest(unittest.TestCase):
     def assertTransform(self, a, b, tolerance=1e-10):
         self.assertLess(
-            max(abs(x - y) for ra, rb in zip(a, b) for x, y in zip(ra, rb)), tolerance
+            max(abs(x - y) for ra, rb in zip(a, b)
+                for x, y in zip(ra, rb)), tolerance
         )
 
-    def test_accessory_is_optional(self):
-        plain = expand('default_bimanual')
-        mounted = expand('bimanual_with_camera_mount')
-        self.assertIsNone(plain.find("link[@name='openarm_body_zed_mount_base_link']"))
+    def test_default_bimanual_includes_camera(self):
+        robot = expand('default_bimanual')
         self.assertIsNotNone(
-            mounted.find("link[@name='openarm_body_zed_mount_base_link']")
+            robot.find("link[@name='openarm_body_zed_mount_base_link']")
         )
-        self.assertIsNone(mounted.find("link[@name='openarm_body_zed_camera_link']"))
+        self.assertIsNotNone(robot.find(
+            "link[@name='openarm_body_zed_camera_link']"))
+        single = expand('right_arm_with_pinch_gripper')
+        self.assertIsNone(single.find(
+            "link[@name='openarm_body_zed_mount_base_link']"))
+        self.assertIsNone(single.find(
+            "link[@name='openarm_body_zed_camera_link']"))
 
     def test_mount_port_matches_combined_cad(self):
-        robot = expand('bimanual_with_camera_mount')
+        robot = expand('default_bimanual')
         expected = transform(
             {
                 'xyz': '0.0563085336684035 0.00869000000000031 0.808829226007701',
@@ -110,17 +115,17 @@ class CameraAssemblyTest(unittest.TestCase):
             poses(robot)['openarm_body_zed_mount_camera_mount_point'], expected
         )
         mount = robot.find("link[@name='openarm_body_zed_mount_base_link']")
-        self.assertAlmostEqual(float(mount.find('inertial/mass').get('value')), 0.13704)
+        self.assertAlmostEqual(
+            float(mount.find('inertial/mass').get('value')), 0.13704)
         self.assertIsNone(mount.find('collision'))
 
     def test_pedestal_uses_measured_mass(self):
         for preset in [
             'default_bimanual',
-            'bimanual_with_camera_mount',
-            'bimanual_with_zed',
         ]:
             body = expand(preset).find("link[@name='openarm_body_link0']")
-            self.assertEqual(float(body.find('inertial/mass').get('value')), 3.74)
+            self.assertEqual(
+                float(body.find('inertial/mass').get('value')), 3.74)
             inertia = body.find('inertial/inertia')
             for key in ['ixy', 'ixz', 'iyz']:
                 self.assertEqual(float(inertia.get(key)), 0)
@@ -137,21 +142,23 @@ class CameraAssemblyTest(unittest.TestCase):
         reflect = identity()
         reflect[1][1] = -1
         right = transform(
-            robot.find("joint[@name='openarm_right_camera_view_frame_joint']/origin")
+            robot.find(
+                "joint[@name='openarm_right_camera_view_frame_joint']/origin")
         )
         left = transform(
-            robot.find("joint[@name='openarm_left_camera_view_frame_joint']/origin")
+            robot.find(
+                "joint[@name='openarm_left_camera_view_frame_joint']/origin")
         )
         self.assertTransform(left, multiply(multiply(reflect, right), reflect))
         self.assertAlmostEqual(right[0][3], 0.0013353 + 0.0205, places=10)
         for side in ['left', 'right']:
-            frame = robot.find(f"link[@name='openarm_{side}_camera_view_frame']")
+            frame = robot.find(
+                f"link[@name='openarm_{side}_camera_view_frame']")
             self.assertIsNone(frame.find('inertial'))
 
     def test_collapse_keeps_reference_world_poses(self):
         for preset in [
             'default_bimanual',
-            'bimanual_with_zed',
             'left_arm_with_pinch_gripper',
             'right_arm_with_pinch_gripper',
         ]:
@@ -196,16 +203,18 @@ class CameraAssemblyTest(unittest.TestCase):
                 )
                 frames.append(
                     transform(
-                        robot.find("joint[@name='camera_view_frame_joint']/origin")
+                        robot.find(
+                            "joint[@name='camera_view_frame_joint']/origin")
                     )
                 )
         self.assertAlmostEqual(frames[0][0][3], 0.0013353)
         reflect = identity()
         reflect[1][1] = -1
-        self.assertTransform(frames[1], multiply(multiply(reflect, frames[0]), reflect))
+        self.assertTransform(frames[1], multiply(
+            multiply(reflect, frames[0]), reflect))
 
     def test_zed_mini_uses_official_camera_tree(self):
-        robot = expand('bimanual_with_zed')
+        robot = expand('default_bimanual')
         joint = robot.find("joint[@name='openarm_body_zed_mount_joint']")
         self.assertEqual(
             joint.find('parent').get('link'),
@@ -216,7 +225,8 @@ class CameraAssemblyTest(unittest.TestCase):
         )
         center = robot.find("link[@name='openarm_body_zed_camera_center']")
         self.assertTrue(
-            center.find('visual/geometry/mesh').get('filename').endswith('/zedm.stl')
+            center.find(
+                'visual/geometry/mesh').get('filename').endswith('/zedm.stl')
         )
         for side, y in [('left', 0.0315), ('right', -0.0315)]:
             origin = robot.find(

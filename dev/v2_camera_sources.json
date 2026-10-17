@@ -20,7 +20,7 @@
     0.007723415,
     -8.746e-05
   ],
-  "camera_adapter_source": "Geometric alignment to the bottom screw-pair features of the official zedm.stl, including the camera_center Z offset of 0.01325 m.",
+  "camera_adapter_source": "Geometric alignment using the symmetry center of the simplified bottom mounting region in the official zedm.stl as an estimated screw-pair midpoint, including the camera_center Z offset of 0.01325 m.",
   "plastic_material_correction": {
     "reference": "assets/robot/openarm_v2.0/meshes/arm/visual/link3.dae",
     "shader": "lambert",

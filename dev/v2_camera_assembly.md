@@ -1,6 +1,6 @@
 # V2 视觉模型与相机装配
 
-本版本更新 link4 排线罩和底座视觉模型，在夹爪上增加相机视角参考坐标，并通过可选组件装配底座相机安装座与 ZED Mini。
+本版本更新 link4 排线罩和底座视觉模型，在夹爪上增加相机视角参考坐标，默认双臂包含独立相机安装座与 ZED Mini 组件。
 
 ## 基线
 
@@ -24,13 +24,13 @@ world
 
 安装座属于独立 `accessory` 组件，文件位于 `assets/accessory/zed_mount/`。其几何包含 Head_Cover、cameramount_head_zed 和两颗 SCB2-5 螺丝；相机模型由 `zed_description` 提供。
 
-这样可以分别使用普通底座、带安装座的底座、以及完整相机装配。相机和安装座各有自己的连接变换，更换相机时可调整相机组件，无需重做底座 mesh。
+相机和安装座各有自己的连接变换；更换相机时调整相机组件，安装座作为独立刚体保留。
 
 | 预设 | 内容 |
 |---|---|
-| `default_bimanual` | 更新后的双臂与底座，以及相机参考坐标 |
-| `bimanual_with_camera_mount` | 增加独立安装座 |
-| `bimanual_with_zed` | 增加安装座和 ZED Mini |
+| `default_bimanual` | 双臂、夹爪、底座、安装座和 ZED Mini |
+| `left_arm` / `right_arm` | 单臂 |
+| `left_arm_with_pinch_gripper` / `right_arm_with_pinch_gripper` | 单臂与夹爪 |
 
 新的 `accessory` 类型支持一个刚体 link。其配置使用现有的 topology、inertials、visuals、collisions 和 reference_points 结构。参考点设置 `emit: true` 时生成无质量的固定坐标；子组件通过 `parent_reference_point` 直接连接该坐标，`connection.origin` 表示相对该坐标的附加变换。
 
@@ -45,7 +45,7 @@ OpenArm 2.0 官方 FAQ 将头部相机列为 **ZED Mini**；安装文档使用 `
 
 导出安装座中的两颗 SCB2-5 螺丝间距约 56 mm，与 ZED Mini 图纸的底部 M2 孔组一致。官方接口使用 `camera_link` 连接机器人；它没有单独提供两个 M2 安装孔中点的 TF。安装座的 CAD 参考点则位于这两个孔的中心连线中点。
 
-本预设按官方 `zedm.stl` 的底部孔位几何对齐：孔中点在其 `camera_link` 坐标系下约为 `(-1.19247, 7.723415, -0.08746)` mm，因此预设中孔中点到 `camera_link` 的位置为：
+本预设按官方 `zedm.stl` 的底部安装区对称中心估计安装孔组中点；它来自简化网格，而非精确螺纹孔 CAD。该点在 `camera_link` 坐标系下约为 `(-1.19247, 7.723415, -0.08746)` mm，因此预设中孔中点到 `camera_link` 的位置为：
 
 ```yaml
 origin:
@@ -98,7 +98,7 @@ colcon build --packages-select openarm_description
 source install/setup.bash
 
 ros2 launch openarm_description display_openarm.launch.py \
-  arm_type:=v20 robot_preset:=bimanual_with_zed \
+  arm_type:=v20 robot_preset:=default_bimanual \
   emit_grasp_frame:=true rviz_config:=bimanual_camera.rviz
 ```
 
@@ -106,17 +106,53 @@ ros2 launch openarm_description display_openarm.launch.py \
 
 ```bash
 xacro /home/li/ros2_ws/src/openarm_description/assets/robot/openarm_v2.0/urdf/openarm_v20.urdf.xacro \
-  robot_preset:=bimanual_with_zed emit_grasp_frame:=true \
-  > /home/li/ros2_ws/src/openarm_description/tmp/openarm_v2_bimanual_with_zed.urdf
+  robot_preset:=default_bimanual emit_grasp_frame:=true ros2_control:=false \
+  > /home/li/ros2_ws/src/openarm_description/tmp/openarm_v2_bimanual.urdf
 ```
 
 测试：
 
 ```bash
 colcon test --packages-select openarm_description \
-  --ctest-args -R v2_camera_components --return-code-on-test-failure
+  --ctest-args -R v2_ --return-code-on-test-failure
 ```
 
-测试覆盖可选安装座、整体 CAD 参考点、称重底座参数、左右旋转镜像、折叠前后的几何与参考点、独立夹爪的参考点镜像，以及官方 ZED Mini 坐标树。
+测试覆盖默认相机装配、CAD 安装点、称重底座参数、左右旋转镜像、参考 frame 输出与折叠、拓扑驱动的关节定义、各 preset 控制接口，以及官方 ZED Mini 坐标树。
 
 导出来源和官方模型哈希见 [v2_camera_sources.json](v2_camera_sources.json)。
+
+## Xacro 组织与装配规则
+
+V1 保留原入口和实现。V2 入口为 `assets/robot/openarm_v2.0/urdf/openarm_v20.urdf.xacro`，负责读取 preset、调用装配宏和按需输出控制接口。
+
+| 位置 | 职责 |
+|---|---|
+| `assets/common/transforms.xacro` | 位姿组合、坐标反射 |
+| `assets/common/links.xacro` | link、joint、惯性和刚性附件输出 |
+| `assets/common/reference_frames.xacro` | 固定参考坐标输出 |
+| `assets/common/components.xacro` | 组件配置加载与具体产品分发 |
+| `assets/common/validation.xacro` | 组件连接和 link/joint 拓扑检查 |
+| `assets/common/assembly.xacro` | 连接变换、末端空 link 折叠、组件树生成 |
+| `assets/robot/openarm_v2.0/urdf/arm/` | V2 手臂生成宏 |
+| `assets/end_effector/pinch_gripper/urdf/` | 夹爪宏和独立夹爪入口 |
+| `assets/sensor/zed/urdf_wrapper/` | 官方 ZED 模型适配 |
+
+`attach_to` 选择父组件。连接位置由 `parent_reference_point` 或 `parent` 二选一指定；两者不能同时填写非空值。`parent_reference_point` 查找父组件的安装接口，`parent` 直接指定最终 URDF link 名称。两者都省略时使用父组件的默认连接 link；根组件默认连接 `robot.root_frame`。
+
+`connection.origin` 始终相对于选中的安装基准；省略时为零位姿。参考点设置 `emit: true` 时生成一个固定 frame，子组件连接到这个 frame；不输出 frame 时，将参考点与 `origin` 的变换相乘，直接连接父 link。两种表达保持同一世界位姿，没有新增 `offset` 字段。
+
+`emit_grasp_frame` 保留原入口参数，并使用同一个参考坐标生成器。`collapse_internal_empty_links` 默认 `true`：当手臂末端 link 没有 visual、collision、inertial 且有一个合适的子组件时，将它折叠到子组件根 link。当前 V2 是将空 `link7` 折叠到 `ee_base_link`，并将 20.5 mm 安装变换传递给几何、COM、手指关节和参考点。折叠后同名 `ee_base_link` 的坐标原点改变，实体及参考点的世界位姿保持一致。
+
+关节名称、类型和父子关系从 `topology.yaml` 读取；`links` 的首项是组件根 link，末项用于选择默认连接端。Pinch gripper 的基座与手指共用公共 link 输出宏。
+
+## 控制与导出
+
+V2 Xacro 的 `ros2_control` 默认 `true`；RViz launch 的该参数默认 `false`。控制接口只为启用的手臂和其夹爪生成，mimic 手指不重复生成主动控制接口。各手臂 preset 的 `control.side` 为 `left` 或 `right`，分别选择 `left_can_interface` 或 `right_can_interface`，与模型前缀分开配置。现有硬件插件、PD 增益和默认 CAN 参数保持原值。
+
+导出纯模型可使用 `ros2_control:=false`，或在 description 目录运行：
+
+```bash
+bash scripts/generate_v20_urdfs.sh --all --no-ros2-control
+```
+
+`--keep-empty-links` 保留末端空 link；`--grasp-frame` 输出抓取参考坐标。现有 V1 入口、配置和控制实现保持独立。

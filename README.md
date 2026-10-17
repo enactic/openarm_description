@@ -20,7 +20,7 @@ Recommended starting point:
 
 ## V2 camera assembly
 
-Use `robot_preset:=bimanual_with_zed` for the bimanual model with a removable camera mount and the official ZED Mini model. `bimanual_with_camera_mount` adds only the mount; `default_bimanual` provides the updated pedestal and arms.
+The V2 `default_bimanual` preset includes both arms, pinch grippers, the camera mount, and the official ZED Mini model. Single-arm presets are also available. Use `ros2_control:=false` when exporting a model without control interfaces.
 
 See [V2 visual models and camera assembly](dev/v2_camera_assembly.md) for the source geometry, mounting frames, measured pedestal parameters, and visualization commands.
 
