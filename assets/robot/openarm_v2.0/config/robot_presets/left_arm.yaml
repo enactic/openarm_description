@@ -44,6 +44,8 @@ primary_arm:
   enabled: true
   product: openarm_v2.0
   config: arm
+  control:
+    side: left
   inertials: nominal
   prefix: openarm_left_
   connection:
@@ -70,6 +72,8 @@ secondary_arm:
   enabled: false
   product: openarm_v2.0
   config: arm
+  control:
+    side: right
   inertials: nominal
   prefix: openarm_right_
   connection:

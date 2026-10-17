@@ -161,6 +161,76 @@ class AssemblyTest(unittest.TestCase):
         ):
             expand_modified({'robot_presets/bimanual_with_zed.yaml': conflict})
 
+    def test_controls_reference_existing_active_joints(self):
+        preset_dir = ROOT / 'assets/robot/openarm_v2.0/config/robot_presets'
+        for preset in sorted(preset_dir.glob('*.yaml')):
+            with self.subTest(preset=preset.stem):
+                robot = expand_modified(robot_preset=preset.stem)
+                joints = {j.get('name'): j for j in robot.findall('joint')}
+                controlled = [
+                    j.get('name') for j in robot.findall('ros2_control/joint')
+                ]
+                active = {
+                    name
+                    for name, joint in joints.items()
+                    if joint.get('type') != 'fixed' and joint.find('mimic') is None
+                }
+                self.assertEqual(set(controlled), active)
+                self.assertEqual(len(controlled), len(set(controlled)))
+
+    def test_control_output_can_be_disabled(self):
+        robot = expand_modified(ros2_control=False)
+        self.assertEqual(robot.findall('ros2_control'), [])
+        self.assertIsNotNone(robot.find("joint[@name='openarm_right_joint1']"))
+
+    def test_control_names_follow_component_prefixes(self):
+        def rename(value):
+            for name, prefix in [
+                ('primary_arm', 'custom_arm_'),
+                ('primary_arm_end_effector', 'custom_tool_'),
+            ]:
+                component = value[name]
+                component['prefix'] = prefix
+                value[name] = component
+            return value
+
+        robot = expand_modified({'robot_presets/bimanual_with_zed.yaml': rename})
+        controlled = {j.get('name') for j in robot.findall('ros2_control/joint')}
+        self.assertIn('custom_arm_joint1', controlled)
+        self.assertIn('custom_tool_finger_joint1', controlled)
+        self.assertNotIn('openarm_left_joint1', controlled)
+        self.assertTrue(controlled <= {j.get('name') for j in robot.findall('joint')})
+
+    def test_real_hardware_parameters_are_preserved(self):
+        robot = expand_modified(
+            use_fake_hardware=False,
+            left_can_interface='left_test',
+            right_can_interface='right_test',
+            can_fd=False,
+        )
+        gains = xacro.load_yaml(
+            str(
+                ROOT / 'assets/robot/openarm_v2.0/config/arm/control/control_gains.yaml'
+            )
+        )
+        for side in ['left', 'right']:
+            system = robot.find(
+                f"ros2_control[@name='openarm_{side}_hardware_interface']"
+            )
+            hardware = system.find('hardware')
+            self.assertEqual(hardware.find('plugin').text, 'openarm_hardware/OpenArmHW')
+            params = {p.get('name'): p.text for p in hardware.findall('param')}
+            self.assertEqual(params['arm_type'], 'v20')
+            self.assertEqual(params['arm_prefix'], side + '_')
+            self.assertEqual(params['can_interface'], side + '_test')
+            self.assertEqual(params['can_fd'].lower(), 'false')
+            self.assertEqual(params['ee_type'], 'pinch_gripper')
+            for i in range(1, 8):
+                for gain in ['kp', 'kd']:
+                    self.assertEqual(
+                        float(params[f'{gain}{i}']), gains[f'joint{i}'][gain]
+                    )
+
 
 if __name__ == '__main__':
     unittest.main()
