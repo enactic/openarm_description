@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+<!--
+Copyright 2026 Enactic, Inc.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+
+
+  <xacro:macro name="openarm_require" params="condition message">
+    <xacro:unless value="${condition}">
+      <xacro:property name="openarm_requirement_failed" value="${xacro.fatal(message)}" lazy_eval="false" />
+    </xacro:unless>
+  </xacro:macro>
+
+  <xacro:macro name="openarm_validate_component_lineage"
+    params="component_name components robot_preset depth:=0">
+
+    <xacro:property name="component_cfg" value="${robot_preset[component_name]}" lazy_eval="false" />
+    <xacro:property name="connection" value="${component_cfg['connection'] if 'connection' in component_cfg else dict()}" lazy_eval="false" />
+    <xacro:property name="attach_to" value="${connection['attach_to'] if 'attach_to' in connection else None}" lazy_eval="false" />
+
+    <xacro:if value="${attach_to != None}">
+      <xacro:openarm_require
+        condition="${depth &lt; len(components)}"
+        message="${'Invalid robot preset: attachment cycle detected while resolving `%s`.' % component_name}" />
+      <xacro:openarm_require
+        condition="${attach_to in robot_preset}"
+        message="${'Invalid robot preset: component `%s` attaches to missing parent `%s`.' % (component_name, attach_to)}" />
+      <xacro:openarm_require
+        condition="${attach_to in components}"
+        message="${'Invalid robot preset: component `%s` attaches to `%s`, but `%s` is not listed in robot.components.' % (component_name, attach_to, attach_to)}" />
+      <xacro:openarm_require
+        condition="${robot_preset[attach_to]['enabled']}"
+        message="${'Invalid robot preset: component `%s` attaches to disabled parent `%s`.' % (component_name, attach_to)}" />
+      <xacro:openarm_require
+        condition="${robot_preset[attach_to]['type'] in ['robot', 'end_effector', 'sensor', 'accessory']}"
+        message="${'Invalid robot preset: component `%s` attaches to unsupported parent type `%s` on `%s`.' % (component_name, robot_preset[attach_to]['type'], attach_to)}" />
+
+      <xacro:openarm_validate_component_lineage
+        component_name="${attach_to}"
+        components="${components}"
+        robot_preset="${robot_preset}"
+        depth="${depth + 1}" />
+    </xacro:if>
+  </xacro:macro>
+
+  <xacro:macro name="openarm_validate_component_entries"
+    params="index components robot_preset">
+
+    <xacro:if value="${index &lt; len(components)}">
+      <xacro:property name="component_name" value="${components[index]}" lazy_eval="false" />
+
+      <xacro:openarm_require
+        condition="${component_name not in components[:index]}"
+        message="${'Invalid robot preset: duplicate component `%s` in robot.components.' % component_name}" />
+      <xacro:openarm_require
+        condition="${component_name in robot_preset}"
+        message="${'Invalid robot preset: robot.components references missing component `%s`.' % component_name}" />
+
+      <xacro:property name="component_cfg" value="${robot_preset[component_name]}" lazy_eval="false" />
+      <xacro:property name="component_type" value="${component_cfg['type']}" lazy_eval="false" />
+      <xacro:property name="component_config" value="${component_cfg['config'] if 'config' in component_cfg else None}" lazy_eval="false" />
+      <xacro:property name="reflect_cfg" value="${component_cfg['reflect'] if 'reflect' in component_cfg else dict(x=1, y=1, z=1)}" lazy_eval="false" />
+
+      <xacro:openarm_require
+        condition="${component_type in ['robot', 'end_effector', 'sensor', 'accessory']}"
+        message="${'Invalid robot preset: component `%s` has unsupported type `%s`.' % (component_name, component_type)}" />
+      <xacro:openarm_require
+        condition="${'product' in component_cfg}"
+        message="${'Invalid robot preset: component `%s` must define product.' % component_name}" />
+      <xacro:openarm_require
+        condition="${'config' in component_cfg}"
+        message="${'Invalid robot preset: component `%s` must define config. Use null when no extra config index is needed.' % component_name}" />
+      <xacro:if value="${component_type == 'robot'}">
+        <xacro:openarm_require
+          condition="${component_cfg['product'] == 'openarm_v2.0'}"
+          message="${'Invalid robot preset: robot component `%s` uses unsupported product `%s`.' % (component_name, component_cfg['product'])}" />
+        <xacro:openarm_require
+          condition="${component_config in ['body', 'arm']}"
+          message="${'Invalid robot preset: robot component `%s` has unsupported config `%s`.' % (component_name, component_config)}" />
+      </xacro:if>
+      <xacro:if value="${component_type == 'sensor'}">
+        <xacro:openarm_require
+          condition="${component_cfg['product'] == 'zed'}"
+          message="${'Invalid robot preset: sensor component `%s` uses unsupported product `%s`.' % (component_name, component_cfg['product'])}" />
+        <xacro:openarm_require
+          condition="${component_config != None and 'camera_model' in component_config}"
+          message="${'Invalid robot preset: sensor component `%s` must use config object with at least camera_model.' % component_name}" />
+      </xacro:if>
+      <xacro:openarm_require
+        condition="${reflect_cfg['x'] in [-1, 1] and reflect_cfg['y'] in [-1, 1] and reflect_cfg['z'] in [-1, 1]}"
+        message="${'Invalid robot preset: component `%s` must use reflect axes of either 1 or -1.' % component_name}" />
+      <xacro:openarm_require
+        condition="${(1 if reflect_cfg['x'] == -1 else 0) + (1 if reflect_cfg['y'] == -1 else 0) + (1 if reflect_cfg['z'] == -1 else 0) &lt;= 1}"
+        message="${'Invalid robot preset: component `%s` requests combined reflection %s, but only single-axis reflection is currently supported.' % (component_name, reflect_cfg)}" />
+
+      <xacro:if value="${component_cfg['enabled']}">
+        <xacro:openarm_validate_component_lineage
+          component_name="${component_name}"
+          components="${components}"
+          robot_preset="${robot_preset}" />
+      </xacro:if>
+
+      <xacro:openarm_validate_component_entries
+        index="${index + 1}"
+        components="${components}"
+        robot_preset="${robot_preset}" />
+    </xacro:if>
+  </xacro:macro>
+
+  <xacro:macro name="openarm_validate_robot_preset"
+    params="components robot_preset">
+
+    <xacro:property
+      name="enabled_components"
+      value="${[name for name in components if name in robot_preset and robot_preset[name]['enabled']]}"
+      lazy_eval="false" />
+    <xacro:property
+      name="root_components"
+      value="${[name for name in enabled_components if not ('connection' in robot_preset[name] and 'attach_to' in robot_preset[name]['connection'] and robot_preset[name]['connection']['attach_to'] != None)]}"
+      lazy_eval="false" />
+
+    <xacro:openarm_require
+      condition="${len(enabled_components) > 0}"
+      message="${'Invalid robot preset: robot.components does not contain any enabled component.'}" />
+    <xacro:openarm_require
+      condition="${len(root_components) == 1}"
+      message="${'Invalid robot preset: expected exactly one enabled root component, found %d (%s).' % (len(root_components), root_components)}" />
+
+    <xacro:openarm_validate_component_entries
+      index="0"
+      components="${components}"
+      robot_preset="${robot_preset}" />
+  </xacro:macro>
+
+</robot>

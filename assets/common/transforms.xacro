@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<!--
+Copyright 2026 Enactic, Inc.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+
+
+  <xacro:macro name="openarm_emit_origin" params="origin reflect_x:=1 reflect_y:=1 reflect_z:=1 reflect_position:=true reflect_rotation:=${False}">
+    <origin
+      xyz="${(reflect_x * origin['x']) if reflect_position else origin['x']} ${(reflect_y * origin['y']) if reflect_position else origin['y']} ${(reflect_z * origin['z']) if reflect_position else origin['z']}"
+      rpy="${reflect_y * reflect_z * origin['roll'] if reflect_rotation else origin['roll']} ${reflect_x * reflect_z * origin['pitch'] if reflect_rotation else origin['pitch']} ${reflect_x * reflect_y * origin['yaw'] if reflect_rotation else origin['yaw']}" />
+  </xacro:macro>
+
+  <xacro:macro name="openarm_compose_pose" params="first second out_name">
+    <xacro:property name="a_r" value="${first['roll']}" />
+    <xacro:property name="a_p" value="${first['pitch']}" />
+    <xacro:property name="a_y" value="${first['yaw']}" />
+    <xacro:property name="b_r" value="${second['roll']}" />
+    <xacro:property name="b_p" value="${second['pitch']}" />
+    <xacro:property name="b_y" value="${second['yaw']}" />
+
+    <xacro:property name="acr" value="${cos(a_r)}" />
+    <xacro:property name="asr" value="${sin(a_r)}" />
+    <xacro:property name="acp" value="${cos(a_p)}" />
+    <xacro:property name="asp" value="${sin(a_p)}" />
+    <xacro:property name="acy" value="${cos(a_y)}" />
+    <xacro:property name="asy" value="${sin(a_y)}" />
+    <xacro:property name="bcr" value="${cos(b_r)}" />
+    <xacro:property name="bsr" value="${sin(b_r)}" />
+    <xacro:property name="bcp" value="${cos(b_p)}" />
+    <xacro:property name="bsp" value="${sin(b_p)}" />
+    <xacro:property name="bcy" value="${cos(b_y)}" />
+    <xacro:property name="bsy" value="${sin(b_y)}" />
+
+    <xacro:property name="a11" value="${acy * acp}" />
+    <xacro:property name="a12" value="${acy * asp * asr - asy * acr}" />
+    <xacro:property name="a13" value="${acy * asp * acr + asy * asr}" />
+    <xacro:property name="a21" value="${asy * acp}" />
+    <xacro:property name="a22" value="${asy * asp * asr + acy * acr}" />
+    <xacro:property name="a23" value="${asy * asp * acr - acy * asr}" />
+    <xacro:property name="a31" value="${-asp}" />
+    <xacro:property name="a32" value="${acp * asr}" />
+    <xacro:property name="a33" value="${acp * acr}" />
+
+    <xacro:property name="b11" value="${bcy * bcp}" />
+    <xacro:property name="b12" value="${bcy * bsp * bsr - bsy * bcr}" />
+    <xacro:property name="b13" value="${bcy * bsp * bcr + bsy * bsr}" />
+    <xacro:property name="b21" value="${bsy * bcp}" />
+    <xacro:property name="b22" value="${bsy * bsp * bsr + bcy * bcr}" />
+    <xacro:property name="b23" value="${bsy * bsp * bcr - bcy * bsr}" />
+    <xacro:property name="b31" value="${-bsp}" />
+    <xacro:property name="b32" value="${bcp * bsr}" />
+    <xacro:property name="b33" value="${bcp * bcr}" />
+
+    <xacro:property name="c11" value="${a11 * b11 + a12 * b21 + a13 * b31}" />
+    <xacro:property name="c21" value="${a21 * b11 + a22 * b21 + a23 * b31}" />
+    <xacro:property name="c22" value="${a21 * b12 + a22 * b22 + a23 * b32}" />
+    <xacro:property name="c23" value="${a21 * b13 + a22 * b23 + a23 * b33}" />
+    <xacro:property name="c31" value="${a31 * b11 + a32 * b21 + a33 * b31}" />
+    <xacro:property name="c32" value="${a31 * b12 + a32 * b22 + a33 * b32}" />
+    <xacro:property name="c33" value="${a31 * b13 + a32 * b23 + a33 * b33}" />
+
+    <xacro:property name="tx" value="${first['x'] + a11 * second['x'] + a12 * second['y'] + a13 * second['z']}" />
+    <xacro:property name="ty" value="${first['y'] + a21 * second['x'] + a22 * second['y'] + a23 * second['z']}" />
+    <xacro:property name="tz" value="${first['z'] + a31 * second['x'] + a32 * second['y'] + a33 * second['z']}" />
+    <xacro:property name="cy_norm" value="${sqrt(c11 * c11 + c21 * c21)}" />
+    <xacro:property name="rr" value="${atan2(c32, c33) if cy_norm > 1e-9 else atan2(-c23, c22)}" />
+    <xacro:property name="rp" value="${atan2(-c31, cy_norm)}" />
+    <xacro:property name="ry" value="${atan2(c21, c11) if cy_norm > 1e-9 else 0.0}" />
+
+    <xacro:property name="${out_name}" value="${dict(x=tx, y=ty, z=tz, roll=rr, pitch=rp, yaw=ry)}" scope="parent" lazy_eval="false" />
+  </xacro:macro>
+
+  <xacro:macro name="openarm_reflect_pose" params="origin reflect_x:=1 reflect_y:=1 reflect_z:=1 out_name">
+    <xacro:property name="${out_name}"
+      value="${dict(x=reflect_x * origin['x'], y=reflect_y * origin['y'], z=reflect_z * origin['z'], roll=reflect_y * reflect_z * origin['roll'], pitch=reflect_x * reflect_z * origin['pitch'], yaw=reflect_x * reflect_y * origin['yaw'])}"
+      scope="parent" lazy_eval="false" />
+  </xacro:macro>
+
+  <xacro:macro name="openarm_emit_composed_origin" params="first second reflect_x:=1 reflect_y:=1 reflect_z:=1 reflect_position:=true reflect_rotation:=${False}">
+    <xacro:openarm_compose_pose first="${first}" second="${second}" out_name="composed_origin" />
+    <xacro:openarm_emit_origin origin="${composed_origin}" reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}" reflect_position="${reflect_position}" reflect_rotation="${reflect_rotation}" />
+  </xacro:macro>
+
+</robot>

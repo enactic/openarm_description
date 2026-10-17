@@ -14,9 +14,8 @@ limitations under the License.
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <xacro:include filename="$(find openarm_description)/assets/robot/openarm_v2.0/urdf/utils/openarm_v20_utils.xacro" />
+  <xacro:include filename="$(find openarm_description)/assets/common/links.xacro" />
 
-  <!-- Recursively emit the arm chain after the base link has been mounted. -->
   <xacro:macro name="openarm_v20_emit_arm_chain"
     params="index links prefix joint_origins joint_axes joint_limits inertials visuals collisions reflect_x:=1 reflect_y:=1 reflect_z:=1 component_reflects:=false reflect_include_links:=^ reflect_include_joints:=^ limit_override_joints:=^ tip_collapse_source_link:=none tip_collapse_child_link:=none base_frame_shift:=none">
     <xacro:if value="${index &lt; len(links) - 1}">
@@ -33,7 +32,7 @@ limitations under the License.
         lazy_eval="false" />
 
       <xacro:unless value="${collapse_tip_child}">
-        <xacro:openarm_v20_emit_link
+        <xacro:openarm_emit_link
           link_name="${prefix}${child_name}"
           source_name="${child_name}"
           inertials="${inertials}"
@@ -44,7 +43,7 @@ limitations under the License.
           reflect_z="${reflect_z if child_link_reflects else 1}" />
       </xacro:unless>
 
-      <xacro:openarm_v20_emit_joint
+      <xacro:openarm_emit_joint
         joint_name="${prefix}${joint_name}"
         joint_type="revolute"
         parent_link="${prefix}${parent_name}"
@@ -83,7 +82,6 @@ limitations under the License.
     </xacro:if>
   </xacro:macro>
 
-  <!-- Emit one arm component: base link, optional mount joint, then the internal joint chain. -->
   <xacro:macro name="openarm_v20_arm"
     params="prefix connected_to mount_origin topology joint_origins joint_axes joint_limits inertials visuals collisions reflect_x:=1 reflect_y:=1 reflect_z:=1 component_reflects:=false reflect_include_links:=^ reflect_include_joints:=^ limit_override_joints:=^ tip_collapse_source_link:=none tip_collapse_child_link:=none skip_mount_joint:=false base_frame_shift:=none">
 
@@ -92,7 +90,7 @@ limitations under the License.
     <xacro:property name="resolved_base_frame_shift" value="${base_frame_shift if base_frame_shift != 'none' else 'none'}" lazy_eval="false" />
     <xacro:property name="base_link_reflects" value="${component_reflects and base_link_name in reflect_include_links}" lazy_eval="false" />
 
-    <xacro:openarm_v20_emit_link
+    <xacro:openarm_emit_link
       link_name="${prefix}${base_link_name}"
       source_name="${base_link_name}"
       inertials="${inertials}"
@@ -105,7 +103,7 @@ limitations under the License.
 
     <xacro:unless value="${skip_mount_joint}">
       <joint name="${prefix}${base_link_name}_mount_joint" type="fixed">
-        <xacro:openarm_v20_emit_origin origin="${mount_origin}" reflect_x="1" reflect_y="1" reflect_z="1" reflect_position="false" />
+        <xacro:openarm_emit_origin origin="${mount_origin}" reflect_x="1" reflect_y="1" reflect_z="1" reflect_position="false" />
         <parent link="${connected_to}" />
         <child link="${prefix}${base_link_name}" />
       </joint>

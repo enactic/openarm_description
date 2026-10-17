@@ -23,15 +23,15 @@ limitations under the License.
       <xacro:property name="component" value="${robot_preset[name]}" lazy_eval="false" />
       <xacro:if value="${component['enabled'] and component['type'] == 'robot' and component['config'] == 'arm'}">
         <xacro:property name="side" value="${component['control']['side']}" lazy_eval="false" />
-        <xacro:openarm_v20_require condition="${side in can_interfaces}" message="${'Unknown control side `%s` on `%s`.' % (side, name)}" />
+        <xacro:openarm_require condition="${side in can_interfaces}" message="${'Unknown control side `%s` on `%s`.' % (side, name)}" />
         <xacro:property name="controlled_arms" value="${[c for c in components if robot_preset[c]['enabled'] and robot_preset[c]['type'] == 'robot' and robot_preset[c]['config'] == 'arm']}" lazy_eval="false" />
-        <xacro:openarm_v20_require condition="${len([c for c in controlled_arms if robot_preset[c]['control']['side'] == side]) == 1}" message="${'Multiple arms select the `%s` hardware interface.' % side}" />
+        <xacro:openarm_require condition="${len([c for c in controlled_arms if robot_preset[c]['control']['side'] == side]) == 1}" message="${'Multiple arms select the `%s` hardware interface.' % side}" />
         <xacro:property name="prefix" value="${component.get('prefix', '')}" lazy_eval="false" />
         <xacro:property name="arm_topology" value="${xacro.load_yaml(config_root + '/arm/struct/topology.yaml')}" lazy_eval="false" />
         <xacro:property name="control_gains" value="${xacro.load_yaml(config_root + '/arm/control/control_gains.yaml')}" lazy_eval="false" />
         <xacro:property name="joint_names" value="${[prefix + joint for joint in arm_topology['joints'] if arm_topology['joints'][joint]['type'] != 'fixed']}" lazy_eval="false" />
         <xacro:property name="grippers" value="${[c for c in components if robot_preset[c]['enabled'] and robot_preset[c]['type'] == 'end_effector' and robot_preset[c].get('connection', dict()).get('attach_to') == name]}" lazy_eval="false" />
-        <xacro:openarm_v20_require condition="${len(grippers) &lt;= 1}" message="${'Arm `%s` supports one controlled gripper.' % name}" />
+        <xacro:openarm_require condition="${len(grippers) &lt;= 1}" message="${'Arm `%s` supports one controlled gripper.' % name}" />
         <xacro:property name="ee_type" value="${''}" lazy_eval="false" />
         <xacro:if value="${len(grippers) == 1}">
           <xacro:property name="gripper" value="${robot_preset[grippers[0]]}" lazy_eval="false" />
