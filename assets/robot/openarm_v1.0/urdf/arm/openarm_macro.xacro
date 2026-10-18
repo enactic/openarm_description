@@ -14,6 +14,8 @@ limitations under the License.
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
+  <xacro:include filename="$(find openarm_description)/assets/common/links.xacro" />
+
   <xacro:macro name="openarm-inertials" params="name inertials:=^ reflect:=1">
     <xacro:unless value="${name in inertials}">
       ${xacro.warning('No inertia properties defined for: ' + name)}
@@ -21,9 +23,7 @@ limitations under the License.
     <xacro:if value="${name in inertials}">
       <xacro:property name="I" value="${inertials[name]}" lazy_eval="false" />
       <inertial>
-        <origin
-          xyz="${I.origin.x} ${reflect * I.origin.y} ${I.origin.z}"
-          rpy="${I.origin.roll} ${I.origin.pitch} ${I.origin.yaw}" />
+        <xacro:openarm_emit_origin origin="${I.origin}" reflect_y="${reflect}" reflect_rotation="${True}" />
         <mass value="${I.mass}" />
         <xacro:if value="${'inertia' in I}">
           <xacro:property name="inert" value="${I.inertia}" />
@@ -39,13 +39,13 @@ limitations under the License.
     <xacro:property name="prefix" value="${'' if no_prefix else 'openarm' + '_' +  arm_prefix}" />
     <link name="${prefix}${name}">
       <visual name="${prefix}${name}_visual">
-        <xacro:openarm-kinematics-link config="${kinematics_link}" name="${name}" />
+        <xacro:openarm-kinematics-link config="${kinematics_link}" name="${name}" reflect="${reflect}" />
         <geometry>
           <mesh filename="package://${description_pkg}/assets/robot/openarm_v1.0/mesh/arm/visual/${name}.dae" scale="0.001 ${0.001*reflect} 0.001" />
         </geometry>
       </visual>
       <collision name="${prefix}${name}_collision">
-        <xacro:openarm-kinematics-link config="${kinematics_link}" name="${name}" />
+        <xacro:openarm-kinematics-link config="${kinematics_link}" name="${name}" reflect="${reflect}" />
         <geometry>
           <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/collision/${name}_symp.stl" scale="0.001 ${0.001*reflect} 0.001" />
           <!-- <mesh filename="package://openarm_description/meshes/arm/${arm_type}/collision/${name}.stl" scale="0.001 0.001 0.001" /> -->
@@ -141,10 +141,26 @@ limitations under the License.
     </xacro:unless>
   </xacro:macro>
 
-  <xacro:macro name="openarm-kinematics-link" params="config name">
+  <xacro:macro name="openarm-kinematics-link" params="config name reflect:=1">
     <xacro:property name="kinematics_link" value="${config[name]['kinematic']}" lazy_eval="false" />
-    <origin rpy="${kinematics_link.roll} ${kinematics_link.pitch} ${kinematics_link.yaw}"
-            xyz="${kinematics_link.x} ${kinematics_link.y} ${kinematics_link.z}" />
+    <xacro:openarm_emit_origin origin="${kinematics_link}" reflect_y="${reflect}" reflect_rotation="${True}" />
+  </xacro:macro>
+
+  <xacro:macro name="openarm_joint_from_config"
+    params="name parent child axis prefix kinematics joint_limits reflect:=1 offset:=none limit_offset:=0 mirror_limits:=${False}">
+    <xacro:property name="origin_cfg" value="${kinematics[name]['kinematic']}" />
+    <xacro:property name="offset_cfg" value="${offset[name]['kinematic_offset'] if offset != 'none' else dict(x=0, y=0, z=0, roll=0, pitch=0, yaw=0)}" />
+    <xacro:property name="right_origin" value="${dict([(key, origin_cfg[key] + offset_cfg[key]) for key in ['x', 'y', 'z', 'roll', 'pitch', 'yaw']])}" />
+    <xacro:property name="axis_values" value="${[float(value) for value in axis.split()]}" />
+    <xacro:property name="limit" value="${joint_limits[name]['limit']}" />
+    <xacro:openarm_emit_joint
+      joint_name="${prefix}${name}" joint_type="revolute"
+      parent_link="${prefix}${parent}" child_link="${prefix}${child}"
+      joint_origins="${dict()}" joint_axes="${dict()}" joint_limits="${dict()}"
+      origin_override="${right_origin}"
+      axis_override="${dict(x=axis_values[0], y=axis_values[1], z=axis_values[2])}"
+      limit_override="${dict(lower=limit.lower + limit_offset, upper=limit.upper + limit_offset, effort=limit.effort, velocity=limit.velocity)}"
+      reflect_y="${reflect}" reflect_rotation="${True}" mirror_limit_sign="${mirror_limits}" />
   </xacro:macro>
 
 </robot>

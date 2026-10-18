@@ -19,6 +19,7 @@ limitations under the License.
   <xacro:macro name="openarm_arm" params="arm_type arm_prefix:='' no_prefix:=false description_pkg:='openarm_description' connected_to:='base' xyz:='0 0 0' rpy:='0 0 0' joint_limits inertials kinematics kinematics_link kinematics_offset:=none " >
 
     <xacro:property name="prefix" value="${'' if no_prefix else 'openarm' + '_' + arm_prefix}" />
+    <xacro:property name="mirror_rules" value="${xacro.load_yaml('$(find openarm_description)/assets/robot/openarm_v1.0/config/arm/mirroring.yaml')}" />
 
     <xacro:if value="${arm_prefix == '' or arm_prefix == 'right_'}">
       <xacro:property name="reflect" value="1" />
@@ -36,88 +37,60 @@ limitations under the License.
       </joint>
     </xacro:unless>
 
-    <xacro:link_with_sc no_prefix="${no_prefix}" name="link0" kinematics_link="${kinematics_link}" inertials="${inertials}" reflect="${reflect}"/>
+    <xacro:link_with_sc no_prefix="${no_prefix}" name="link0" kinematics_link="${kinematics_link}" inertials="${inertials}" reflect="${reflect if 'link0' in mirror_rules.links else 1}"/>
 
-    <xacro:link_with_sc no_prefix="${no_prefix}" name="link1" kinematics_link="${kinematics_link}" inertials="${inertials}" reflect="${reflect}"/>
+    <xacro:link_with_sc no_prefix="${no_prefix}" name="link1" kinematics_link="${kinematics_link}" inertials="${inertials}" reflect="${reflect if 'link1' in mirror_rules.links else 1}"/>
 
-    <joint name="${prefix}joint1" type="revolute">
-      <xacro:openarm-kinematics name="joint1" config="${kinematics}" reflect="${reflect}"/>
-      <parent link="${prefix}link0" />
-      <child link="${prefix}link1" />
-      <axis xyz="0 0 1" />
-      <xacro:openarm-limits name="joint1" config="${joint_limits}" offset="${-2.094396 if arm_prefix=='left_' else 0}"/>
-    </joint>
+    <xacro:openarm_joint_from_config
+      name="joint1" parent="link0" child="link1" axis="0 0 1" prefix="${prefix}"
+      kinematics="${kinematics}" joint_limits="${joint_limits}"
+     reflect="${reflect if 'joint1' in mirror_rules.joints else 1}" mirror_limits="${reflect == -1 and 'joint1' in mirror_rules.joints and arm_prefix == 'left_'}" />
 
     <!-- for bimanual offset -->
-    <xacro:link_with_sc no_prefix="${no_prefix}" name="link2" kinematics_link="${kinematics_link}" inertials="${inertials}" reflect="${reflect}"/>
+    <xacro:link_with_sc no_prefix="${no_prefix}" name="link2" kinematics_link="${kinematics_link}" inertials="${inertials}" reflect="${reflect if 'link2' in mirror_rules.links else 1}"/>
 
-    <xacro:property name="limit_offset_joint2" value="0" />
+    <xacro:property name="limit_offset_joint2" value="${pi/2 if ('right_' in prefix or 'left_' in prefix) else 0}" />
 
-    <xacro:if value="${prefix.find('right_') != -1}">
-      <xacro:property name="limit_offset_joint2" value="${pi/2}" />
-    </xacro:if>
+    <xacro:openarm_joint_from_config
+      name="joint2" parent="link1" child="link2" axis="-1 0 0" prefix="${prefix}"
+      kinematics="${kinematics}" joint_limits="${joint_limits}"
+     reflect="${reflect if 'joint2' in mirror_rules.joints else 1}" mirror_limits="${reflect == -1 and 'joint2' in mirror_rules.joints}"
+      offset="${kinematics_offset}" limit_offset="${limit_offset_joint2}" />
 
-    <xacro:if value="${prefix.find('left_') != -1}">
-      <xacro:property name="limit_offset_joint2" value="${-pi/2}" />
-    </xacro:if>
+    <xacro:link_with_sc no_prefix="${no_prefix}" name="link3" kinematics_link="${kinematics_link}" inertials="${inertials}" reflect="${reflect if 'link3' in mirror_rules.links else 1}"/>
 
-    <joint name="${prefix}joint2" type="revolute">
-      <xacro:openarm-kinematics name="joint2" config="${kinematics}" offset="${kinematics_offset}" reflect="${reflect}"/>
-      <parent link="${prefix}link1" />
-      <child link="${prefix}link2" />
-      <axis xyz="-1 0 0" />
-      <xacro:openarm-limits name="joint2" config="${joint_limits}" reflect="${reflect}" offset="${limit_offset_joint2}"/>
-    </joint>
+    <xacro:openarm_joint_from_config
+      name="joint3" parent="link2" child="link3" axis="0 0 1" prefix="${prefix}"
+      kinematics="${kinematics}" joint_limits="${joint_limits}"
+     reflect="${reflect if 'joint3' in mirror_rules.joints else 1}" mirror_limits="${reflect == -1 and 'joint3' in mirror_rules.joints}" />
 
-    <xacro:link_with_sc no_prefix="${no_prefix}" name="link3" kinematics_link="${kinematics_link}" inertials="${inertials}"/>
+    <xacro:link_with_sc no_prefix="${no_prefix}" name="link4" kinematics_link="${kinematics_link}" reflect="${reflect if 'link4' in mirror_rules.links else 1}"/>
 
-    <joint name="${prefix}joint3" type="revolute">
-      <xacro:openarm-kinematics name="joint3" config="${kinematics}" />
-      <parent link="${prefix}link2" />
-      <child link="${prefix}link3" />
-      <axis xyz="0 0 1" />
-      <xacro:openarm-limits name="joint3" config="${joint_limits}" />
-    </joint>
+    <xacro:openarm_joint_from_config
+      name="joint4" parent="link3" child="link4" axis="0 1 0" prefix="${prefix}"
+      kinematics="${kinematics}" joint_limits="${joint_limits}"
+     reflect="${reflect if 'joint4' in mirror_rules.joints else 1}" mirror_limits="${reflect == -1 and 'joint4' in mirror_rules.joints}" />
 
-    <xacro:link_with_sc no_prefix="${no_prefix}" name="link4" kinematics_link="${kinematics_link}" />
+    <xacro:link_with_sc no_prefix="${no_prefix}" name="link5" kinematics_link="${kinematics_link}" inertials="${inertials}" reflect="${reflect if 'link5' in mirror_rules.links else 1}"/>
 
-    <joint name="${prefix}joint4" type="revolute">
-      <xacro:openarm-kinematics name="joint4" config="${kinematics}" />
-      <parent link="${prefix}link3" />
-      <child link="${prefix}link4" />
-      <axis xyz="0 1 0" />
-      <xacro:openarm-limits name="joint4" config="${joint_limits}" />
-    </joint>
+    <xacro:openarm_joint_from_config
+      name="joint5" parent="link4" child="link5" axis="0 0 1" prefix="${prefix}"
+      kinematics="${kinematics}" joint_limits="${joint_limits}"
+     reflect="${reflect if 'joint5' in mirror_rules.joints else 1}" mirror_limits="${reflect == -1 and 'joint5' in mirror_rules.joints}" />
 
-    <xacro:link_with_sc no_prefix="${no_prefix}" name="link5" kinematics_link="${kinematics_link}" inertials="${inertials}" reflect="${reflect}" />
+    <xacro:link_with_sc no_prefix="${no_prefix}" name="link6" kinematics_link="${kinematics_link}" inertials="${inertials}" reflect="${reflect if 'link6' in mirror_rules.links else 1}"/>
 
-    <joint name="${prefix}joint5" type="revolute">
-      <xacro:openarm-kinematics name="joint5" config="${kinematics}" reflect="${reflect}"/>
-      <parent link="${prefix}link4" />
-      <child link="${prefix}link5" />
-      <axis xyz="0 0 1" />
-      <xacro:openarm-limits name="joint5" config="${joint_limits}" />
-    </joint>
+    <xacro:openarm_joint_from_config
+      name="joint6" parent="link5" child="link6" axis="1 0 0" prefix="${prefix}"
+      kinematics="${kinematics}" joint_limits="${joint_limits}"
+     reflect="${reflect if 'joint6' in mirror_rules.joints else 1}" mirror_limits="${reflect == -1 and 'joint6' in mirror_rules.joints}" />
 
-    <xacro:link_with_sc no_prefix="${no_prefix}" name="link6" kinematics_link="${kinematics_link}" inertials="${inertials}" reflect="${reflect}"/>
+    <xacro:link_with_sc no_prefix="${no_prefix}" name="link7" kinematics_link="${kinematics_link}" inertials="${inertials}" reflect="${reflect if 'link7' in mirror_rules.links else 1}"/>
 
-    <joint name="${prefix}joint6" type="revolute">
-      <xacro:openarm-kinematics name="joint6" config="${kinematics}" />
-      <parent link="${prefix}link5" />
-      <child link="${prefix}link6" />
-      <axis xyz="1 0 0" />
-      <xacro:openarm-limits name="joint6" config="${joint_limits}" />
-    </joint>
-
-    <xacro:link_with_sc no_prefix="${no_prefix}" name="link7" kinematics_link="${kinematics_link}" inertials="${inertials}" reflect="${reflect}"/>
-
-    <joint name="${prefix}joint7" type="revolute">
-      <xacro:openarm-kinematics name="joint7" config="${kinematics}" />
-      <parent link="${prefix}link6"/>
-      <child link="${prefix}link7"/>
-      <axis xyz="0 ${reflect} 0"/>
-      <xacro:openarm-limits name="joint7" config="${joint_limits}" />
-    </joint>
+    <xacro:openarm_joint_from_config
+      name="joint7" parent="link6" child="link7" axis="0 1 0" prefix="${prefix}"
+      kinematics="${kinematics}" joint_limits="${joint_limits}"
+     reflect="${reflect if 'joint7' in mirror_rules.joints else 1}" mirror_limits="${reflect == -1 and 'joint7' in mirror_rules.joints}" />
 
   </xacro:macro>
 </robot>

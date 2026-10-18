@@ -30,6 +30,7 @@ if(BUILD_TESTING)
   find_package(ament_cmake_pytest REQUIRED)
   ament_add_pytest_test(v2_camera_components test/test_v2_camera_components.py)
   ament_add_pytest_test(v2_assembly test/test_v2_assembly.py)
+  ament_add_pytest_test(v1_mirroring test/test_v1_mirroring.py)
 endif()
 
 foreach(install_dir assets launch rviz scripts)
