@@ -22,8 +22,6 @@ limitations under the License.
         arm_type="${arm_type}"
         arm_prefix="${arm_prefix}"
         ee_type="${ee_type}"
-        xyz_ee="${xyz_ee}"
-        rpy_ee="${rpy_ee}"
         ee_kinematics="${ee_kinematics}"
         ee_kinematics_link="${ee_kinematics_link}"
         ee_inertials="${ee_inertials}"
