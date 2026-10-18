@@ -42,7 +42,7 @@ class V1MirroringTest(unittest.TestCase):
                         for j in robot.findall('joint')}
             roots = {link.get('name')
                      for link in robot.findall('link')} - children
-            self.assertEqual(roots, {prefix + 'link0'})
+            self.assertEqual(roots, {'world'})
             for i in range(1, 8):
                 joint = robot.find(f"joint[@name='{prefix}joint{i}']")
                 self.assertEqual(
@@ -66,10 +66,10 @@ class V1MirroringTest(unittest.TestCase):
             self.assertAlmostEqual(
                 float(limit.get('upper')), 1.745329 + sign * math.pi / 2)
 
-    def test_elbow_joint_origins_keep_their_local_offsets(self):
+    def test_elbow_joint_origins_are_on_the_centerline(self):
         robot = expand()
         for side in ['left', 'right']:
-            for index, expected in [(4, 0.0315), (5, -0.0315)]:
+            for index, expected in [(4, 0.0), (5, 0.0)]:
                 joint = robot.find(
                     f"joint[@name='openarm_{side}_joint{index}']")
                 self.assertEqual(

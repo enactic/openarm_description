@@ -16,7 +16,7 @@ limitations under the License.
 
   <xacro:include filename="$(find openarm_description)/assets/common/assembly.xacro" />
 
-  <xacro:include filename="$(find openarm_description)/assets/robot/openarm_v2.0/urdf/ros2_control/openarm_robot.ros2_control.xacro" />
+  <xacro:include filename="$(find openarm_description)/assets/common/ros2_control.xacro" />
 
   <xacro:arg name="robot_preset" default="default_bimanual" />
   <xacro:arg name="emit_grasp_frame" default="false" />
@@ -38,7 +38,7 @@ limitations under the License.
     emit_grasp_frame="$(arg emit_grasp_frame)" />
 
   <xacro:if value="$(arg ros2_control)">
-    <xacro:openarm_v20_ros2_control robot_preset="${robot_preset_cfg}" config_root="${config_root}"
+    <xacro:openarm_ros2_control robot_preset="${robot_preset_cfg}" config_root="${config_root}"
       can_interfaces="${dict(left='$(arg left_can_interface)', right='$(arg right_can_interface)')}"
       use_fake_hardware="$(arg use_fake_hardware)" fake_sensor_commands="$(arg fake_sensor_commands)" can_fd="$(arg can_fd)" />
   </xacro:if>

@@ -20,7 +20,7 @@ limitations under the License.
     <link name="${link_name}" />
     <joint name="${link_name}_joint" type="fixed">
       <xacro:if value="${frame_shift != 'none'}">
-        <xacro:openarm_emit_composed_origin first="${frame_shift}" second="${origin}" reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}" reflect_rotation="${True}" />
+        <xacro:openarm_emit_shifted_origin frame_shift="${frame_shift}" origin="${origin}" reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}" reflect_rotation="${True}" />
       </xacro:if>
       <xacro:unless value="${frame_shift != 'none'}">
         <xacro:openarm_emit_origin origin="${origin}" reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}" reflect_rotation="${True}" />

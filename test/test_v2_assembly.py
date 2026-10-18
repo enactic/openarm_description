@@ -312,6 +312,78 @@ class AssemblyTest(unittest.TestCase):
                     'prismatic',
                 )
 
+    def test_pinch_overrides_precede_reflection_and_survive_collapse(self):
+        def override(preset):
+            component = preset['primary_arm_end_effector']
+            component['origin_override_joints'] = {'finger_joint1': {
+                'x': .03, 'y': .015, 'z': .01,
+                'roll': .2, 'pitch': .1, 'yaw': .3}}
+            component['limit_override_joints'] = {'finger_joint1': {
+                'lower': -.2, 'upper': .6, 'effort': 7, 'velocity': 10}}
+            preset['primary_arm_end_effector'] = component
+            return preset
+
+        first, second = [expand_modified(
+            {'robot_presets/default_bimanual.yaml': override},
+            collapse_empty_end=collapse,
+        ) for collapse in [False, True]]
+        for robot in [first, second]:
+            joint = robot.find("joint[@name='openarm_left_finger_joint1']")
+            limit = joint.find('limit')
+            self.assertEqual(float(limit.get('lower')), -.6)
+            self.assertEqual(float(limit.get('upper')), .2)
+            values = [float(v)
+                      for v in joint.find('origin').get('rpy').split()]
+            for actual, expected in zip(values, [-.2, .1, -.3]):
+                self.assertAlmostEqual(actual, expected)
+        a, b = poses(first), poses(second)
+        for name in ['openarm_left_ee_link1', 'openarm_left_ee_link2']:
+            self.assertLess(max(abs(x-y) for ra, rb in zip(a[name], b[name])
+                                for x, y in zip(ra, rb)), 1e-10)
+
+    def test_pinch_excluded_joints_keep_their_axes(self):
+        def exclude(preset):
+            component = preset['primary_arm_end_effector']
+            component['reflect'] = {
+                'x': -1, 'y': 1, 'z': 1,
+                'include': {'links': ['base_link'], 'joints': [],
+                            'reference_points': []},
+            }
+            preset['primary_arm_end_effector'] = component
+            return preset
+
+        robot = expand_modified(
+            {'robot_presets/default_bimanual.yaml': exclude})
+        for index in [1, 2]:
+            left = robot.find(
+                f"joint[@name='openarm_left_finger_joint{index}']")
+            right = robot.find(
+                f"joint[@name='openarm_right_finger_joint{index}']")
+            self.assertEqual(left.find('axis').attrib,
+                             right.find('axis').attrib)
+            self.assertEqual(left.find('limit').attrib,
+                             right.find('limit').attrib)
+
+    def test_gripper_names_follow_topology_namespaces(self):
+        def names(value):
+            value['link_prefix'] = 'tool_'
+            value['joint_prefix'] = 'act_'
+            return value
+
+        robot = expand_modified(
+            {'pinch_gripper/config/struct/topology.yaml': names})
+        for side in ['left', 'right']:
+            prefix = 'openarm_' + side + '_'
+            self.assertIsNotNone(robot.find(
+                f"link[@name='{prefix}tool_base_link']"))
+            self.assertIsNotNone(robot.find(
+                f"joint[@name='{prefix}act_joint1']"))
+            self.assertIsNotNone(robot.find(
+                f"ros2_control/joint[@name='{prefix}act_joint1']"))
+            second = robot.find(f"joint[@name='{prefix}act_joint2']")
+            self.assertEqual(second.find('mimic').get(
+                'joint'), prefix+'act_joint1')
+
     def test_unknown_topology_link_rejected(self):
         def change(value):
             joints = value['joints']

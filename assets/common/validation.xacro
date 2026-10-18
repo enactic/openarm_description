@@ -83,11 +83,15 @@ limitations under the License.
         message="${'Invalid robot preset: component `%s` must define config. Use null when no extra config index is needed.' % component_name}" />
       <xacro:if value="${component_type == 'robot'}">
         <xacro:openarm_require
-          condition="${component_cfg['product'] == 'openarm_v2.0'}"
+          condition="${component_cfg['product'] in ['openarm_v1.0', 'openarm_v2.0']}"
           message="${'Invalid robot preset: robot component `%s` uses unsupported product `%s`.' % (component_name, component_cfg['product'])}" />
         <xacro:openarm_require
           condition="${component_config in ['body', 'arm']}"
           message="${'Invalid robot preset: robot component `%s` has unsupported config `%s`.' % (component_name, component_config)}" />
+      </xacro:if>
+      <xacro:if value="${component_type == 'end_effector'}">
+        <xacro:openarm_require condition="${component_cfg['product'] in ['pinch_gripper', 'parallel_link']}"
+          message="${'Unsupported end effector `%s`.' % component_cfg['product']}" />
       </xacro:if>
       <xacro:if value="${component_type == 'sensor'}">
         <xacro:openarm_require

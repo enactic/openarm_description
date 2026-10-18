@@ -42,8 +42,12 @@ def transform(origin):
 
 
 def poses(robot):
-    values = {'world': identity()}
     pending = robot.findall('joint')
+    children = {joint.find('child').get('link') for joint in pending}
+    roots = {link.get('name') for link in robot.findall('link')} - children
+    if len(roots) != 1:
+        raise AssertionError('Expected one URDF root')
+    values = {roots.pop(): identity()}
     while pending:
         progressed = False
         for joint in list(pending):

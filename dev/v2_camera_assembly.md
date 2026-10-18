@@ -19,7 +19,7 @@ world
         └── openarm_body_zed_mount_base_link
             └── openarm_body_zed_mount_camera_mount_point
                 └── openarm_body_zed_camera_link
-                    └── 官方 ZED 中心、左右相机、光学与 IMU 坐标
+                    └── 官方 ZED 中心、左右相机和光学坐标
 ```
 
 安装座属于独立 `accessory` 组件，文件位于 `assets/accessory/zed_mount/`。其几何包含 Head_Cover、cameramount_head_zed 和两颗 SCB2-5 螺丝；相机模型由 `zed_description` 提供。
@@ -57,7 +57,7 @@ origin:
   yaw: 0.0
 ```
 
-这是针对官方可视模型的装配变换；实机外参调整入口为 `body_camera.connection.origin`。光学与 IMU 坐标继续由官方宏生成。
+这是针对官方可视模型的装配变换；实机外参调整入口为 `body_camera.connection.origin`。相机中心、左右相机和光学坐标继续由官方宏生成。
 
 安装座使用单独导出的 CAD 惯性，质量为 **0.13704 kg**。官方 ZED 宏没有提供相机惯性，所以相机 link 当前没有独立 inertial 项。
 
@@ -123,7 +123,7 @@ colcon test --packages-select openarm_description \
 
 ## Xacro 组织与装配规则
 
-V1 保留原入口和实现。V2 入口为 `assets/robot/openarm_v2.0/urdf/openarm_v20.urdf.xacro`，负责读取 preset、调用装配宏和按需输出控制接口。
+V1、V2 保留各自入口，共用装配、运动链和控制生成逻辑。V1 的配置与夹爪归属见 [v1_mirroring.md](v1_mirroring.md)。V2 入口为 `assets/robot/openarm_v2.0/urdf/openarm_v20.urdf.xacro`，负责读取 preset、调用装配宏和按需输出控制接口。
 
 | 位置 | 职责 |
 |---|---|
@@ -133,7 +133,8 @@ V1 保留原入口和实现。V2 入口为 `assets/robot/openarm_v2.0/urdf/opena
 | `assets/common/components.xacro` | 组件配置加载与具体产品分发 |
 | `assets/common/validation.xacro` | 组件连接和 link/joint 拓扑检查 |
 | `assets/common/assembly.xacro` | 连接变换、末端空 link 折叠、组件树生成 |
-| `assets/robot/openarm_v2.0/urdf/arm/` | V2 手臂生成宏 |
+| `assets/common/kinematic_chain.xacro` | 拓扑驱动的手臂和多 link 组件生成 |
+| `assets/common/ros2_control.xacro` | 按启用组件生成控制接口 |
 | `assets/end_effector/pinch_gripper/urdf/` | 夹爪宏和独立夹爪入口 |
 | `assets/sensor/zed/urdf_wrapper/` | 官方 ZED 模型适配 |
 
@@ -143,7 +144,7 @@ V1 保留原入口和实现。V2 入口为 `assets/robot/openarm_v2.0/urdf/opena
 
 `emit_grasp_frame` 保留原入口参数，并使用同一个参考坐标生成器。`assets/robot/openarm_v2.0/config/arm/struct/topology.yaml` 中的 `collapse_empty_end: true` 控制手臂末端折叠，左右臂共用该设置；省略该字段或设置为 `false` 时保留末端 link。开启时，当手臂末端 link 没有 visual、collision、inertial 且有一个合适的子组件时，将它折叠到子组件根 link。当前 V2 是将空 `link7` 折叠到 `ee_base_link`，并将 20.5 mm 安装变换传递给几何、COM、手指关节和参考点。折叠后同名 `ee_base_link` 的坐标原点改变，实体及参考点的世界位姿保持一致。
 
-关节名称、类型和父子关系从 `topology.yaml` 读取；`links` 的首项是组件根 link，末项用于选择默认连接端。Pinch gripper 的基座与手指共用公共 link 输出宏。
+`origin_override_joints` 和 `limit_override_joints` 在左右镜像之前覆盖完整的关节配置。关节名称、类型和父子关系从 `topology.yaml` 读取；`links` 的首项是组件根 link，末项用于选择默认连接端。Pinch gripper 的基座与手指共用公共 link 输出宏。组件内部的 `link_prefix`、`joint_prefix` 在 topology 中声明；模型、mimic 和控制接口使用同一套名称。
 
 ## 控制与导出
 
@@ -155,4 +156,4 @@ V2 Xacro 的 `ros2_control` 默认 `true`；RViz launch 的该参数默认 `fals
 bash scripts/generate_v20_urdfs.sh --all --no-ros2-control
 ```
 
-需要保留末端空 link 时，将 arm topology 中的 `collapse_empty_end` 改为 `false`；Xacro、launch 和导出脚本不再提供折叠参数。`--grasp-frame` 输出抓取参考坐标。现有 V1 入口、配置和控制实现保持独立。
+需要保留末端空 link 时，将 arm topology 中的 `collapse_empty_end` 改为 `false`；Xacro、launch 和导出脚本不再提供折叠参数。`--grasp-frame` 输出抓取参考坐标。V1 与 V2 的入口保持独立，配置通过同一公共装配层展开。

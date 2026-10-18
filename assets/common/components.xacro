@@ -17,7 +17,7 @@ limitations under the License.
   <xacro:include filename="$(find openarm_description)/assets/common/links.xacro" />
   <xacro:include filename="$(find openarm_description)/assets/common/reference_frames.xacro" />
   <xacro:include filename="$(find openarm_description)/assets/common/validation.xacro" />
-  <xacro:include filename="$(find openarm_description)/assets/robot/openarm_v2.0/urdf/arm/openarm_arm.xacro" />
+  <xacro:include filename="$(find openarm_description)/assets/common/kinematic_chain.xacro" />
   <xacro:include filename="$(find openarm_description)/assets/end_effector/pinch_gripper/urdf/pinch_gripper_macro.xacro" />
   <xacro:include filename="$(find openarm_description)/assets/sensor/zed/urdf_wrapper/openarm_zed_wrapper.xacro" />
 
@@ -62,7 +62,7 @@ limitations under the License.
     <xacro:unless value="${source_type == 'sensor'}">
       <xacro:if value="${source_type == 'robot'}">
         <xacro:property name="component_type" value="${component_config}" lazy_eval="false" />
-        <xacro:property name="component_cfg_root" value="${config_root + '/' + component_config}" lazy_eval="false" />
+        <xacro:property name="component_cfg_root" value="${'$(find openarm_description)/assets/robot/' + product + '/config/' + component_config}" lazy_eval="false" />
       </xacro:if>
       <xacro:if value="${source_type == 'end_effector'}">
         <xacro:property name="component_type" value="end_effector" lazy_eval="false" />
@@ -77,8 +77,9 @@ limitations under the License.
         <xacro:property name="component_cfg_root" value="${'$(find openarm_description)/assets/accessory/' + product + '/config'}" lazy_eval="false" />
       </xacro:if>
 
-      <xacro:property name="component_link_prefix" value="${component_prefix + ('ee_' if component_type == 'end_effector' else '')}" lazy_eval="false" />
       <xacro:property name="component_topology" value="${xacro.load_yaml(component_cfg_root + '/struct/topology.yaml')}" lazy_eval="false" />
+      <xacro:property name="component_link_prefix" value="${component_prefix + component_topology.get('link_prefix', '')}" lazy_eval="false" />
+      <xacro:property name="component_joint_prefix" value="${component_prefix + component_topology.get('joint_prefix', '')}" lazy_eval="false" />
       <xacro:openarm_validate_topology topology="${component_topology}" component="${component_name}" />
       <xacro:property name="component_reference_points" value="${xacro.load_yaml(component_cfg_root + '/struct/reference_points.yaml')}" lazy_eval="false" />
       <xacro:if value="${component_type == 'accessory'}">
@@ -109,6 +110,7 @@ limitations under the License.
                      config_root=component_cfg_root,
                      prefix=component_prefix,
                      link_prefix=component_link_prefix,
+                     joint_prefix=component_joint_prefix,
                      root_link_actual=component_root_link_actual,
                      topology=component_topology,
                      reference_points=component_reference_points,
@@ -149,22 +151,24 @@ limitations under the License.
         base_frame_shift="${component_runtime['base_frame_shift']}" />
     </xacro:if>
 
-    <xacro:if value="${component_type == 'arm'}">
-      <xacro:openarm_v20_arm
-        prefix="${component_desc['prefix']}"
+    <xacro:if value="${component_type == 'arm' or (component_type == 'end_effector' and component_desc['product'] == 'parallel_link')}">
+      <xacro:openarm_emit_kinematic_component
+        link_prefix="${component_desc['link_prefix']}"
+        joint_prefix="${component_desc['joint_prefix']}"
         connected_to="${component_runtime['resolved_connected_to']}"
         mount_origin="${component_runtime['resolved_mount_origin']}"
         topology="${component_desc['topology']}"
         joint_origins="${component_desc['joint_origins']}"
         joint_axes="${component_desc['joint_axes']}"
         joint_limits="${component_desc['joint_limits']}"
+        joint_mimics="${component_desc['joint_mimics']}"
+        origin_override_joints="${component_runtime['origin_override_joints']}"
         inertials="${component_desc['inertials']}"
         visuals="${component_desc['visuals']}"
         collisions="${component_desc['collisions']}"
         reflect_x="${component_runtime['reflect_x']}"
         reflect_y="${component_runtime['reflect_y']}"
         reflect_z="${component_runtime['reflect_z']}"
-        component_reflects="${component_runtime['component_reflects']}"
         reflect_include_links="${component_runtime['reflect_include_links']}"
         reflect_include_joints="${component_runtime['reflect_include_joints']}"
         limit_override_joints="${component_runtime['limit_override_joints']}"
@@ -174,7 +178,7 @@ limitations under the License.
         base_frame_shift="${component_runtime['base_frame_shift']}" />
     </xacro:if>
 
-    <xacro:if value="${component_type == 'end_effector'}">
+    <xacro:if value="${component_type == 'end_effector' and component_desc['product'] == 'pinch_gripper'}">
       <xacro:openarm_pinch_gripper
         prefix="${component_desc['prefix']}"
         connected_to="${component_runtime['resolved_connected_to']}"
@@ -195,6 +199,7 @@ limitations under the License.
         reflect_include_links="${component_runtime['reflect_include_links']}"
         reflect_include_joints="${component_runtime['reflect_include_joints']}"
         reflect_include_reference_points="${component_runtime['reflect_include_reference_points']}"
+        origin_override_joints="${component_runtime['origin_override_joints']}"
         limit_override_joints="${component_runtime['limit_override_joints']}"
         emit_grasp_frame="${emit_grasp_frame}"
         skip_mount_joint="${component_runtime['skip_mount_joint']}"
@@ -208,7 +213,7 @@ limitations under the License.
         mount_origin="${component_runtime['resolved_mount_origin']}"
         prefix="${component_desc['prefix']}" />
     </xacro:if>
-    <xacro:unless value="${component_type == 'end_effector'}">
+    <xacro:unless value="${component_type == 'end_effector' and component_desc['product'] == 'pinch_gripper'}">
       <xacro:openarm_emit_reference_frames
         reference_points="${component_desc['reference_points']}"
         prefix="${component_desc['root_link_actual'] + '_' if component_type == 'body' else component_desc['prefix']}"
