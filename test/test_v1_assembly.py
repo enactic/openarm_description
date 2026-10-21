@@ -72,6 +72,19 @@ class V1AssemblyTest(unittest.TestCase):
                 self.assertEqual(set(controlled), expected)
                 self.assertEqual(len(controlled), len(set(controlled)))
 
+    def test_external_body_keeps_closed_cover_mass(self):
+        for no_prefix in [False, True]:
+            robot = expand(no_prefix=no_prefix)
+            name = 'body_link0' if no_prefix else 'openarm_body_link0'
+            body = robot.find(f"link[@name='{name}']")
+            self.assertEqual(
+                float(body.find('inertial/mass').get('value')), 3.74)
+            self.assertTrue(body.find('visual/geometry/mesh').get('filename').startswith(
+                'package://openarm_description/assets/body/v1.0/'))
+            inertia = body.find('inertial/inertia')
+            for key in ['ixy', 'ixz', 'iyz']:
+                self.assertEqual(float(inertia.get(key)), 0)
+
     def test_tool_owns_link7_and_keeps_the_hand_tree(self):
         arm = xacro.load_yaml(
             str(ROOT / 'assets/robot/openarm_v1.0/config/arm/inertials/nominal.yaml'))

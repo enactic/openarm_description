@@ -75,9 +75,26 @@ class AssemblyTest(unittest.TestCase):
                     1e-10,
                 )
 
+    def test_body_can_assemble_without_arms(self):
+        def body_only(value):
+            robot = value['robot']
+            robot['components'] = ['body']
+            value['robot'] = robot
+            return value
+
+        robot = expand_modified(
+            {'robot_presets/default_bimanual.yaml': body_only})
+        body = robot.find("link[@name='openarm_body_link0']")
+        self.assertIsNotNone(body)
+        self.assertTrue(body.find('visual/geometry/mesh').get('filename').startswith(
+            'package://openarm_description/assets/body/v2.0/'))
+        self.assertFalse(robot.findall('ros2_control'))
+        self.assertFalse([joint for joint in robot.findall('joint')
+                          if joint.get('type') != 'fixed'])
+
     def test_camera_mount_emit_preserves_pose(self):
         for parent_file in [
-            'config/body/struct/reference_points.yaml',
+            'body/v2.0/config/struct/reference_points.yaml',
             'accessory/zed_mount/config/struct/reference_points.yaml',
         ]:
             off, on = [

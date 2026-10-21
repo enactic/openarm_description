@@ -43,7 +43,7 @@ limitations under the License.
         condition="${robot_preset[attach_to]['enabled']}"
         message="${'Invalid robot preset: component `%s` attaches to disabled parent `%s`.' % (component_name, attach_to)}" />
       <xacro:openarm_require
-        condition="${robot_preset[attach_to]['type'] in ['robot', 'end_effector', 'sensor', 'accessory']}"
+        condition="${robot_preset[attach_to]['type'] in ['robot', 'body', 'end_effector', 'sensor', 'accessory']}"
         message="${'Invalid robot preset: component `%s` attaches to unsupported parent type `%s` on `%s`.' % (component_name, robot_preset[attach_to]['type'], attach_to)}" />
 
       <xacro:openarm_validate_component_lineage
@@ -73,7 +73,7 @@ limitations under the License.
       <xacro:property name="reflect_cfg" value="${component_cfg['reflect'] if 'reflect' in component_cfg else dict(x=1, y=1, z=1)}" lazy_eval="false" />
 
       <xacro:openarm_require
-        condition="${component_type in ['robot', 'end_effector', 'sensor', 'accessory']}"
+        condition="${component_type in ['robot', 'body', 'end_effector', 'sensor', 'accessory']}"
         message="${'Invalid robot preset: component `%s` has unsupported type `%s`.' % (component_name, component_type)}" />
       <xacro:openarm_require
         condition="${'product' in component_cfg}"
@@ -86,8 +86,14 @@ limitations under the License.
           condition="${component_cfg['product'] in ['openarm_v1.0', 'openarm_v2.0']}"
           message="${'Invalid robot preset: robot component `%s` uses unsupported product `%s`.' % (component_name, component_cfg['product'])}" />
         <xacro:openarm_require
-          condition="${component_config in ['body', 'arm']}"
+          condition="${component_config == 'arm'}"
           message="${'Invalid robot preset: robot component `%s` has unsupported config `%s`.' % (component_name, component_config)}" />
+      </xacro:if>
+      <xacro:if value="${component_type == 'body'}">
+        <xacro:openarm_require condition="${component_cfg['product'] in ['v1.0', 'v2.0']}"
+          message="${'Unsupported body `%s`.' % component_cfg['product']}" />
+        <xacro:openarm_require condition="${component_config == None and 'link_name' in component_cfg}"
+          message="${'Body `%s` requires config: null and link_name.' % component_name}" />
       </xacro:if>
       <xacro:if value="${component_type == 'end_effector'}">
         <xacro:openarm_require condition="${component_cfg['product'] in ['pinch_gripper', 'parallel_link']}"

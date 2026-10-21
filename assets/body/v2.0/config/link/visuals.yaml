@@ -14,15 +14,15 @@
 
 body_link0:
   origin:
-    x: 0
-    y: 0
-    z: 0
-    roll: 0
-    pitch: 0
-    yaw: 0
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
   geometry:
-    mesh: package://openarm_description/assets/robot/openarm_v1.0/mesh/body/collision/body_link0_symp.stl
+    mesh: "package://openarm_description/assets/body/v2.0/meshes/visual/body_link0.dae"
     scale:
-      x: 0.001
-      y: 0.001
-      z: 0.001
+      x: 1.0
+      y: 1.0
+      z: 1.0

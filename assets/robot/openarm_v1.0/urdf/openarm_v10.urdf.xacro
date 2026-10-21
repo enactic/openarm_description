@@ -45,7 +45,6 @@ limitations under the License.
   <xacro:property name="preset" value="${xacro.load_yaml(config_root + '/robot_presets/' + preset_name + '.yaml')}" lazy_eval="false" />
   <xacro:property name="without_prefix" value="${'$(arg no_prefix)'.lower() in ['true', '1']}" />
   <xacro:property name="arm_count" value="${len([n for n in preset['robot']['components'] if preset[n]['enabled'] and preset[n]['type'] == 'robot' and preset[n]['config'] == 'arm'])}" />
-  <xacro:property name="body_mounts" value="${xacro.load_yaml(config_root + '/body/struct/reference_points.yaml')}" />
 
   <xacro:macro name="openarm_v1_entry_components" params="value index:=0 out_name">
     <xacro:property name="names" value="${value['robot']['components']}" />
@@ -53,7 +52,7 @@ limitations under the License.
       <xacro:property name="name" value="${names[index]}" />
       <xacro:property name="component" value="${value[name]}" lazy_eval="false" />
       <xacro:property name="connection" value="${component.get('connection', dict())}" lazy_eval="false" />
-      <xacro:if value="${without_prefix and component['type'] == 'robot' and component['config'] == 'body'}">
+      <xacro:if value="${without_prefix and component['type'] == 'body'}">
         <xacro:property name="component" value="${dict(component, link_name='body_link0')}" lazy_eval="false" />
       </xacro:if>
       <xacro:if value="${without_prefix and arm_count == 1 and (component['type'] == 'end_effector' or (component['type'] == 'robot' and component['config'] == 'arm'))}">
@@ -73,10 +72,26 @@ limitations under the License.
         <xacro:property name="position_arg" value="${'$(arg left_arm_base_xyz)' if side == 'left' else '$(arg right_arm_base_xyz)'}" />
         <xacro:property name="rotation_arg" value="${'$(arg left_arm_base_rpy)' if side == 'left' else '$(arg right_arm_base_rpy)'}" />
         <xacro:if value="${position_arg != '' or rotation_arg != ''}">
-          <xacro:property name="base" value="${body_mounts[connection['parent_reference_point']]['origin'] if connection.get('parent_reference_point') else connection['origin']}" />
+          <xacro:property name="override_parent" value="${connection.get('parent')}" lazy_eval="false" />
+          <xacro:property name="offset" value="${connection.get('origin') or dict()}" lazy_eval="false" />
+          <xacro:property name="base" value="${dict(x=offset.get('x') or 0.0, y=offset.get('y') or 0.0, z=offset.get('z') or 0.0, roll=offset.get('roll') or 0.0, pitch=offset.get('pitch') or 0.0, yaw=offset.get('yaw') or 0.0)}" lazy_eval="false" />
+          <xacro:if value="${connection.get('parent_reference_point') not in [None, '']}">
+            <xacro:property name="mount_parent_cfg" value="${value[connection['attach_to']]}" lazy_eval="false" />
+            <xacro:openarm_load_component_descriptor component_name="${connection['attach_to']}" component_cfg="${mount_parent_cfg}" config_root="${config_root}" out_name="mount_parent_desc" />
+            <xacro:property name="mount_reference_name" value="${connection['parent_reference_point']}" lazy_eval="false" />
+            <xacro:property name="mount_reference" value="${mount_parent_desc['reference_points'][mount_reference_name]}" lazy_eval="false" />
+            <xacro:property name="reference_origin" value="${mount_reference['origin']}" lazy_eval="false" />
+            <xacro:property name="parent_reflection" value="${mount_parent_cfg.get('reflect', dict(x=1, y=1, z=1))}" lazy_eval="false" />
+            <xacro:if value="${mount_reference_name in parent_reflection.get('include', dict()).get('reference_points', list(mount_parent_desc['reference_points']))}">
+              <xacro:openarm_reflect_pose origin="${reference_origin}" reflect_x="${parent_reflection['x']}" reflect_y="${parent_reflection['y']}" reflect_z="${parent_reflection['z']}" out_name="reference_origin" />
+            </xacro:if>
+            <xacro:openarm_compose_pose first="${reference_origin}" second="${base}" out_name="base" />
+            <xacro:property name="reference_parent" value="${mount_parent_desc['link_name_map'].get(mount_reference['parent'], mount_parent_desc['link_prefix'] + mount_reference['parent'])}" lazy_eval="false" />
+            <xacro:property name="override_parent" value="${None if reference_parent == mount_parent_desc['default_mount_parent'] else reference_parent}" lazy_eval="false" />
+          </xacro:if>
           <xacro:property name="pos" value="${[float(v) for v in position_arg.split()] if position_arg else [base['x'], base['y'], base['z']]}" />
           <xacro:property name="rot" value="${[float(v) for v in rotation_arg.split()] if rotation_arg else [base['roll'], base['pitch'], base['yaw']]}" />
-          <xacro:property name="connection" value="${dict(connection, parent_reference_point=None, parent=None, origin=dict(x=pos[0], y=pos[1], z=pos[2], roll=rot[0], pitch=rot[1], yaw=rot[2]))}" lazy_eval="false" />
+          <xacro:property name="connection" value="${dict(connection, parent_reference_point=None, parent=override_parent, origin=dict(x=pos[0], y=pos[1], z=pos[2], roll=rot[0], pitch=rot[1], yaw=rot[2]))}" lazy_eval="false" />
         </xacro:if>
         <xacro:property name="prefix_arg" value="${'$(arg left_arm_prefix)' if side == 'left' else '$(arg right_arm_prefix)'}" />
         <xacro:if value="${prefix_arg != ''}">

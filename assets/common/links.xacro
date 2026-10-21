@@ -100,17 +100,17 @@ limitations under the License.
       <xacro:if value="${joint_type != 'fixed'}">
         <xacro:property name="joint_axis_cfg" value="${axis_override if axis_override != 'none' else joint_axes[source_joint_name].axis}" lazy_eval="false" />
         <xacro:property
-          name="joint_axis_reflect_sign"
-          value="${-1 if ((reflect_x == -1 and joint_axis_cfg['x'] * joint_axis_cfg['x'] > 1e-18) or (reflect_y == -1 and joint_axis_cfg['y'] * joint_axis_cfg['y'] > 1e-18) or (reflect_z == -1 and joint_axis_cfg['z'] * joint_axis_cfg['z'] > 1e-18)) else 1}"
+          name="mirror_limit_for_axis"
+          value="${(reflect_x == -1 and joint_axis_cfg['x'] * joint_axis_cfg['x'] > 1e-18) or (reflect_y == -1 and joint_axis_cfg['y'] * joint_axis_cfg['y'] > 1e-18) or (reflect_z == -1 and joint_axis_cfg['z'] * joint_axis_cfg['z'] > 1e-18)}"
           lazy_eval="false" />
-        <axis xyz="${joint_axis_reflect_sign * joint_axis_cfg['x']} ${joint_axis_reflect_sign * joint_axis_cfg['y']} ${joint_axis_reflect_sign * joint_axis_cfg['z']}" />
+        <axis xyz="${reflect_x * joint_axis_cfg['x']} ${reflect_y * joint_axis_cfg['y']} ${reflect_z * joint_axis_cfg['z']}" />
       </xacro:if>
 
       <xacro:if value="${joint_type != 'fixed' and (limit_override != 'none' or source_joint_name in joint_limits)}">
         <xacro:property name="joint_limit_cfg" value="${limit_override if limit_override != 'none' else joint_limits[source_joint_name].limit}" lazy_eval="false" />
         <xacro:property
           name="effective_mirror_limit_sign"
-          value="${mirror_limit_sign or joint_axis_reflect_sign == -1}"
+          value="${mirror_limit_sign or mirror_limit_for_axis}"
           lazy_eval="false" />
         <xacro:if value="${effective_mirror_limit_sign}">
           <xacro:property

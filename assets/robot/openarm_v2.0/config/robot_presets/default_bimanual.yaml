@@ -23,10 +23,10 @@ robot:
   - body_camera_mount
   - body_camera
 body:
-  type: robot
+  type: body
   enabled: true
-  product: openarm_v2.0
-  config: body
+  product: v2.0
+  config: null
   inertials: nominal
   link_name: openarm_body_link0
   connection:

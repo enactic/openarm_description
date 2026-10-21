@@ -18,11 +18,14 @@ assets/common/
 assets/robot/openarm_v1.0/
   config/
     arm/{struct,joint,link,inertials,control}/
-    body/{struct,link,inertials}/
     robot_presets/
   urdf/
     openarm_v10.urdf.xacro
     example/v1.urdf
+
+assets/body/v1.0/
+  config/{struct,link,inertials}/
+  meshes/{visual,collision}/
 
 assets/end_effector/parallel_link/
   config/{struct,joint,link,inertials}/
@@ -46,6 +49,8 @@ assets/end_effector/parallel_link/
 关节原点、mesh 原点和 COM 同步换算。惯量继续表达在 COM，坐标轴未旋转，因此质心惯量张量数值不变。参考原点平移没有移动实体或转轴线。
 
 J2/J3、J4/J5、J6/J7 原来的横向连接偏移由此消除。单臂零位时 link0–7 的轴仍与原单臂同向；双臂仍使用原来的旋转式安装。直接用旧 link2/4/6 坐标表达的外部点，需要减去上表的原点平移。
+
+底座是独立的 `body` 组件，preset 使用 `type: body`、`product: v1.0`、`config: null`。完整胸罩版本保持 3.74 kg；开口胸罩版本见 [body 组件与惯量](body_components.md)。Preset 暂留在各版本 robot 目录，后续迁到独立装配配置目录。
 
 ## 单臂、双臂与镜像
 

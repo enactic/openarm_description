@@ -72,9 +72,9 @@ limitations under the License.
           lazy_eval="false" />
       </xacro:if>
 
-      <xacro:if value="${source_type == 'accessory'}">
-        <xacro:property name="component_type" value="accessory" lazy_eval="false" />
-        <xacro:property name="component_cfg_root" value="${'$(find openarm_description)/assets/accessory/' + product + '/config'}" lazy_eval="false" />
+      <xacro:if value="${source_type in ['body', 'accessory']}">
+        <xacro:property name="component_type" value="${source_type}" lazy_eval="false" />
+        <xacro:property name="component_cfg_root" value="${'$(find openarm_description)/assets/' + source_type + '/' + product + '/config'}" lazy_eval="false" />
       </xacro:if>
 
       <xacro:property name="component_topology" value="${xacro.load_yaml(component_cfg_root + '/struct/topology.yaml')}" lazy_eval="false" />
@@ -82,10 +82,10 @@ limitations under the License.
       <xacro:property name="component_joint_prefix" value="${component_prefix + component_topology.get('joint_prefix', '')}" lazy_eval="false" />
       <xacro:openarm_validate_topology topology="${component_topology}" component="${component_name}" />
       <xacro:property name="component_reference_points" value="${xacro.load_yaml(component_cfg_root + '/struct/reference_points.yaml')}" lazy_eval="false" />
-      <xacro:if value="${component_type == 'accessory'}">
+      <xacro:if value="${component_type in ['body', 'accessory']}">
         <xacro:openarm_require
           condition="${len(component_topology['links']) == 1 and len(component_topology['joints']) == 0}"
-          message="${'Accessory `%s` must define one rigid link and no internal joints.' % component_name}" />
+          message="${'Component `%s` must define one rigid link and no internal joints.' % component_name}" />
       </xacro:if>
 
       <xacro:property name="component_joint_origins" value="${xacro.load_yaml(component_cfg_root + '/joint/joint_origins.yaml') if component_type not in ['body', 'accessory'] else empty_dict}" lazy_eval="false" />
@@ -95,7 +95,7 @@ limitations under the License.
       <xacro:property name="component_inertials" value="${xacro.load_yaml(component_cfg_root + '/inertials/' + component_cfg['inertials'] + '.yaml')}" lazy_eval="false" />
       <xacro:property name="component_visuals" value="${xacro.load_yaml(component_cfg_root + '/link/visuals.yaml')}" lazy_eval="false" />
       <xacro:property name="component_collisions" value="${xacro.load_yaml(component_cfg_root + '/link/collisions.yaml')}" lazy_eval="false" />
-      <xacro:property name="component_link_name_map" value="${dict(body_link0=component_cfg['link_name']) if component_type == 'body' else empty_dict}" lazy_eval="false" />
+      <xacro:property name="component_link_name_map" value="${dict([(component_topology['links'][0], component_cfg['link_name'])]) if component_type == 'body' else empty_dict}" lazy_eval="false" />
       <xacro:property name="component_root_link_actual" value="${component_cfg['link_name'] if component_type == 'body' else (component_link_prefix + component_topology['links'][0])}" lazy_eval="false" />
       <xacro:property name="component_default_mount_parent" value="${component_cfg['link_name'] if component_type == 'body' else (component_link_prefix + component_topology['links'][-1])}" lazy_eval="false" />
       <xacro:property name="component_collapse_empty_end" value="${component_type == 'arm' and component_topology.get('collapse_empty_end', False) and len([j for j in component_topology['joints'] if component_topology['joints'][j]['parent'] == component_topology['links'][-1]]) == 0}" lazy_eval="false" />

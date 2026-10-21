@@ -131,13 +131,14 @@ class CameraAssemblyTest(unittest.TestCase):
             float(mount.find('inertial/mass').get('value')), 0.13704)
         self.assertIsNone(mount.find('collision'))
 
-    def test_pedestal_uses_measured_mass(self):
+    def test_pedestal_uses_volume_scaled_cover_mass(self):
         for preset in [
             'default_bimanual',
         ]:
             body = expand(preset).find("link[@name='openarm_body_link0']")
-            self.assertEqual(
-                float(body.find('inertial/mass').get('value')), 3.74)
+            self.assertAlmostEqual(
+                float(body.find('inertial/mass').get('value')),
+                3.734812201783, places=10)
             inertia = body.find('inertial/inertia')
             for key in ['ixy', 'ixz', 'iyz']:
                 self.assertEqual(float(inertia.get(key)), 0)

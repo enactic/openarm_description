@@ -13,7 +13,6 @@
   "zed_model": "zedm",
   "zed_mesh_sha256": "bf0193e6b2f36a348e1cbe3c19e18adc3e90e4b054f4fce47286482380cd149c",
   "zed_macro_sha256": "672c05fd529a4382ec3079ba45cf9257f328e847b81d401e5df024899bbace52",
-  "measured_body_mass_kg": 3.74,
   "camera_mount_mass_from_cad_kg": 0.13704,
   "screw_midpoint_in_camera_link_m": [
     -0.00119247,
@@ -39,9 +38,13 @@
       "assets/accessory/zed_mount/meshes/visual/zed_mount.dae": {
         "3071eb5fd9314940b22b963e96d886ab": "Head_Cover"
       },
-      "assets/robot/openarm_v2.0/meshes/body/visual/body_link0.dae": {
+      "assets/body/v2.0/meshes/visual/body_link0.dae": {
         "bf8c2ba0ab8e4b4085a6e124f2443409": "chest_cover_v2.0"
       }
     }
-  }
+  },
+  "measured_metal_base_mass_kg": 3.55,
+  "closed_cover_mass_kg_approx": 0.19,
+  "estimated_body_mass_kg": 3.734812201782901,
+  "body_inertial_calculation": "dev/body_inertial_result.json"
 }

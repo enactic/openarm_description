@@ -19,10 +19,10 @@ robot:
     - primary_arm_end_effector
 
 body:
-  type: robot
+  type: body
   enabled: false
-  product: openarm_v2.0
-  config: body
+  product: v2.0
+  config: null
   inertials: nominal
   link_name: openarm_body_link0
   connection:

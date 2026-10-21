@@ -37,5 +37,4 @@ __pycache__
 /urdf/
 
 docs/
-scripts/*
-!scripts/generate_v20_urdfs.sh
+scripts/

@@ -6,7 +6,7 @@
 
 基于 `206eb8a`，整合此前确认的 V1 修复：`109076c`、`496500f`、`53c5710`、`407fb47`、`e4f5396`。保留主线已经修正的 V2 双臂安装原点 `(0, ±0.030, 0.697)` m。
 
-底座继续使用称重结果：支架 3.55 kg，加约 0.19 kg 塑料罩，合计 **3.74 kg**。COM 与对角惯量沿用已确认参数。新导出 URDF 中约 9.864 kg 的底座质量未用于此模型。
+底座金属支架使用称重值 **3.55 kg**。顶部开口胸罩按完整胸罩约 190 g 的体积比例折算为 **184.812 g**，合计 **3.734812202 kg**；重新合成 COM 和惯量后，保留对角项。计算与来源见 [body 组件与惯量](body_components.md)。
 
 ## 组件组织
 
@@ -21,6 +21,8 @@ world
                 └── openarm_body_zed_camera_link
                     └── 官方 ZED 中心、左右相机和光学坐标
 ```
+
+底座定义位于 `assets/body/v2.0/`，preset 通过 `type: body`、`product: v2.0` 引用。Preset 暂留在 robot 目录，后续迁到独立装配配置目录。
 
 安装座属于独立 `accessory` 组件，文件位于 `assets/accessory/zed_mount/`。其几何包含 Head_Cover、cameramount_head_zed 和两颗 SCB2-5 螺丝；相机模型由 `zed_description` 提供。
 
@@ -117,7 +119,7 @@ colcon test --packages-select openarm_description \
   --ctest-args -R v2_ --return-code-on-test-failure
 ```
 
-测试覆盖默认相机装配、CAD 安装点、称重底座参数、左右旋转镜像、参考 frame 输出与折叠、拓扑驱动的关节定义、各 preset 控制接口，以及官方 ZED Mini 坐标树。
+测试覆盖默认相机装配、CAD 安装点、称重金属底座与按体积折算的胸罩参数、左右旋转镜像、参考 frame 输出与折叠、拓扑驱动的关节定义、各 preset 控制接口，以及官方 ZED Mini 坐标树。
 
 导出来源和官方模型哈希见 [v2_camera_sources.json](v2_camera_sources.json)。
 
@@ -150,10 +152,4 @@ V1、V2 保留各自入口，共用装配、运动链和控制生成逻辑。V1 
 
 V2 Xacro 的 `ros2_control` 默认 `true`；RViz launch 的该参数默认 `false`。控制接口只为启用的手臂和其夹爪生成，mimic 手指不重复生成主动控制接口。各手臂 preset 的 `control.side` 为 `left` 或 `right`，分别选择 `left_can_interface` 或 `right_can_interface`，与模型前缀分开配置。现有硬件插件、PD 增益和默认 CAN 参数保持原值。
 
-导出纯模型可使用 `ros2_control:=false`，或在 description 目录运行：
-
-```bash
-bash scripts/generate_v20_urdfs.sh --all --no-ros2-control
-```
-
-需要保留末端空 link 时，将 arm topology 中的 `collapse_empty_end` 改为 `false`；Xacro、launch 和导出脚本不再提供折叠参数。`--grasp-frame` 输出抓取参考坐标。V1 与 V2 的入口保持独立，配置通过同一公共装配层展开。
+V1 与 V2 的入口保持独立，配置通过同一公共装配层展开。

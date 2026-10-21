@@ -14,15 +14,17 @@
 
 body_link0:
   origin:
-    x: 0
-    y: 0
-    z: 0
+    x: -0.01627169562
+    y: 0.0
+    z: 0.2433653277268
     roll: 0
     pitch: 0
     yaw: 0
-  geometry:
-    mesh: package://openarm_description/assets/robot/openarm_v1.0/mesh/body/visual/body_link0.dae
-    scale:
-      x: 0.001
-      y: 0.001
-      z: 0.001
+  mass: 3.734812201783
+  inertia:
+    xx: 0.2475196717666
+    xy: 0.0
+    xz: 0.0
+    yy: 0.2516022327277
+    yz: 0.0
+    zz: 0.01401835876591
