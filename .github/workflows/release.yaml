@@ -29,6 +29,11 @@ jobs:
           - "humble"
     steps:
       - uses: actions/checkout@v7
+      - uses: actions/checkout@v7
+        with:
+          repository: stereolabs/zed-ros2-description
+          ref: 1aa88b319897311d2f33882a4abbc40da8d75ace
+          path: .ci/zed_description
       - name: Build URDF files
         run: |
           docker container run \
@@ -37,7 +42,7 @@ jobs:
             osrf/ros:${{ matrix.id }}-desktop-full \
             bash -c '
               cd /source
-              colcon build
+              colcon build --paths /source/.ci/zed_description /source
               source install/setup.bash
 
               mkdir -p urdf_output

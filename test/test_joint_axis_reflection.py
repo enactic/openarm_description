@@ -30,7 +30,8 @@ def rotation(axis, angle):
 
 
 def expand(axis, reflect=(1, 1, 1), mirror_limits=False, joint_type='revolute'):
-    origin = {'x': 0.12, 'y': -0.04, 'z': 0.07, 'roll': 0.31, 'pitch': -0.47, 'yaw': 0.29}
+    origin = {'x': 0.12, 'y': -0.04, 'z': 0.07,
+              'roll': 0.31, 'pitch': -0.47, 'yaw': 0.29}
     limits = {'lower': -0.4, 'upper': 1.2, 'effort': 7, 'velocity': 3}
     symbols = {
         'axis_input': dict(zip(('x', 'y', 'z'), axis)),
