@@ -32,7 +32,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           repository: stereolabs/zed-ros2-description
-          ref: 1aa88b319897311d2f33882a4abbc40da8d75ace
+          ref: 22468247c1653d08a1e213809f3e9ce76291487d
           path: .ci/zed_description
       - name: Build URDF files
         run: |

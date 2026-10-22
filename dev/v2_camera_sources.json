@@ -9,10 +9,10 @@
     "openarmv2.0bimanualURDF_with_cam_mount.SLDASM/urdf/openarmv2.0bimanualURDF_with_cam_mount.SLDASM.urdf": "168a81c79d2ce571221db5cde69c74859d57bc17de29dbe29f2f3ac616b5ab41",
     "end-efector_follower_4310_v1.0_urdf_with_cam_view.SLDASM/urdf/end-efector_follower_4310_v1.0_urdf_with_cam_view.SLDASM.urdf": "ca1af20a3d88403803fe6efd705d9a30e3a84e73b411cc8ef6ed7566859701c5"
   },
-  "zed_description_version": "0.1.3",
+  "zed_description_version": "0.2.0",
   "zed_model": "zedm",
   "zed_mesh_sha256": "bf0193e6b2f36a348e1cbe3c19e18adc3e90e4b054f4fce47286482380cd149c",
-  "zed_macro_sha256": "672c05fd529a4382ec3079ba45cf9257f328e847b81d401e5df024899bbace52",
+  "zed_macro_sha256": "9f9eb8a9df16af7ae222bcbd36923ed9e5b5acd7b5b407fd4eca443f917fb941",
   "camera_mount_mass_from_cad_kg": 0.13704,
   "screw_midpoint_in_camera_link_m": [
     -0.00119247,
@@ -46,5 +46,7 @@
   "measured_metal_base_mass_kg": 3.55,
   "closed_cover_mass_kg_approx": 0.19,
   "estimated_body_mass_kg": 3.734812201782901,
-  "body_inertial_calculation": "dev/body_inertial_result.json"
+  "body_inertial_calculation": "dev/body_inertial_result.json",
+  "zed_description_repository": "https://github.com/stereolabs/zed-ros2-description",
+  "zed_description_commit": "22468247c1653d08a1e213809f3e9ce76291487d"
 }

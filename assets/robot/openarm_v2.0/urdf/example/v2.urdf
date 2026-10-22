@@ -623,45 +623,6 @@ limitations under the License.
     <parent link="openarm_body_zed_mount_base_link"/>
     <child link="openarm_body_zed_mount_camera_mount_point"/>
   </joint>
-  <material name="zed_mat">
-    <color rgba="0.8 0.8 0.8 1.0"/>
-  </material>
-  <material name="zedm_mat">
-    <color rgba="0 0 0 1.0"/>
-  </material>
-  <material name="zed2_mat">
-    <color rgba="0.25 0.25 0.25 1.0"/>
-  </material>
-  <material name="zed2i_mat">
-    <color rgba="0.25 0.25 0.25 1.0"/>
-  </material>
-  <material name="zedx_mat">
-    <color rgba="0.25 0.25 0.25 1.0"/>
-  </material>
-  <material name="zedxm_mat">
-    <color rgba="0.25 0.25 0.25 1.0"/>
-  </material>
-  <material name="zedxhdr_mat">
-    <color rgba="0.25 0.25 0.25 1.0"/>
-  </material>
-  <material name="zedxhdrmini_mat">
-    <color rgba="0.25 0.25 0.25 1.0"/>
-  </material>
-  <material name="zedxhdrmax_mat">
-    <color rgba="0.25 0.25 0.25 1.0"/>
-  </material>
-  <material name="virtual_mat">
-    <color rgba="0.25 0.25 0.25 1.0"/>
-  </material>
-  <material name="zedxonegs_mat">
-    <color rgba="0.25 0.25 0.25 1.0"/>
-  </material>
-  <material name="zedxone4k_mat">
-    <color rgba="0.25 0.25 0.25 1.0"/>
-  </material>
-  <material name="zedxonehdr_mat">
-    <color rgba="0.25 0.25 0.25 1.0"/>
-  </material>
   <!-- Camera mounting point (the threaded screw hole in the bottom) -->
   <link name="openarm_body_zed_camera_link"/>
   <!-- Camera Center -->
@@ -671,7 +632,9 @@ limitations under the License.
       <geometry>
         <mesh filename="package://zed_description/meshes/zedm.stl"/>
       </geometry>
-      <material name="zedm_mat"/>
+      <material name="cam_mat">
+        <color rgba="0 0 0 1.0"/>
+      </material>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0.0 0 0.0"/>
