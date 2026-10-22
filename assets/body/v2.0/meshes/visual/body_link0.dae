@@ -769,35 +769,17 @@
     <effect id="35e7962cfb13412ab0bca01f8ce870d6" name="35e7962cfb13412ab0bca01f8ce870d6">
       <profile_COMMON>
         <technique sid="common">
-          <phong>
+          <lambert>
             <emission>
-              <color>0.0 0.0 0.0 1.0</color>
+              <color sid="emission">0 0 0 1</color>
             </emission>
-            <ambient>
-              <color>0.5019607843137255 0.5019607843137255 0.5019607843137255 1.0</color>
-            </ambient>
             <diffuse>
-              <color>0.5019607843137255 0.5019607843137255 0.5019607843137255 1.0</color>
+              <color sid="diffuse">0.09412 0.09412 0.09412 1</color>
             </diffuse>
-            <specular>
-              <color>0.0 0.0 0.0 1.0</color>
-            </specular>
-            <shininess>
-              <float>0.0</float>
-            </shininess>
-            <reflective>
-              <color>0.0 0.0 0.0 1.0</color>
-            </reflective>
-            <reflectivity>
-              <float>0.0</float>
-            </reflectivity>
-            <transparent>
-              <color>0.0 0.0 0.0 1.0</color>
-            </transparent>
-            <transparency>
-              <float>1.0</float>
-            </transparency>
-          </phong>
+            <index_of_refraction>
+              <float sid="ior">1.45</float>
+            </index_of_refraction>
+          </lambert>
         </technique>
         <extra>
           <technique profile="GOOGLEEARTH">

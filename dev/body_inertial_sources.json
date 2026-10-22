@@ -91,7 +91,7 @@
     "mesh": "assets/body/v2.0/meshes/visual/body_link0.dae",
     "geometry_id": "4e1fb0d4b9d94b9c962eb5986522e418",
     "scale_to_m": 1.0,
-    "mesh_sha256": "d14bdcd90410f1bb77fef8302bac29b07f2457876bcdf9e8447df42b8eeb49c4"
+    "mesh_sha256": "79169006138c64c61c636c8de0481382f39d9158373edba0461b0845f7941c2c"
   },
   "method": "Uniform effective density from the measured closed cover; signed tetrahedra in a local frame centered on the new cover bounds; aggregate with the calibrated metal base, reflect-average about Y=0, then retain diagonal inertia."
 }

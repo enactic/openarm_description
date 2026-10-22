@@ -48,5 +48,16 @@
   "estimated_body_mass_kg": 3.734812201782901,
   "body_inertial_calculation": "dev/body_inertial_result.json",
   "zed_description_repository": "https://github.com/stereolabs/zed-ros2-description",
-  "zed_description_commit": "22468247c1653d08a1e213809f3e9ce76291487d"
+  "zed_description_commit": "22468247c1653d08a1e213809f3e9ce76291487d",
+  "column_material_correction": {
+    "reference": "https://github.com/enactic/openarm_description/blob/6f0de1cba743920e74e6b88ae5e29084d99123ce/assets/robot/openarm_v2.0/meshes/body/visual/body_link0.dae",
+    "effect": "35e7962cfb13412ab0bca01f8ce870d6",
+    "shader": "lambert",
+    "diffuse_rgba": [
+      0.09412,
+      0.09412,
+      0.09412,
+      1.0
+    ]
+  }
 }
