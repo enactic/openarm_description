@@ -6,7 +6,7 @@ from unittest.mock import patch
 import xml.etree.ElementTree as ET
 
 import ament_index_python.packages as packages
-from test_v2_camera_components import ENTRY, poses, ROOT
+from test_v2_camera_components import ENTRY, multiply, poses, ROOT, transform
 import xacro
 
 
@@ -107,37 +107,47 @@ class AssemblyTest(unittest.TestCase):
             self.assert_common_poses(off, on)
 
     def test_rotated_offset_on_mirrored_gripper_reference(self):
-        def camera_on_gripper(value):
-            camera = value['body_camera']
-            camera['connection'] = {
-                'attach_to': 'primary_arm_end_effector',
-                'parent_reference_point': 'camera_view_frame',
-                'origin': {
-                    'x': 0.012,
-                    'y': -0.008,
-                    'z': 0.005,
-                    'roll': 0.3,
-                    'pitch': -0.2,
-                    'yaw': 0.4,
-                },
-            }
-            value['body_camera'] = camera
-            return value
+        for offset in [None, {
+            'x': 0.012, 'y': -0.008, 'z': 0.005,
+            'roll': 0.3, 'pitch': -0.2, 'yaw': 0.4,
+        }]:
+            def add_probe(value):
+                robot = value['robot']
+                robot['components'] = list(robot['components']) + ['mount_probe']
+                value['robot'] = robot
+                probe = copy.deepcopy(value['body'])
+                probe['link_name'] = 'test_probe'
+                probe['connection'] = {
+                    'attach_to': 'primary_arm_end_effector',
+                    'parent_reference_point': 'camera_view_frame',
+                    'origin': offset,
+                }
+                value['mount_probe'] = probe
+                return value
 
-        for collapse in [False, True]:
-            robots = [
-                expand_modified(
-                    {
-                        'robot_presets/default_bimanual.yaml': camera_on_gripper,
-                        'pinch_gripper/config/struct/reference_points.yaml': set_reference_emit(
-                            'camera_view_frame', emit
-                        ),
-                    },
-                    collapse_empty_end=collapse,
+            for collapse in [False, True]:
+                robots = [expand_modified({
+                    'robot_presets/default_bimanual.yaml': add_probe,
+                    'pinch_gripper/config/struct/reference_points.yaml':
+                        set_reference_emit('camera_view_frame', emit),
+                }, collapse_empty_end=collapse) for emit in [False, True]]
+                values = [poses(robot) for robot in robots]
+                for robot in robots:
+                    self.assertIsNotNone(robot.find("link[@name='test_probe']"))
+                self.assert_common_poses(*robots)
+                delta = offset or dict.fromkeys(
+                    ['x', 'y', 'z', 'roll', 'pitch', 'yaw'], 0.0)
+                expected = multiply(
+                    values[1]['openarm_left_camera_view_frame'],
+                    transform(ET.Element('origin', {
+                        'xyz': ' '.join(str(delta[k]) for k in ['x', 'y', 'z']),
+                        'rpy': ' '.join(str(delta[k]) for k in ['roll', 'pitch', 'yaw']),
+                    })),
                 )
-                for emit in [False, True]
-            ]
-            self.assert_common_poses(*robots)
+                for value in values:
+                    self.assertLess(max(
+                        abs(a - b) for row, target in zip(value['test_probe'], expected)
+                        for a, b in zip(row, target)), 1e-10)
 
     def test_arm_tip_reference_emit_with_and_without_collapse(self):
         for collapse in [False, True]:
@@ -171,11 +181,11 @@ class AssemblyTest(unittest.TestCase):
 
     def test_conflicting_parent_selectors_rejected(self):
         def conflict(value):
-            camera = value['body_camera']
-            connection = camera['connection']
+            gripper = value['primary_arm_end_effector']
+            connection = gripper['connection']
             connection['parent'] = 'openarm_body_link0'
-            camera['connection'] = connection
-            value['body_camera'] = camera
+            gripper['connection'] = connection
+            value['primary_arm_end_effector'] = gripper
             return value
 
         with self.assertRaisesRegex(

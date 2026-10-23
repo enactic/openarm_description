@@ -45,7 +45,7 @@
         </technique>
       </profile_COMMON>
     </effect>
-  
+
 <effect id="defaultmaterial_001-effect">
       <profile_COMMON>
         <technique sid="common">
@@ -89,7 +89,7 @@
     <material id="palette_00_metal_silver_004-material" name="palette_00_metal_silver.004">
       <instance_effect url="#palette_00_metal_silver_004-effect" />
     </material>
-  
+
 <material id="defaultmaterial_001-material" name="defaultmaterial.001">
       <instance_effect url="#defaultmaterial_001-effect" />
     </material>
@@ -194,7 +194,7 @@
         </triangles>
       </mesh>
     </geometry>
-  
+
 <geometry id="new_cable_cover_1-mesh" name="new_cable_cover_1">
       <mesh>
         <source id="new_cable_cover_1-mesh-positions">
@@ -292,7 +292,7 @@
           </bind_material>
         </instance_geometry>
       </node>
-    
+
 <node id="new_cable_cover_1" name="new_cable_cover_1" type="NODE">
         <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
         <instance_geometry url="#new_cable_cover_1-mesh" name="new_cable_cover_1">
