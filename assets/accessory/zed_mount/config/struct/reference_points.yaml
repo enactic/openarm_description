@@ -1,0 +1,10 @@
+camera_mount_point:
+  parent: base_link
+  emit: true
+  origin:
+    x: 0.0263085336684006
+    y: 0.00869000000000031
+    z: 0.065829226007701
+    roll: 0
+    pitch: 1.08210413623648
+    yaw: 0

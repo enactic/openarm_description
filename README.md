@@ -18,6 +18,10 @@ Recommended starting point:
 - for all new robot assembly, presets, xacro, and URDF generation work, start with `assets/robot/openarm_v2.0`
 - only use `assets/robot/openarm_v1.0` when you need the old `v10 + parallel_link` compatibility path -->
 
+## V2 camera assembly
+
+The V2 `default_bimanual` preset includes both arms, pinch grippers, the camera mount, and the official ZED Mini model. Single-arm presets are also available. Use `ros2_control:=false` when exporting a model without control interfaces.
+
 ## Related links
 
 - 📚 Read the [documentation](https://docs.openarm.dev/software/description)
