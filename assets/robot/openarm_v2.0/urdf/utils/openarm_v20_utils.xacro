@@ -14,15 +14,15 @@ limitations under the License.
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <!-- Emit one origin while optionally mirroring translation along selected axes. -->
-  <xacro:macro name="openarm_v20_emit_origin" params="origin reflect_x:=1 reflect_y:=1 reflect_z:=1 reflect_position:=true">
+  <!-- Emit one origin with optional translation and rotation reflection. -->
+  <xacro:macro name="openarm_v20_emit_origin" params="origin reflect_x:=1 reflect_y:=1 reflect_z:=1 reflect_position:=true reflect_rotation:=${False}">
     <origin
       xyz="${(reflect_x * origin['x']) if reflect_position else origin['x']} ${(reflect_y * origin['y']) if reflect_position else origin['y']} ${(reflect_z * origin['z']) if reflect_position else origin['z']}"
-      rpy="${origin['roll']} ${origin['pitch']} ${origin['yaw']}" />
+      rpy="${reflect_y * reflect_z * origin['roll'] if reflect_rotation else origin['roll']} ${reflect_x * reflect_z * origin['pitch'] if reflect_rotation else origin['pitch']} ${reflect_x * reflect_y * origin['yaw'] if reflect_rotation else origin['yaw']}" />
   </xacro:macro>
 
   <!-- Compose two poses in xacro so mount transforms can be absorbed into geometry or joints. -->
-  <xacro:macro name="openarm_v20_emit_composed_origin" params="first second reflect_x:=1 reflect_y:=1 reflect_z:=1 reflect_position:=true">
+  <xacro:macro name="openarm_v20_compose_pose" params="first second out_name">
     <xacro:property name="a_r" value="${first['roll']}" />
     <xacro:property name="a_p" value="${first['pitch']}" />
     <xacro:property name="a_y" value="${first['yaw']}" />
@@ -79,9 +79,18 @@ limitations under the License.
     <xacro:property name="rp" value="${atan2(-c31, cy_norm)}" />
     <xacro:property name="ry" value="${atan2(c21, c11) if cy_norm > 1e-9 else 0.0}" />
 
-    <origin
-      xyz="${(reflect_x * tx) if reflect_position else tx} ${(reflect_y * ty) if reflect_position else ty} ${(reflect_z * tz) if reflect_position else tz}"
-      rpy="${rr} ${rp} ${ry}" />
+    <xacro:property name="${out_name}" value="${dict(x=tx, y=ty, z=tz, roll=rr, pitch=rp, yaw=ry)}" scope="parent" lazy_eval="false" />
+  </xacro:macro>
+
+  <xacro:macro name="openarm_v20_reflect_pose" params="origin reflect_x:=1 reflect_y:=1 reflect_z:=1 out_name">
+    <xacro:property name="${out_name}"
+      value="${dict(x=reflect_x * origin['x'], y=reflect_y * origin['y'], z=reflect_z * origin['z'], roll=reflect_y * reflect_z * origin['roll'], pitch=reflect_x * reflect_z * origin['pitch'], yaw=reflect_x * reflect_y * origin['yaw'])}"
+      scope="parent" lazy_eval="false" />
+  </xacro:macro>
+
+  <xacro:macro name="openarm_v20_emit_composed_origin" params="first second reflect_x:=1 reflect_y:=1 reflect_z:=1 reflect_position:=true reflect_rotation:=${False}">
+    <xacro:openarm_v20_compose_pose first="${first}" second="${second}" out_name="composed_origin" />
+    <xacro:openarm_v20_emit_origin origin="${composed_origin}" reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}" reflect_position="${reflect_position}" reflect_rotation="${reflect_rotation}" />
   </xacro:macro>
 
   <xacro:macro name="openarm_v20_emit_limit" params="limit">
@@ -158,10 +167,10 @@ limitations under the License.
     <link name="${link_name}" />
     <joint name="${link_name}_joint" type="fixed">
       <xacro:if value="${frame_shift != 'none'}">
-        <xacro:openarm_v20_emit_composed_origin first="${frame_shift}" second="${origin}" reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}" />
+        <xacro:openarm_v20_emit_composed_origin first="${frame_shift}" second="${origin}" reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}" reflect_rotation="${True}" />
       </xacro:if>
       <xacro:unless value="${frame_shift != 'none'}">
-        <xacro:openarm_v20_emit_origin origin="${origin}" reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}" />
+        <xacro:openarm_v20_emit_origin origin="${origin}" reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}" reflect_rotation="${True}" />
       </xacro:unless>
       <parent link="${parent_link}" />
       <child link="${link_name}" />
@@ -216,6 +225,33 @@ limitations under the License.
           offset="${mimic_override['offset']}" />
       </xacro:if>
     </joint>
+  </xacro:macro>
+
+  <xacro:macro name="openarm_v20_emit_reference_frames"
+    params="reference_points prefix link_prefix link_name_map:=${dict()} base_link_name:='' reflect_x:=1 reflect_y:=1 reflect_z:=1 reflect_include_reference_points:=^ frame_shift:=none force_emit_reference:='' index:=0">
+    <xacro:property name="reference_names" value="${list(reference_points.keys())}" lazy_eval="false" />
+    <xacro:if value="${index &lt; len(reference_names)}">
+      <xacro:property name="reference_name" value="${reference_names[index]}" lazy_eval="false" />
+      <xacro:property name="reference" value="${reference_points[reference_name]}" lazy_eval="false" />
+      <xacro:if value="${reference.get('emit', False) or reference_name == force_emit_reference}">
+        <xacro:property name="reference_parent" value="${reference['parent']}" lazy_eval="false" />
+        <xacro:property name="reference_reflects" value="${reference_name in reflect_include_reference_points}" lazy_eval="false" />
+        <xacro:openarm_v20_emit_reference_link
+          link_name="${prefix + reference_name}"
+          parent_link="${link_name_map[reference_parent] if reference_parent in link_name_map else link_prefix + reference_parent}"
+          origin="${reference['origin']}"
+          reflect_x="${reflect_x if reference_reflects else 1}"
+          reflect_y="${reflect_y if reference_reflects else 1}"
+          reflect_z="${reflect_z if reference_reflects else 1}"
+          frame_shift="${frame_shift if reference_parent == base_link_name else 'none'}" />
+      </xacro:if>
+      <xacro:openarm_v20_emit_reference_frames
+        reference_points="${reference_points}" prefix="${prefix}" link_prefix="${link_prefix}"
+        link_name_map="${link_name_map}" base_link_name="${base_link_name}"
+        reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}"
+        reflect_include_reference_points="${reflect_include_reference_points}"
+        frame_shift="${frame_shift}" force_emit_reference="${force_emit_reference}" index="${index + 1}" />
+    </xacro:if>
   </xacro:macro>
 
 </robot>
