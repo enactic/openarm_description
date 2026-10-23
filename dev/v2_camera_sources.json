@@ -29,7 +29,7 @@
       0.247,
       1.0
     ],
-    "effects_by_asset": {
+    "source_effects_by_asset": {
       "assets/robot/openarm_v2.0/meshes/arm/visual/link4.dae": {
         "0ec108db923f4e2da9953aecf36428a3": "J4-J5_Cover_v1.0",
         "265ca50ef3a940aca6eeb2b19904d8b8": "cable_holder_J4 (negative Y)",
