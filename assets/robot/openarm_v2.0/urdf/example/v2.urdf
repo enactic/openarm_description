@@ -9,7 +9,7 @@
     <visual name="openarm_body_link0_visual">
       <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/body/visual/body_link0.dae" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/body/visual/body_link0.dae" scale="1.0 1.0 1.0"/>
       </geometry>
       <material name="openarm_body_link0_material">
         <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1"/>
@@ -22,9 +22,9 @@
       </geometry>
     </collision>
     <inertial>
-      <origin rpy="0 0 0" xyz="-0.016206894902 0 0.244091987626"/>
-      <mass value="3.74"/>
-      <inertia ixx="0.248946829107" ixy="0.0" ixz="0.0" iyy="0.253033907704" iyz="0.0" izz="0.0140271775534"/>
+      <origin rpy="0 0 0" xyz="-0.01627169562 0.0 0.2433653277268"/>
+      <mass value="3.734812201783"/>
+      <inertia ixx="0.2475196717666" ixy="0.0" ixz="0.0" iyy="0.2516022327277" iyz="0.0" izz="0.01401835876591"/>
     </inertial>
   </link>
   <joint name="openarm_body_link0_mount_joint" type="fixed">
