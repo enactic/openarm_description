@@ -22,8 +22,6 @@ Recommended starting point:
 
 The V2 `default_bimanual` preset includes both arms, pinch grippers, the camera mount, and the official ZED Mini model. Single-arm presets are also available. Use `ros2_control:=false` when exporting a model without control interfaces.
 
-See [V2 visual models and camera assembly](dev/v2_camera_assembly.md) for the source geometry, mounting frames, measured pedestal parameters, and visualization commands.
-
 ## Related links
 
 - 📚 Read the [documentation](https://docs.openarm.dev/software/description)
