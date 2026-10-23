@@ -113,7 +113,8 @@ class AssemblyTest(unittest.TestCase):
         }]:
             def add_probe(value):
                 robot = value['robot']
-                robot['components'] = list(robot['components']) + ['mount_probe']
+                robot['components'] = list(
+                    robot['components']) + ['mount_probe']
                 value['robot'] = robot
                 probe = copy.deepcopy(value['body'])
                 probe['link_name'] = 'test_probe'
@@ -133,7 +134,8 @@ class AssemblyTest(unittest.TestCase):
                 }, collapse_empty_end=collapse) for emit in [False, True]]
                 values = [poses(robot) for robot in robots]
                 for robot in robots:
-                    self.assertIsNotNone(robot.find("link[@name='test_probe']"))
+                    self.assertIsNotNone(robot.find(
+                        "link[@name='test_probe']"))
                 self.assert_common_poses(*robots)
                 delta = offset or dict.fromkeys(
                     ['x', 'y', 'z', 'roll', 'pitch', 'yaw'], 0.0)
