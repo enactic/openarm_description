@@ -106,9 +106,11 @@ limitations under the License.
           lazy_eval="false" />
       </xacro:if>
 
+
       <xacro:property name="component_link_prefix" value="${component_prefix + ('ee_' if component_type == 'end_effector' else '')}" lazy_eval="false" />
       <xacro:property name="component_topology" value="${xacro.load_yaml(component_cfg_root + '/struct/topology.yaml')}" lazy_eval="false" />
       <xacro:property name="component_reference_points" value="${xacro.load_yaml(component_cfg_root + '/struct/reference_points.yaml')}" lazy_eval="false" />
+
       <xacro:property name="component_joint_origins" value="${xacro.load_yaml(component_cfg_root + '/joint/joint_origins.yaml') if component_type != 'body' else empty_dict}" lazy_eval="false" />
       <xacro:property name="component_joint_axes" value="${xacro.load_yaml(component_cfg_root + '/joint/joint_axes.yaml') if component_type != 'body' else empty_dict}" lazy_eval="false" />
       <xacro:property name="component_joint_limits" value="${xacro.load_yaml(component_cfg_root + '/joint/joint_limits.yaml') if component_type != 'body' else empty_dict}" lazy_eval="false" />
@@ -275,7 +277,7 @@ limitations under the License.
 
   <!-- Resolve runtime assembly data from a static descriptor plus preset overrides. -->
   <xacro:macro name="openarm_v20_resolve_component_runtime"
-    params="component_name components robot_preset config_root root_frame component_cfg component_desc parent_desc:=none collapse_internal_empty_links:=false out_name">
+    params="component_name components robot_preset config_root root_frame component_cfg component_desc parent_desc:=none collapse_internal_empty_links:=false emit_grasp_frame:=false out_name">
 
     <xacro:property name="none_value" value="${'none'}" lazy_eval="false" />
     <xacro:property name="zero_origin" value="${dict(x=0.0, y=0.0, z=0.0, roll=0.0, pitch=0.0, yaw=0.0)}" lazy_eval="false" />
@@ -306,7 +308,14 @@ limitations under the License.
     <xacro:property name="has_parent_override" value="${'parent' in connection and connection['parent'] != None}" lazy_eval="false" />
     <xacro:property name="has_origin_override" value="${'origin' in connection and connection['origin'] != None}" lazy_eval="false" />
 
-    <!-- Start from defaults, then let reference-point lookup and explicit overrides refine the mount. -->
+    <xacro:openarm_v20_require
+      condition="${not (has_parent_reference_key and has_parent_override)}"
+      message="${'Component `%s` must choose parent or parent_reference_point, not both.' % component_name}" />
+    <xacro:property name="origin_cfg" value="${connection['origin'] if has_origin_override else zero_origin}" lazy_eval="false" />
+    <xacro:property name="connection_origin"
+      value="${dict(x=origin_cfg.get('x') or 0.0, y=origin_cfg.get('y') or 0.0, z=origin_cfg.get('z') or 0.0, roll=origin_cfg.get('roll') or 0.0, pitch=origin_cfg.get('pitch') or 0.0, yaw=origin_cfg.get('yaw') or 0.0)}"
+      lazy_eval="false" />
+    <xacro:property name="resolved_mount_origin" value="${connection_origin}" lazy_eval="false" />
     <xacro:if value="${has_parent_reference_key}">
       <xacro:openarm_v20_require
         condition="${has_parent_desc}"
@@ -323,36 +332,23 @@ limitations under the License.
       <xacro:property name="parent_ref" value="${parent_desc['reference_points'][parent_ref_name]}" lazy_eval="false" />
       <xacro:property name="parent_ref_should_reflect" value="${parent_component_reflects and parent_ref_name in parent_reflect_include_reference_points}" lazy_eval="false" />
       <xacro:property name="parent_ref_canonical_link" value="${parent_ref['parent']}" lazy_eval="false" />
-      <xacro:property
-        name="resolved_connected_to"
-        value="${parent_desc['link_name_map'][parent_ref_canonical_link] if parent_ref_canonical_link in parent_desc['link_name_map'] else parent_desc['link_prefix'] + parent_ref_canonical_link}"
-        lazy_eval="false" />
-      <xacro:property
-        name="resolved_mount_origin"
-        value="${dict(x=((parent_reflect_cfg['x'] * parent_ref['origin']['x']) if parent_ref_should_reflect else parent_ref['origin']['x']),
-                     y=((parent_reflect_cfg['y'] * parent_ref['origin']['y']) if parent_ref_should_reflect else parent_ref['origin']['y']),
-                     z=((parent_reflect_cfg['z'] * parent_ref['origin']['z']) if parent_ref_should_reflect else parent_ref['origin']['z']),
-                     roll=parent_ref['origin']['roll'],
-                     pitch=parent_ref['origin']['pitch'],
-                     yaw=parent_ref['origin']['yaw'])}"
-        lazy_eval="false" />
-    </xacro:if>
-
-    <xacro:if value="${has_parent_override}">
-      <xacro:property name="resolved_connected_to" value="${connection['parent']}" lazy_eval="false" />
-    </xacro:if>
-
-    <xacro:if value="${has_origin_override}">
-      <xacro:property name="origin_override" value="${connection['origin']}" lazy_eval="false" />
-      <xacro:property
-        name="resolved_mount_origin"
-        value="${dict(x=(origin_override['x'] if origin_override['x'] != None else resolved_mount_origin['x']),
-                     y=(origin_override['y'] if origin_override['y'] != None else resolved_mount_origin['y']),
-                     z=(origin_override['z'] if origin_override['z'] != None else resolved_mount_origin['z']),
-                     roll=(origin_override['roll'] if origin_override['roll'] != None else resolved_mount_origin['roll']),
-                     pitch=(origin_override['pitch'] if origin_override['pitch'] != None else resolved_mount_origin['pitch']),
-                     yaw=(origin_override['yaw'] if origin_override['yaw'] != None else resolved_mount_origin['yaw']))}"
-        lazy_eval="false" />
+      <xacro:property name="resolved_connected_to"
+        value="${parent_desc['link_name_map'][parent_ref_canonical_link] if parent_ref_canonical_link in parent_desc['link_name_map'] else parent_desc['link_prefix'] + parent_ref_canonical_link}" lazy_eval="false" />
+      <xacro:property name="reference_origin" value="${parent_ref['origin']}" lazy_eval="false" />
+      <xacro:if value="${parent_ref_canonical_link == parent_desc['topology']['links'][0] and parent_desc.get('base_frame_shift', 'none') != 'none'}">
+        <xacro:openarm_v20_compose_pose first="${parent_desc['base_frame_shift']}" second="${reference_origin}" out_name="reference_origin" />
+      </xacro:if>
+      <xacro:if value="${parent_ref_should_reflect}">
+        <xacro:openarm_v20_reflect_pose origin="${reference_origin}" reflect_x="${parent_reflect_cfg['x']}" reflect_y="${parent_reflect_cfg['y']}" reflect_z="${parent_reflect_cfg['z']}" out_name="reference_origin" />
+      </xacro:if>
+      <xacro:openarm_v20_compose_pose first="${reference_origin}" second="${connection_origin}" out_name="reference_mount_origin" />
+      <xacro:property name="resolved_mount_origin" value="${reference_mount_origin}" lazy_eval="false" />
+      <xacro:property name="parent_reference_emitted" value="${parent_ref.get('emit', False) or (emit_grasp_frame and parent_desc['component_type'] == 'end_effector' and parent_ref_name == 'grasp_frame')}" lazy_eval="false" />
+      <xacro:if value="${parent_reference_emitted}">
+        <xacro:property name="reference_prefix" value="${parent_desc['root_link_actual'] + '_' if parent_desc['component_type'] == 'body' else parent_desc['prefix']}" lazy_eval="false" />
+        <xacro:property name="resolved_connected_to" value="${reference_prefix + parent_ref_name}" lazy_eval="false" />
+        <xacro:property name="resolved_mount_origin" value="${connection_origin}" lazy_eval="false" />
+      </xacro:if>
     </xacro:if>
 
     <!-- reference point child empty links are already absorbed into config; runtime collapse only targets the parent's terminal empty link -->
@@ -362,7 +358,7 @@ limitations under the License.
       lazy_eval="false" />
     <xacro:if value="${has_parent_reference_key and not has_parent_override and collapse_internal_empty_links and parent_terminal_link_empty and parent_ref_canonical_link == parent_desc['topology']['links'][-1]}">
       <xacro:property name="skip_mount_joint" value="${True}" lazy_eval="false" />
-      <xacro:property name="base_frame_shift" value="${resolved_mount_origin}" lazy_eval="false" />
+      <xacro:openarm_v20_reflect_pose origin="${reference_mount_origin}" reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}" out_name="base_frame_shift" />
     </xacro:if>
 
     <!-- A parent can expose at most one child that consumes its terminal empty link. -->
@@ -503,6 +499,19 @@ limitations under the License.
         mount_origin="${component_runtime['resolved_mount_origin']}"
         prefix="${component_desc['prefix']}" />
     </xacro:if>
+    <xacro:unless value="${component_type == 'end_effector'}">
+      <xacro:openarm_v20_emit_reference_frames
+        reference_points="${component_desc['reference_points']}"
+        prefix="${component_desc['root_link_actual'] + '_' if component_type == 'body' else component_desc['prefix']}"
+        link_prefix="${component_desc['link_prefix']}"
+        link_name_map="${component_desc['link_name_map']}"
+        base_link_name="${component_desc['topology']['links'][0]}"
+        reflect_x="${component_runtime['reflect_x']}"
+        reflect_y="${component_runtime['reflect_y']}"
+        reflect_z="${component_runtime['reflect_z']}"
+        reflect_include_reference_points="${component_runtime['reflect_include_reference_points']}"
+        frame_shift="${component_runtime['base_frame_shift']}" />
+    </xacro:unless>
   </xacro:macro>
 
   <!-- Per-component orchestration: descriptor -> runtime resolution -> emission -> child recursion. -->
@@ -531,7 +540,12 @@ limitations under the License.
       component_desc="${component_desc}"
       parent_desc="${parent_desc}"
       collapse_internal_empty_links="${collapse_internal_empty_links}"
+      emit_grasp_frame="${emit_grasp_frame}"
       out_name="component_runtime" />
+
+    <xacro:property name="runtime_link_name_map"
+      value="${dict(list(component_desc['link_name_map'].items()) + ([(component_runtime['collapse_source_link'], component_runtime['collapse_child_link'])] if component_runtime['collapse_source_link'] != 'none' else []))}" lazy_eval="false" />
+    <xacro:property name="component_desc" value="${dict(component_desc, link_name_map=runtime_link_name_map, base_frame_shift=component_runtime['base_frame_shift'])}" lazy_eval="false" />
 
     <xacro:openarm_v20_emit_component_from_runtime
       component_desc="${component_desc}"
