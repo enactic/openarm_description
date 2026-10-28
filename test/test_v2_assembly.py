@@ -1,30 +1,45 @@
-"""Check component mounting and generated control interfaces."""
+# Copyright 2026 Enactic, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""Check component mounting and reference frame emission."""
 
 import copy
+import os
+from pathlib import Path
+import shutil
+import tempfile
 import unittest
-from unittest.mock import patch
 import xml.etree.ElementTree as ET
 
-import ament_index_python.packages as packages
-from test_v2_camera_components import ENTRY, multiply, poses, ROOT, transform
+from test_v2_camera_components import (
+    ENTRY,
+    multiply,
+    package_share_at,
+    poses,
+    ROOT,
+    transform,
+)
 import xacro
+import yaml
 
 
 def expand_modified(changes=None, collapse_empty_end=None, **mappings):
-    original_share = packages.get_package_share_directory
-    symbols = xacro._global_symbols['xacro']
-    original_load = symbols['load_yaml']
+    """Expand the V2 model with changed YAML files.
 
-    def package_share(name):
-        return str(ROOT) if name == 'openarm_description' else original_share(name)
-
-    def load_yaml(filename):
-        value = original_load(filename)
-        for suffix, change in (changes or {}).items():
-            if str(filename).endswith(suffix):
-                value = change(copy.deepcopy(value))
-        return value
-
+    changes maps a YAML path relative to assets/ to a function that
+    receives the loaded YAML value and returns the changed value.
+    """
     arguments = {
         'robot_preset': 'default_bimanual',
         'emit_grasp_frame': 'true',
@@ -38,8 +53,16 @@ def expand_modified(changes=None, collapse_empty_end=None, **mappings):
             for key, value in mappings.items()
         }
     )
-    with patch.object(packages, 'get_package_share_directory', package_share):
-        with patch.dict(symbols, {'load_yaml': load_yaml}):
+    with tempfile.TemporaryDirectory() as share:
+        # Link all assets and replace only the changed YAML files.
+        shutil.copytree(ROOT / 'assets', Path(share) / 'assets',
+                        copy_function=os.symlink)
+        for path, change in (changes or {}).items():
+            target = Path(share) / 'assets' / path
+            value = change(yaml.safe_load(target.read_text()))
+            target.unlink()
+            target.write_text(yaml.safe_dump(value, sort_keys=False))
+        with package_share_at(share):
             robot = ET.fromstring(
                 xacro.process_file(str(ENTRY), mappings=arguments).toxml()
             )
@@ -97,8 +120,8 @@ class AssemblyTest(unittest.TestCase):
 
             for collapse in [False, True]:
                 robots = [expand_modified({
-                    'robot_presets/default_bimanual.yaml': add_probe,
-                    'pinch_gripper/config/struct/reference_points.yaml':
+                    'robot/openarm_v2.0/config/robot_presets/default_bimanual.yaml': add_probe,
+                    'end_effector/pinch_gripper/config/struct/reference_points.yaml':
                         set_reference_emit('camera_view_frame', emit),
                 }, collapse_empty_end=collapse) for emit in [False, True]]
                 values = [poses(robot) for robot in robots]
@@ -125,7 +148,7 @@ class AssemblyTest(unittest.TestCase):
             robots = [
                 expand_modified(
                     {
-                        'config/arm/struct/reference_points.yaml': set_reference_emit(
+                        'robot/openarm_v2.0/config/arm/struct/reference_points.yaml': set_reference_emit(
                             'ee_mount_point', emit
                         ),
                     },
@@ -135,20 +158,26 @@ class AssemblyTest(unittest.TestCase):
             ]
             self.assert_common_poses(*robots)
 
-    def test_grasp_frame_generated_once(self):
-        for enabled in [False, True]:
-            robot = expand_modified(
-                {
-                    'pinch_gripper/config/struct/reference_points.yaml': set_reference_emit(
-                        'grasp_frame', True
-                    ),
-                },
-                emit_grasp_frame=enabled,
-            )
-            self.assertEqual(
-                len(robot.findall(
-                    "link[@name='openarm_right_grasp_frame']")), 1
-            )
+    def test_grasp_frame_emission(self):
+        # grasp_frame is emitted once when either the reference point's
+        # emit or the emit_grasp_frame argument is enabled.
+        for emit in [False, True]:
+            for enabled in [False, True]:
+                with self.subTest(emit=emit, emit_grasp_frame=enabled):
+                    robot = expand_modified(
+                        {
+                            'end_effector/pinch_gripper/config/struct/reference_points.yaml': set_reference_emit(
+                                'grasp_frame', emit
+                            ),
+                        },
+                        emit_grasp_frame=enabled,
+                    )
+                    for side in ['left', 'right']:
+                        self.assertEqual(
+                            len(robot.findall(
+                                f"link[@name='openarm_{side}_grasp_frame']")),
+                            1 if emit or enabled else 0,
+                        )
 
     def test_conflicting_parent_selectors_rejected(self):
         def conflict(value):
@@ -162,7 +191,8 @@ class AssemblyTest(unittest.TestCase):
         with self.assertRaisesRegex(
             xacro.XacroException, 'choose parent or parent_reference_point'
         ):
-            expand_modified({'robot_presets/default_bimanual.yaml': conflict})
+            expand_modified(
+                {'robot/openarm_v2.0/config/robot_presets/default_bimanual.yaml': conflict})
 
 
 if __name__ == '__main__':
