@@ -14,7 +14,8 @@ limitations under the License.
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="pinch_gripper">
 
-  <xacro:include filename="$(find openarm_description)/assets/robot/openarm_v2.0/urdf/utils/openarm_v20_utils.xacro" />
+  <xacro:include filename="$(find openarm_description)/assets/common/links.xacro" />
+  <xacro:include filename="$(find openarm_description)/assets/common/reference_frames.xacro" />
   <xacro:include filename="$(find openarm_description)/assets/robot/openarm_v2.0/urdf/utils/openarm_v20_ee.xacro" />
 
   <xacro:macro name="openarm_v20_require" params="condition message">
