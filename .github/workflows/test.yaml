@@ -41,3 +41,24 @@ jobs:
       - name: Run pre-commit
         run: |
           pre-commit run --show-diff-on-failure --color=always --all-files
+  test:
+    name: Test (${{ matrix.id }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        id:
+          - "rolling"
+          - "kilted"
+          - "jazzy"
+          - "humble"
+    steps:
+      - uses: actions/checkout@v7
+      - name: Run tests
+        run: |
+          docker container run \
+            --rm \
+            --volume ${PWD}:/source \
+            osrf/ros:${{ matrix.id }}-desktop-full \
+            /source/test/run.sh /tmp/build
