@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!--
+Copyright 2026 Enactic, Inc.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find openarm_description)/assets/common/transforms.xacro" />
+
+  <xacro:macro name="openarm_emit_reference_link" params="link_name parent_link origin reflect_x:=1 reflect_y:=1 reflect_z:=1 frame_shift:=none">
+    <link name="${link_name}" />
+    <joint name="${link_name}_joint" type="fixed">
+      <xacro:if value="${frame_shift != 'none'}">
+        <xacro:openarm_emit_composed_origin first="${frame_shift}" second="${origin}" reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}" reflect_rotation="${True}" />
+      </xacro:if>
+      <xacro:unless value="${frame_shift != 'none'}">
+        <xacro:openarm_emit_origin origin="${origin}" reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}" reflect_rotation="${True}" />
+      </xacro:unless>
+      <parent link="${parent_link}" />
+      <child link="${link_name}" />
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="openarm_emit_reference_frames"
+    params="reference_points prefix link_prefix link_name_map:=${dict()} base_link_name:='' reflect_x:=1 reflect_y:=1 reflect_z:=1 reflect_include_reference_points:=^ frame_shift:=none force_emit_reference:='' index:=0">
+    <xacro:property name="reference_names" value="${list(reference_points.keys())}" lazy_eval="false" />
+    <xacro:if value="${index &lt; len(reference_names)}">
+      <xacro:property name="reference_name" value="${reference_names[index]}" lazy_eval="false" />
+      <xacro:property name="reference" value="${reference_points[reference_name]}" lazy_eval="false" />
+      <xacro:if value="${reference.get('emit', False) or reference_name == force_emit_reference}">
+        <xacro:property name="reference_parent" value="${reference['parent']}" lazy_eval="false" />
+        <xacro:property name="reference_reflects" value="${reference_name in reflect_include_reference_points}" lazy_eval="false" />
+        <xacro:openarm_emit_reference_link
+          link_name="${prefix + reference_name}"
+          parent_link="${link_name_map[reference_parent] if reference_parent in link_name_map else link_prefix + reference_parent}"
+          origin="${reference['origin']}"
+          reflect_x="${reflect_x if reference_reflects else 1}"
+          reflect_y="${reflect_y if reference_reflects else 1}"
+          reflect_z="${reflect_z if reference_reflects else 1}"
+          frame_shift="${frame_shift if reference_parent == base_link_name else 'none'}" />
+      </xacro:if>
+      <xacro:openarm_emit_reference_frames
+        reference_points="${reference_points}" prefix="${prefix}" link_prefix="${link_prefix}"
+        link_name_map="${link_name_map}" base_link_name="${base_link_name}"
+        reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}"
+        reflect_include_reference_points="${reflect_include_reference_points}"
+        frame_shift="${frame_shift}" force_emit_reference="${force_emit_reference}" index="${index + 1}" />
+    </xacro:if>
+  </xacro:macro>
+
+</robot>
