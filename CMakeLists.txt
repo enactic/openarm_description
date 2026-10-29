@@ -28,6 +28,8 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
   find_package(ament_cmake_pytest REQUIRED)
+  ament_add_pytest_test(joint_axis_reflection
+                        test/test_joint_axis_reflection.py)
   ament_add_pytest_test(v2_camera_components test/test_v2_camera_components.py)
   ament_add_pytest_test(v2_assembly test/test_v2_assembly.py)
 endif()
