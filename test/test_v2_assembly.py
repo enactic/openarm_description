@@ -22,7 +22,7 @@ import tempfile
 import unittest
 import xml.etree.ElementTree as ET
 
-from test_v2_camera_components import (
+from helpers import (
     ENTRY,
     multiply,
     package_share_at,
