@@ -1,0 +1,76 @@
+#!/usr/bin/python3
+import sys
+import os
+import xacro
+
+from ament_index_python.packages import get_package_share_directory
+from launch_ros.substitutions import FindPackageShare
+
+# All accepted arm_type values
+VALID_ARM_TYPES = {
+    "v1.0", "v10", "v1_0", "openarm_v1.0", "openarm_v10", "openarm_v1_0",
+    "v2.0", "v20", "v2_0", "openarm_v2.0", "openarm_v20", "openarm_v2_0",
+    "v2.0_cell", "v20_cell", "v2_0_cell", "openarm_v2.0_cell", "openarm_v20_cell", "openarm_v2_0_cell",
+}
+
+
+def resolve_arm_config(arm_type_str: str) -> tuple[str, str]:
+    """
+    Resolve folder name and xacro file name from arm_type.
+    Accepts: v1.0, v10, v1_0, openarm_v1.0, openarm_v10, openarm_v1_0 (and v2.0 variants)
+    Raises ValueError if arm_type is not recognized.
+    """
+    if arm_type_str not in VALID_ARM_TYPES:
+        raise ValueError(
+            f"Invalid arm_type: '{arm_type_str}'. "
+            f"Please specify openarm_v1.0, openarm_v2.0 or openarm_v2.0_cell"
+        )
+    if any(x in arm_type_str for x in ("1.0", "10", "1_0")):
+        return "openarm_v1.0", "openarm_v10.urdf.xacro"
+    if "cell" in arm_type_str:
+        return "openarm_v2.0_cell", "openarm_v20_cell.urdf.xacro"
+    return "openarm_v2.0", "openarm_v20.urdf.xacro"
+
+def generate_robot_description(arm_type_str):
+    """Generate robot description using xacro processing."""
+    description_package_str = "openarm_description"
+    use_fake_hardware_str = "true"
+    right_can_interface_str = "can0"
+    left_can_interface_str = "can1"
+
+    folder_name, file_name = resolve_arm_config(arm_type_str)
+
+    xacro_path = os.path.join(
+        get_package_share_directory(description_package_str),
+        "assets", "robot", folder_name, "urdf", file_name
+    )
+
+    robot_description = xacro.process_file(
+        xacro_path,
+        mappings={
+            "arm_type": arm_type_str,
+            "bimanual": "true",
+            "use_fake_hardware": use_fake_hardware_str,
+            "ros2_control": "true",
+            "right_can_interface": right_can_interface_str,
+            "left_can_interface": left_can_interface_str,
+        }
+    ).toprettyxml(indent="  ")
+
+    return robot_description
+
+def main():
+    if len(sys.argv) < 2:
+        raise ValueError("Missing arm type argument (v1_0, v2_0, v2_0_cell)")
+    arm_type = sys.argv[1]
+    export_file = f"{arm_type}.urdf"
+
+    print("Generating URDF")
+    urdf = generate_robot_description(arm_type)
+    print("Exporting URDF")
+    with(open(export_file, "w") as fstream):
+        fstream.write(urdf)
+    print("Succesfully exported to " + export_file)
+
+if __name__ == "__main__":
+    main()
