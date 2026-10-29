@@ -1,22 +1,33 @@
+# Copyright 2026 Enactic, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """Check oblique joint axes against reflected rigid-body motion."""
 
 import itertools
 import math
-from pathlib import Path
 import unittest
-from unittest.mock import patch
 import xml.etree.ElementTree as ET
 
-import ament_index_python.packages as packages
+from helpers import (
+    multiply,
+    package_share_at,
+    ROOT,
+    transform,
+)
 import xacro
 
-ROOT = Path(__file__).resolve().parents[1]
 REFLECTIONS = [(1, 1, 1), (-1, 1, 1), (1, -1, 1), (1, 1, -1)]
-
-
-def multiply(first, second):
-    return [[sum(a * b for a, b in zip(row, col)) for col in zip(*second)]
-            for row in first]
 
 
 def rotation(axis, angle):
@@ -29,55 +40,50 @@ def rotation(axis, angle):
     ]
 
 
+def literal(values):
+    """Format values as a dict() expression for xacro."""
+    return 'dict(' + ', '.join(f'{k}={v!r}' for k, v in values.items()) + ')'
+
+
 def expand(axis, reflect=(1, 1, 1), mirror_limits=False, joint_type='revolute'):
     origin = {'x': 0.12, 'y': -0.04, 'z': 0.07,
               'roll': 0.31, 'pitch': -0.47, 'yaw': 0.29}
     limits = {'lower': -0.4, 'upper': 1.2, 'effort': 7, 'velocity': 3}
-    symbols = {
-        'axis_input': dict(zip(('x', 'y', 'z'), axis)),
-        'origin_input': origin,
-        'limit_input': limits,
-        'reflect_input': reflect,
-        'mirror_limits_input': mirror_limits,
-        'joint_type_input': joint_type,
-    }
     text = """<robot name="axis_test" xmlns:xacro="http://www.ros.org/wiki/xacro">
       <xacro:include filename="$(find openarm_description)/assets/common/links.xacro" />
       <link name="base" /><link name="tip" />
-      <xacro:openarm_emit_joint joint_name="joint" joint_type="${joint_type_input}"
+      <xacro:openarm_emit_joint joint_name="joint" joint_type="%(joint_type)s"
         parent_link="base" child_link="tip" joint_origins="${dict()}"
         joint_axes="${dict()}" joint_limits="${dict()}"
-        origin_override="${origin_input}" axis_override="${axis_input}"
-        limit_override="${limit_input}" reflect_rotation="${True}"
-        reflect_x="${reflect_input[0]}" reflect_y="${reflect_input[1]}"
-        reflect_z="${reflect_input[2]}" mirror_limit_sign="${mirror_limits_input}" />
-    </robot>"""
-    original_share = packages.get_package_share_directory
-
-    def package_share(name):
-        return str(ROOT) if name == 'openarm_description' else original_share(name)
-
-    with patch.object(packages, 'get_package_share_directory', package_share):
-        with patch.dict(xacro._global_symbols, symbols):
-            document = xacro.parse(text)
-            xacro.process_doc(document)
+        origin_override="${%(origin)s}" axis_override="${%(axis)s}"
+        limit_override="${%(limits)s}" reflect_rotation="${True}"
+        reflect_x="${%(reflect_x)r}" reflect_y="${%(reflect_y)r}"
+        reflect_z="${%(reflect_z)r}" mirror_limit_sign="${%(mirror_limits)r}" />
+    </robot>""" % {
+        'joint_type': joint_type,
+        'origin': literal(origin),
+        'axis': literal(dict(zip(('x', 'y', 'z'), axis))),
+        'limits': literal(limits),
+        'reflect_x': reflect[0],
+        'reflect_y': reflect[1],
+        'reflect_z': reflect[2],
+        'mirror_limits': mirror_limits,
+    }
+    with package_share_at(ROOT):
+        document = xacro.parse(text)
+        xacro.process_doc(document)
     return ET.fromstring(document.toxml()).find('joint')
 
 
 def joint_pose(joint, position):
-    origin = joint.find('origin')
-    xyz = [float(v) for v in origin.get('xyz').split()]
-    roll, pitch, yaw = [float(v) for v in origin.get('rpy').split()]
-    basis = multiply(rotation((0, 0, 1), yaw), multiply(
-        rotation((0, 1, 0), pitch), rotation((1, 0, 0), roll)))
     axis = [float(v) for v in joint.find('axis').get('xyz').split()]
     if joint.get('type') == 'prismatic':
-        delta = [row[0]*axis[0] + row[1]*axis[1] + row[2]*axis[2]
-                 for row in basis]
-        xyz = [p + position*d for p, d in zip(xyz, delta)]
+        motion = [[float(i == j) for j in range(3)] + [position * axis[i]]
+                  for i in range(3)]
     else:
-        basis = multiply(basis, rotation(axis, position))
-    return [row + [p] for row, p in zip(basis, xyz)] + [[0., 0., 0., 1.]]
+        motion = [row + [0.] for row in rotation(axis, position)]
+    return multiply(transform(joint.find('origin')),
+                    motion + [[0., 0., 0., 1.]])
 
 
 class JointAxisReflectionTest(unittest.TestCase):
