@@ -14,7 +14,7 @@ limitations under the License.
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="openarm_v20">
 
-  <xacro:include filename="$(find openarm_description)/assets/robot/openarm_v2.0/urdf/utils/openarm_v20_robot.xacro" />
+  <xacro:include filename="$(find openarm_description)/assets/component_loader.xacro" />
   <xacro:include filename="$(find openarm_description)/assets/common/assembly.xacro" />
 
   <xacro:include filename="$(find openarm_description)/assets/robot/openarm_v2.0/urdf/ros2_control/openarm.bimanual.ros2_control.xacro" />

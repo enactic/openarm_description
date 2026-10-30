@@ -14,39 +14,12 @@ limitations under the License.
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <xacro:include filename="$(find openarm_description)/assets/robot/openarm_v2.0/urdf/utils/openarm_v20_arm.xacro" />
-  <xacro:include filename="$(find openarm_description)/assets/robot/openarm_v2.0/urdf/utils/openarm_v20_ee.xacro" />
-  <xacro:include filename="$(find openarm_description)/assets/robot/openarm_v2.0/urdf/utils/openarm_v20_sensor.xacro" />
   <xacro:include filename="$(find openarm_description)/assets/common/links.xacro" />
   <xacro:include filename="$(find openarm_description)/assets/common/reference_frames.xacro" />
   <xacro:include filename="$(find openarm_description)/assets/common/validation.xacro" />
-
-  <xacro:macro name="openarm_v20_body"
-    params="link_name connected_to mount_origin topology inertials visuals collisions reflect_x:=1 reflect_y:=1 reflect_z:=1 reflect_include_links:=^ skip_mount_joint:=false base_frame_shift:=none">
-
-    <xacro:property name="base_link_name" value="${topology['links'][0]}" lazy_eval="false" />
-    <xacro:property name="resolved_base_frame_shift" value="${base_frame_shift if base_frame_shift != 'none' else 'none'}" lazy_eval="false" />
-    <xacro:property name="base_link_reflects" value="${base_link_name in reflect_include_links}" lazy_eval="false" />
-
-    <xacro:openarm_emit_link
-      link_name="${link_name}"
-      source_name="${base_link_name}"
-      inertials="${inertials}"
-      visuals="${visuals}"
-      collisions="${collisions}"
-      reflect_x="${reflect_x if base_link_reflects else 1}"
-      reflect_y="${reflect_y if base_link_reflects else 1}"
-      reflect_z="${reflect_z if base_link_reflects else 1}"
-      frame_shift="${resolved_base_frame_shift}" />
-
-    <xacro:unless value="${skip_mount_joint}">
-      <joint name="${link_name}_mount_joint" type="fixed">
-        <xacro:openarm_emit_origin origin="${mount_origin}" reflect_x="1" reflect_y="1" reflect_z="1" reflect_position="false" />
-        <parent link="${connected_to}" />
-        <child link="${link_name}" />
-      </joint>
-    </xacro:unless>
-  </xacro:macro>
+  <xacro:include filename="$(find openarm_description)/assets/robot/openarm_v2.0/urdf/utils/openarm_v20_arm.xacro" />
+  <xacro:include filename="$(find openarm_description)/assets/robot/openarm_v2.0/urdf/utils/openarm_v20_ee.xacro" />
+  <xacro:include filename="$(find openarm_description)/assets/robot/openarm_v2.0/urdf/utils/openarm_v20_sensor.xacro" />
 
   <xacro:macro name="openarm_load_component_descriptor"
     params="component_name component_cfg config_root out_name">
@@ -165,7 +138,7 @@ limitations under the License.
     <xacro:property name="component_type" value="${component_runtime['component_type']}" lazy_eval="false" />
 
     <xacro:if value="${component_type == 'body'}">
-      <xacro:openarm_v20_body
+      <xacro:openarm_emit_rigid_component
         link_name="${component_desc['root_link_actual']}"
         connected_to="${component_runtime['resolved_connected_to']}"
         mount_origin="${component_runtime['resolved_mount_origin']}"
