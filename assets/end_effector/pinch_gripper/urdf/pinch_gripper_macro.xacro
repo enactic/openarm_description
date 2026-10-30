@@ -18,7 +18,9 @@ limitations under the License.
   <xacro:include filename="$(find openarm_description)/assets/common/reference_frames.xacro" />
 
   <!-- Current EE implementation targets the two-finger gripper topology. -->
-  <xacro:macro name="openarm_v20_ee"
+  <xacro:include filename="$(find openarm_description)/assets/common/validation.xacro" />
+
+  <xacro:macro name="openarm_pinch_gripper"
     params="prefix connected_to mount_origin:=none topology joint_origins joint_axes joint_limits joint_mimics inertials visuals collisions reflect_x:=1 reflect_y:=1 reflect_z:=1 component_reflects:=false reflect_include_links:=^ reflect_include_joints:=^ reflect_include_reference_points:=^ limit_override_joints:=^ ee_reference_points:=^ emit_grasp_frame:=false grasp_reference_point:=grasp_frame skip_mount_joint:=false base_frame_shift:=none">
 
     <xacro:property name="base_link_name" value="${topology['links'][0]}" />
