@@ -16,7 +16,7 @@ limitations under the License.
 
   <xacro:include filename="$(find openarm_description)/assets/common/links.xacro" />
   <xacro:include filename="$(find openarm_description)/assets/common/reference_frames.xacro" />
-  <xacro:include filename="$(find openarm_description)/assets/robot/openarm_v2.0/urdf/utils/openarm_v20_ee.xacro" />
+  <xacro:include filename="$(find openarm_description)/assets/end_effector/pinch_gripper/urdf/pinch_gripper_macro.xacro" />
 
 
   <xacro:arg name="ee_config_dir" default="$(find openarm_description)/assets/end_effector/pinch_gripper/config" />
@@ -42,7 +42,7 @@ limitations under the License.
   <xacro:property name="ee_topology" value="${xacro.load_yaml('$(arg ee_config_dir)/struct/topology.yaml')}" lazy_eval="false" />
   <xacro:property name="ee_reference_points" value="${xacro.load_yaml('$(arg ee_config_dir)/struct/reference_points.yaml')}" lazy_eval="false" />
 
-  <xacro:openarm_v20_ee
+  <xacro:openarm_pinch_gripper
     prefix=""
     connected_to="world"
     topology="${ee_topology}"

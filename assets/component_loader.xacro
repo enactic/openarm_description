@@ -18,7 +18,7 @@ limitations under the License.
   <xacro:include filename="$(find openarm_description)/assets/common/reference_frames.xacro" />
   <xacro:include filename="$(find openarm_description)/assets/common/validation.xacro" />
   <xacro:include filename="$(find openarm_description)/assets/robot/openarm_v2.0/urdf/utils/openarm_v20_arm.xacro" />
-  <xacro:include filename="$(find openarm_description)/assets/robot/openarm_v2.0/urdf/utils/openarm_v20_ee.xacro" />
+  <xacro:include filename="$(find openarm_description)/assets/end_effector/pinch_gripper/urdf/pinch_gripper_macro.xacro" />
   <xacro:include filename="$(find openarm_description)/assets/robot/openarm_v2.0/urdf/utils/openarm_v20_sensor.xacro" />
 
   <xacro:macro name="openarm_load_component_descriptor"
@@ -180,7 +180,7 @@ limitations under the License.
     </xacro:if>
 
     <xacro:if value="${component_type == 'end_effector'}">
-      <xacro:openarm_v20_ee
+      <xacro:openarm_pinch_gripper
         prefix="${component_desc['prefix']}"
         connected_to="${component_runtime['resolved_connected_to']}"
         mount_origin="${component_runtime['resolved_mount_origin']}"
