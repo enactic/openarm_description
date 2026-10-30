@@ -55,6 +55,11 @@ jobs:
           - "humble"
     steps:
       - uses: actions/checkout@v7
+      - uses: actions/checkout@v7
+        with:
+          repository: stereolabs/zed-ros2-description
+          ref: 22468247c1653d08a1e213809f3e9ce76291487d
+          path: .ci/zed_description
       - name: Run tests
         run: |
           docker container run \

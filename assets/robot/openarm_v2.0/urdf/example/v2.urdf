@@ -22,13 +22,13 @@ limitations under the License.
       <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
       <!-- Preserve the mesh's embedded materials. -->
       <geometry>
-        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/body/visual/body_link0.dae" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://openarm_description/assets/body/v2.0/meshes/visual/body_link0.dae" scale="1.0 1.0 1.0"/>
       </geometry>
     </visual>
     <collision name="openarm_body_link0_collision">
       <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/body/collision/body_link0_symp.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://openarm_description/assets/body/v2.0/meshes/collision/body_link0_symp.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
@@ -41,6 +41,12 @@ limitations under the License.
     <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
     <parent link="world"/>
     <child link="openarm_body_link0"/>
+  </joint>
+  <link name="openarm_camera_mount_point"/>
+  <joint name="openarm_camera_mount_point_joint" type="fixed">
+    <origin rpy="0.0 0.0 0.0" xyz="0.03 0.0 0.743"/>
+    <parent link="openarm_body_link0"/>
+    <child link="openarm_camera_mount_point"/>
   </joint>
   <link name="openarm_left_base_link">
     <visual name="openarm_left_base_link_visual">
@@ -236,17 +242,16 @@ limitations under the License.
     <axis xyz="1 0 0"/>
     <limit effort="7" lower="-1.5708" upper="1.5708" velocity="20.944"/>
   </joint>
-  <!-- The base link is emitted inline because its naming and frame-shift behavior differ from the finger links. -->
   <link name="openarm_left_ee_base_link">
     <visual name="openarm_left_ee_base_link_visual">
-      <origin rpy="0.0 -0.0 0.0" xyz="0.0205 -0.0 0.0"/>
+      <origin rpy="0.0 -0.0 0.0" xyz="0.0205 0.0 0.0"/>
       <!-- Preserve the mesh's embedded materials. -->
       <geometry>
         <mesh filename="package://openarm_description/assets/end_effector/pinch_gripper/meshes/visual/ee_base_link.dae" scale="1 -1 1"/>
       </geometry>
     </visual>
     <collision name="openarm_left_ee_base_link_collision">
-      <origin rpy="0.0 -0.0 0.0" xyz="0.0205 -0.0 0.0"/>
+      <origin rpy="0.0 -0.0 0.0" xyz="0.0205 0.0 0.0"/>
       <geometry>
         <mesh filename="package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/ee_base_link.stl" scale="1 -1 1"/>
       </geometry>
@@ -512,7 +517,6 @@ limitations under the License.
     <axis xyz="1 0 0"/>
     <limit effort="7" lower="-1.5708" upper="1.5708" velocity="20.944"/>
   </joint>
-  <!-- The base link is emitted inline because its naming and frame-shift behavior differ from the finger links. -->
   <link name="openarm_right_ee_base_link">
     <visual name="openarm_right_ee_base_link_visual">
       <origin rpy="0.0 -0.0 0.0" xyz="0.0205 0.0 0.0"/>
@@ -593,6 +597,89 @@ limitations under the License.
     <origin rpy="2.1009 1.1424 2.1431" xyz="0.021835300000000002 -0.024136 -0.086895"/>
     <parent link="openarm_right_ee_base_link"/>
     <child link="openarm_right_camera_view_frame"/>
+  </joint>
+  <link name="openarm_body_zed_mount_base_link">
+    <visual name="openarm_body_zed_mount_base_link_visual">
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <!-- Preserve the mesh's embedded materials. -->
+      <geometry>
+        <mesh filename="package://openarm_description/assets/accessory/zed_mount/meshes/visual/zed_mount.dae" scale="1 1 1"/>
+      </geometry>
+    </visual>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.014296 0.0034952 0.047826"/>
+      <mass value="0.13704"/>
+      <inertia ixx="0.00018293" ixy="-6.3997e-06" ixz="-3.1024e-05" iyy="0.00011247" iyz="-8.6526e-06" izz="0.00012779"/>
+    </inertial>
+  </link>
+  <joint name="openarm_body_zed_mount_base_link_mount_joint" type="fixed">
+    <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+    <parent link="openarm_camera_mount_point"/>
+    <child link="openarm_body_zed_mount_base_link"/>
+  </joint>
+  <link name="openarm_body_zed_mount_camera_mount_point"/>
+  <joint name="openarm_body_zed_mount_camera_mount_point_joint" type="fixed">
+    <origin rpy="0 1.08210413623648 0" xyz="0.0263085336684006 0.00869000000000031 0.065829226007701"/>
+    <parent link="openarm_body_zed_mount_base_link"/>
+    <child link="openarm_body_zed_mount_camera_mount_point"/>
+  </joint>
+  <!-- Camera mounting point (the threaded screw hole in the bottom) -->
+  <link name="openarm_body_zed_camera_link"/>
+  <!-- Camera Center -->
+  <link name="openarm_body_zed_camera_center">
+    <visual>
+      <origin rpy="0 0 0" xyz="0.0 0 0.0"/>
+      <geometry>
+        <mesh filename="package://zed_description/meshes/zedm.stl"/>
+      </geometry>
+      <material name="cam_mat">
+        <color rgba="0 0 0 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.0 0 0.0"/>
+      <geometry>
+        <mesh filename="package://zed_description/meshes/zedm.stl"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="openarm_body_zed_camera_center_joint" type="fixed">
+    <parent link="openarm_body_zed_camera_link"/>
+    <child link="openarm_body_zed_camera_center"/>
+    <origin rpy="0 0.0 0" xyz="0 0 0.01325"/>
+  </joint>
+  <!-- Left Camera -->
+  <link name="openarm_body_zed_left_camera_frame">
+  </link>
+  <joint name="openarm_body_zed_left_camera_joint" type="fixed">
+    <parent link="openarm_body_zed_camera_center"/>
+    <child link="openarm_body_zed_left_camera_frame"/>
+    <origin rpy="0 0 0" xyz="0.0 0.0315 0"/>
+  </joint>
+  <link name="openarm_body_zed_left_camera_frame_optical"/>
+  <joint name="openarm_body_zed_left_camera_optical_joint" type="fixed">
+    <origin rpy="-1.5707963267948966 0.0 -1.5707963267948966" xyz="0 0 0"/>
+    <parent link="openarm_body_zed_left_camera_frame"/>
+    <child link="openarm_body_zed_left_camera_frame_optical"/>
+  </joint>
+  <!-- Right Camera -->
+  <link name="openarm_body_zed_right_camera_frame">
+  </link>
+  <joint name="openarm_body_zed_right_camera_joint" type="fixed">
+    <parent link="openarm_body_zed_camera_center"/>
+    <child link="openarm_body_zed_right_camera_frame"/>
+    <origin rpy="0 0 0" xyz="0.0 -0.0315 0"/>
+  </joint>
+  <link name="openarm_body_zed_right_camera_frame_optical"/>
+  <joint name="openarm_body_zed_right_camera_optical_joint" type="fixed">
+    <origin rpy="-1.5707963267948966 0.0 -1.5707963267948966" xyz="0 0 0"/>
+    <parent link="openarm_body_zed_right_camera_frame"/>
+    <child link="openarm_body_zed_right_camera_frame_optical"/>
+  </joint>
+  <joint name="openarm_body_zed_mount_joint" type="fixed">
+    <origin rpy="0.0 0.0 0.0" xyz="0.00119247 -0.007723415 8.746e-05"/>
+    <parent link="openarm_body_zed_mount_camera_mount_point"/>
+    <child link="openarm_body_zed_camera_link"/>
   </joint>
   <ros2_control name="openarm_left_hardware_interface" type="system">
     <hardware>
@@ -713,14 +800,6 @@ limitations under the License.
         <param name="initial_value">0.0</param>
       </state_interface>
     </joint>
-    <!-- <joint name="openarm_${left_arm_prefix}finger_joint2">
-        <param name="mimic">openarm_${left_arm_prefix}finger_joint1</param>
-        <param name="multiplier">${left_finger_mimic_multiplier}</param>
-        <command_interface name="position"/>
-        <state_interface name="position">
-          <param name="initial_value">0.0</param>
-        </state_interface>
-      </joint> -->
   </ros2_control>
   <ros2_control name="openarm_right_hardware_interface" type="system">
     <hardware>
@@ -841,13 +920,5 @@ limitations under the License.
         <param name="initial_value">0.0</param>
       </state_interface>
     </joint>
-    <!-- <joint name="openarm_${right_arm_prefix}finger_joint2">
-        <param name="mimic">openarm_${right_arm_prefix}finger_joint1</param>
-        <param name="multiplier">${right_finger_mimic_multiplier}</param>
-        <command_interface name="position"/>
-        <state_interface name="position">
-          <param name="initial_value">0.0</param>
-        </state_interface>
-      </joint> -->
   </ros2_control>
 </robot>
