@@ -19,12 +19,12 @@ robot:
     - primary_arm_end_effector
 
 body:
-  type: robot
+  type: body
+  prefix: openarm_
   enabled: false
-  product: openarm_v2.0
-  config: body
+  product: v2.0
+  config: null
   inertials: nominal
-  link_name: openarm_body_link0
   connection:
     parent: world
     origin:
@@ -45,6 +45,8 @@ primary_arm:
   enabled: true
   product: openarm_v2.0
   config: arm
+  control:
+    side: right
   inertials: nominal
   prefix: openarm_right_
   connection:
@@ -67,6 +69,8 @@ secondary_arm:
   enabled: false
   product: openarm_v2.0
   config: arm
+  control:
+    side: left
   inertials: nominal
   prefix: openarm_left_
   connection:
