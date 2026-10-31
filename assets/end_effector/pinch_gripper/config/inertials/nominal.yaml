@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-base_link:
+ee_base_link:
   origin:
     x: -0.0067098
     y: 0.008407299999999999
@@ -28,7 +28,7 @@ base_link:
     yy: 0.00015627
     yz: -1.5124e-06
     zz: 0.0001659
-link1:
+ee_link1:
   origin:
     x: -0.0124990911725494
     y: 0.00176592789915655
@@ -44,7 +44,7 @@ link1:
     yy: 3.62137424319396e-05
     yz: -3.60343788693423e-06
     zz: 1.74958961632907e-05
-link2:
+ee_link2:
   origin:
     x: -0.012796
     y: -0.0020183

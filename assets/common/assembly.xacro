@@ -74,7 +74,7 @@ limitations under the License.
       <xacro:property name="parent_ref_should_reflect" value="${parent_component_reflects and parent_ref_name in parent_reflect_include_reference_points}" lazy_eval="false" />
       <xacro:property name="parent_ref_canonical_link" value="${parent_ref['parent']}" lazy_eval="false" />
       <xacro:property name="resolved_connected_to"
-        value="${parent_desc['link_name_map'][parent_ref_canonical_link] if parent_ref_canonical_link in parent_desc['link_name_map'] else parent_desc['link_prefix'] + parent_ref_canonical_link}" lazy_eval="false" />
+        value="${parent_desc['link_name_map'][parent_ref_canonical_link] if parent_ref_canonical_link in parent_desc['link_name_map'] else parent_desc['prefix'] + parent_ref_canonical_link}" lazy_eval="false" />
       <xacro:property name="reference_origin" value="${parent_ref['origin']}" lazy_eval="false" />
       <xacro:if value="${parent_ref_canonical_link == parent_desc['topology']['links'][0] and parent_desc.get('base_frame_shift', 'none') != 'none'}">
         <xacro:openarm_compose_pose first="${parent_desc['base_frame_shift']}" second="${reference_origin}" out_name="reference_origin" />
@@ -99,7 +99,7 @@ limitations under the License.
       lazy_eval="false" />
     <xacro:if value="${has_parent_reference_key and not has_parent_override and collapse_internal_empty_links and parent_terminal_link_empty and parent_ref_canonical_link == parent_desc['topology']['links'][-1]}">
       <xacro:property name="skip_mount_joint" value="${True}" lazy_eval="false" />
-      <xacro:openarm_reflect_pose origin="${reference_mount_origin}" reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}" out_name="base_frame_shift" />
+  <xacro:openarm_reflect_pose origin="${reference_mount_origin}" reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}" out_name="base_frame_shift" />
     </xacro:if>
 
     <!-- A parent can expose at most one child that consumes its terminal empty link. -->

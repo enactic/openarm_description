@@ -14,17 +14,17 @@
 
 links:
   canonical_to_original:
-    base_link: ee_base_link
-    link1: finger_inner
-    link2: finger_outer
+    ee_base_link: ee_base_link
+    ee_link1: finger_inner
+    ee_link2: finger_outer
   original_to_canonical:
-    ee_base_link: base_link
-    finger_inner: link1
-    finger_outer: link2
+    ee_base_link: ee_base_link
+    finger_inner: ee_link1
+    finger_outer: ee_link2
 joints:
   canonical_to_original:
-    joint1: finger_inner_joint
-    joint2: finger_outer_joint
+    finger_joint1: finger_inner_joint
+    finger_joint2: finger_outer_joint
   original_to_canonical:
-    finger_inner_joint: joint1
-    finger_outer_joint: joint2
+    finger_inner_joint: finger_joint1
+    finger_outer_joint: finger_joint2

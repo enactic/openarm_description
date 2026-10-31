@@ -86,6 +86,7 @@ limitations under the License.
           message="${'Invalid robot preset: robot component `%s` has unsupported config `%s`.' % (component_name, component_config)}" />
       </xacro:if>
 
+
       <xacro:openarm_require
         condition="${reflect_cfg['x'] in [-1, 1] and reflect_cfg['y'] in [-1, 1] and reflect_cfg['z'] in [-1, 1]}"
         message="${'Invalid robot preset: component `%s` must use reflect axes of either 1 or -1.' % component_name}" />
@@ -130,6 +131,30 @@ limitations under the License.
       index="0"
       components="${components}"
       robot_preset="${robot_preset}" />
+  </xacro:macro>
+
+  <xacro:macro name="openarm_validate_link_ancestry" params="name topology component depth:=0">
+    <xacro:if value="${name != topology['links'][0]}">
+      <xacro:openarm_require condition="${depth &lt; len(topology['links'])}" message="${'Component `%s` has a cycle at link `%s`.' % (component, name)}" />
+      <xacro:property name="incoming" value="${[j for j in topology['joints'] if topology['joints'][j]['child'] == name]}" lazy_eval="false" />
+      <xacro:openarm_require condition="${len(incoming) == 1}" message="${'Link `%s` in `%s` must have one parent joint.' % (name, component)}" />
+      <xacro:openarm_validate_link_ancestry name="${topology['joints'][incoming[0]]['parent']}" topology="${topology}" component="${component}" depth="${depth + 1}" />
+    </xacro:if>
+  </xacro:macro>
+
+  <xacro:macro name="openarm_validate_topology" params="topology component index:=0">
+    <xacro:property name="links" value="${topology['links']}" lazy_eval="false" />
+    <xacro:property name="joints" value="${topology['joints']}" lazy_eval="false" />
+    <xacro:if value="${index == 0}">
+      <xacro:openarm_require condition="${len(links) > 0 and len([link for link in links if links.count(link) != 1]) == 0}" message="${'Component `%s` must have nonempty, unique links.' % component}" />
+      <xacro:openarm_require condition="${len([j for j in joints if joints[j]['parent'] not in links or joints[j]['child'] not in links]) == 0}" message="${'Component `%s` has a joint referencing an unknown link.' % component}" />
+      <xacro:openarm_require condition="${len([j for j in joints if joints[j]['child'] == links[0]]) == 0}" message="${'Root link of `%s` cannot have an internal parent joint.' % component}" />
+      <xacro:openarm_require condition="${len([j for j in joints if joints[j]['type'] not in ['fixed', 'revolute', 'continuous', 'prismatic']]) == 0}" message="${'Component `%s` has an unsupported joint type.' % component}" />
+    </xacro:if>
+    <xacro:if value="${index &lt; len(links)}">
+      <xacro:openarm_validate_link_ancestry name="${links[index]}" topology="${topology}" component="${component}" />
+      <xacro:openarm_validate_topology topology="${topology}" component="${component}" index="${index + 1}" />
+    </xacro:if>
   </xacro:macro>
 
 </robot>

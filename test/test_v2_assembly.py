@@ -194,6 +194,90 @@ class AssemblyTest(unittest.TestCase):
             expand_modified(
                 {'robot/openarm_v2.0/config/robot_presets/default_bimanual.yaml': conflict})
 
+    def test_joint_order_does_not_define_the_arm_chain(self):
+        def reorder(value):
+            value['joints'] = dict(reversed(list(value['joints'].items())))
+            return value
+
+        original = expand_modified()
+        reordered = expand_modified(
+            {'robot/openarm_v2.0/config/arm/struct/topology.yaml': reorder})
+        self.assert_common_poses(original, reordered)
+
+    def test_arm_joint_names_come_from_topology(self):
+        def rename_topology(value):
+            joints = value['joints']
+            joints['wrist'] = joints.pop('joint7')
+            value['joints'] = joints
+            return value
+
+        def rename_parameters(value):
+            value['wrist'] = value.pop('joint7')
+            return value
+
+        changes = {
+            'robot/openarm_v2.0/config/arm/struct/topology.yaml': rename_topology}
+        for filename in ['joint_origins.yaml', 'joint_axes.yaml', 'joint_limits.yaml']:
+            changes['robot/openarm_v2.0/config/arm/joint/' +
+                    filename] = rename_parameters
+        robot = expand_modified(changes, robot_preset='right_arm')
+        self.assertIsNotNone(robot.find("joint[@name='openarm_right_wrist']"))
+        self.assertIsNone(robot.find("joint[@name='openarm_right_joint7']"))
+
+    def test_joint_type_and_parent_come_from_topology(self):
+        def arm_change(value):
+            joints = value['joints']
+            joint = joints['joint7']
+            joint['type'] = 'fixed'
+            joint['parent'] = 'link5'
+            joints['joint7'] = joint
+            value['joints'] = joints
+            return value
+
+        robot = expand_modified(
+            {'robot/openarm_v2.0/config/arm/struct/topology.yaml': arm_change}, robot_preset='right_arm'
+        )
+        joint = robot.find("joint[@name='openarm_right_joint7']")
+        self.assertEqual(joint.get('type'), 'fixed')
+        self.assertEqual(joint.find('parent').get(
+            'link'), 'openarm_right_link5')
+        self.assertIsNone(joint.find('axis'))
+        self.assertIsNone(joint.find('limit'))
+
+    def test_gripper_joint_type_comes_from_topology(self):
+        def change(value):
+            joints = value['joints']
+            for name in joints:
+                joint = joints[name]
+                joint['type'] = 'prismatic'
+                joints[name] = joint
+            value['joints'] = joints
+            return value
+
+        robot = expand_modified(
+            {'end_effector/pinch_gripper/config/struct/topology.yaml': change})
+        for side in ['left', 'right']:
+            for index in [1, 2]:
+                self.assertEqual(
+                    robot.find(
+                        f"joint[@name='openarm_{side}_finger_joint{index}']"
+                    ).get('type'),
+                    'prismatic',
+                )
+
+    def test_unknown_topology_link_rejected(self):
+        def change(value):
+            joints = value['joints']
+            joint = joints['joint7']
+            joint['parent'] = 'missing'
+            joints['joint7'] = joint
+            value['joints'] = joints
+            return value
+
+        with self.assertRaisesRegex(xacro.XacroException, 'unknown link'):
+            expand_modified(
+                {'robot/openarm_v2.0/config/arm/struct/topology.yaml': change})
+
 
 if __name__ == '__main__':
     unittest.main()

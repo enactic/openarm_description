@@ -17,9 +17,9 @@ limitations under the License.
   <xacro:include filename="$(find openarm_description)/assets/common/links.xacro" />
   <xacro:include filename="$(find openarm_description)/assets/common/reference_frames.xacro" />
   <xacro:include filename="$(find openarm_description)/assets/common/validation.xacro" />
-  <xacro:include filename="$(find openarm_description)/assets/robot/openarm_v2.0/urdf/utils/openarm_v20_arm.xacro" />
+  <xacro:include filename="$(find openarm_description)/assets/common/kinematic_chain.xacro" />
   <xacro:include filename="$(find openarm_description)/assets/end_effector/pinch_gripper/urdf/pinch_gripper_macro.xacro" />
-  <xacro:include filename="$(find openarm_description)/assets/robot/openarm_v2.0/urdf/utils/openarm_v20_sensor.xacro" />
+  <xacro:include filename="$(find openarm_description)/assets/sensor/zed/urdf_wrapper/openarm_zed_wrapper.xacro" />
 
   <xacro:macro name="openarm_load_component_descriptor"
     params="component_name component_cfg config_root out_name">
@@ -35,6 +35,10 @@ limitations under the License.
         condition="${component_cfg['product'] == 'openarm_v2.0'}"
         message="${'Invalid robot preset: robot component `%s` uses unsupported product `%s`.' % (component_name, component_cfg['product'])}" />
     </xacro:if>
+    <xacro:if value="${source_type == 'end_effector'}">
+      <xacro:openarm_require condition="${component_cfg['product'] == 'pinch_gripper'}"
+        message="${'Unsupported end effector `%s`.' % component_cfg['product']}" />
+    </xacro:if>
     <xacro:if value="${source_type == 'sensor'}">
       <xacro:openarm_require
         condition="${component_cfg['product'] == 'zed'}"
@@ -43,7 +47,6 @@ limitations under the License.
         condition="${component_config != None and 'camera_model' in component_config}"
         message="${'Invalid robot preset: sensor component `%s` must use config object with at least camera_model.' % component_name}" />
     </xacro:if>
-
 
     <xacro:if value="${source_type == 'sensor'}">
       <xacro:property name="sensor_name" value="${component_config['camera_name'] if 'camera_name' in component_config else (component_prefix + product)}" lazy_eval="false" />
@@ -56,7 +59,7 @@ limitations under the License.
                      product=product,
                      config=component_config,
                      prefix=component_prefix,
-                     link_prefix=component_prefix,
+
                      root_link_actual=sensor_root_link,
                      topology=dict(links=[sensor_root_link], joints=dict()),
                      reference_points=empty_dict,
@@ -87,9 +90,9 @@ limitations under the License.
           lazy_eval="false" />
       </xacro:if>
 
-
-      <xacro:property name="component_link_prefix" value="${component_prefix + ('ee_' if component_type == 'end_effector' else '')}" lazy_eval="false" />
       <xacro:property name="component_topology" value="${xacro.load_yaml(component_cfg_root + '/struct/topology.yaml')}" lazy_eval="false" />
+
+      <xacro:openarm_validate_topology topology="${component_topology}" component="${component_name}" />
       <xacro:property name="component_reference_points" value="${xacro.load_yaml(component_cfg_root + '/struct/reference_points.yaml')}" lazy_eval="false" />
 
       <xacro:property name="component_joint_origins" value="${xacro.load_yaml(component_cfg_root + '/joint/joint_origins.yaml') if component_type != 'body' else empty_dict}" lazy_eval="false" />
@@ -100,8 +103,8 @@ limitations under the License.
       <xacro:property name="component_visuals" value="${xacro.load_yaml(component_cfg_root + '/link/visuals.yaml')}" lazy_eval="false" />
       <xacro:property name="component_collisions" value="${xacro.load_yaml(component_cfg_root + '/link/collisions.yaml')}" lazy_eval="false" />
       <xacro:property name="component_link_name_map" value="${dict(body_link0=component_cfg['link_name']) if component_type == 'body' else empty_dict}" lazy_eval="false" />
-      <xacro:property name="component_root_link_actual" value="${component_cfg['link_name'] if component_type == 'body' else (component_link_prefix + component_topology['links'][0])}" lazy_eval="false" />
-      <xacro:property name="component_default_mount_parent" value="${component_cfg['link_name'] if component_type == 'body' else (component_link_prefix + component_topology['links'][-1])}" lazy_eval="false" />
+      <xacro:property name="component_root_link_actual" value="${component_cfg['link_name'] if component_type == 'body' else (component_prefix + component_topology['links'][0])}" lazy_eval="false" />
+      <xacro:property name="component_default_mount_parent" value="${component_cfg['link_name'] if component_type == 'body' else (component_prefix + component_topology['links'][-1])}" lazy_eval="false" />
       <xacro:property name="component_supports_tip_collapse" value="${component_type == 'arm'}" lazy_eval="false" />
 
       <xacro:property
@@ -113,7 +116,7 @@ limitations under the License.
                      config=component_config,
                      config_root=component_cfg_root,
                      prefix=component_prefix,
-                     link_prefix=component_link_prefix,
+
                      root_link_actual=component_root_link_actual,
                      topology=component_topology,
                      reference_points=component_reference_points,
@@ -155,7 +158,7 @@ limitations under the License.
     </xacro:if>
 
     <xacro:if value="${component_type == 'arm'}">
-      <xacro:openarm_v20_arm
+      <xacro:openarm_emit_kinematic_component
         prefix="${component_desc['prefix']}"
         connected_to="${component_runtime['resolved_connected_to']}"
         mount_origin="${component_runtime['resolved_mount_origin']}"
@@ -163,13 +166,13 @@ limitations under the License.
         joint_origins="${component_desc['joint_origins']}"
         joint_axes="${component_desc['joint_axes']}"
         joint_limits="${component_desc['joint_limits']}"
+        joint_mimics="${component_desc['joint_mimics']}"
         inertials="${component_desc['inertials']}"
         visuals="${component_desc['visuals']}"
         collisions="${component_desc['collisions']}"
         reflect_x="${component_runtime['reflect_x']}"
         reflect_y="${component_runtime['reflect_y']}"
         reflect_z="${component_runtime['reflect_z']}"
-        component_reflects="${component_runtime['component_reflects']}"
         reflect_include_links="${component_runtime['reflect_include_links']}"
         reflect_include_joints="${component_runtime['reflect_include_joints']}"
         limit_override_joints="${component_runtime['limit_override_joints']}"
@@ -179,7 +182,7 @@ limitations under the License.
         base_frame_shift="${component_runtime['base_frame_shift']}" />
     </xacro:if>
 
-    <xacro:if value="${component_type == 'end_effector'}">
+    <xacro:if value="${component_type == 'end_effector' and component_desc['product'] == 'pinch_gripper'}">
       <xacro:openarm_pinch_gripper
         prefix="${component_desc['prefix']}"
         connected_to="${component_runtime['resolved_connected_to']}"
@@ -207,18 +210,17 @@ limitations under the License.
     </xacro:if>
 
     <xacro:if value="${component_type == 'sensor'}">
-      <xacro:openarm_v20_sensor
-        product="${component_desc['product']}"
+      <xacro:openarm_zed_wrapper
         config="${component_desc['config']}"
         connected_to="${component_runtime['resolved_connected_to']}"
         mount_origin="${component_runtime['resolved_mount_origin']}"
         prefix="${component_desc['prefix']}" />
     </xacro:if>
-    <xacro:unless value="${component_type == 'end_effector'}">
+    <xacro:unless value="${component_type == 'end_effector' and component_desc['product'] == 'pinch_gripper'}">
       <xacro:openarm_emit_reference_frames
         reference_points="${component_desc['reference_points']}"
         prefix="${component_desc['root_link_actual'] + '_' if component_type == 'body' else component_desc['prefix']}"
-        link_prefix="${component_desc['link_prefix']}"
+        link_prefix="${component_desc['prefix']}"
         link_name_map="${component_desc['link_name_map']}"
         base_link_name="${component_desc['topology']['links'][0]}"
         reflect_x="${component_runtime['reflect_x']}"
