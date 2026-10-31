@@ -32,6 +32,9 @@ limitations under the License.
     <xacro:property name="reflect_include_joints" value="${reflect_include_cfg['joints'] if 'joints' in reflect_include_cfg else list(component_desc['topology']['joints'].keys())}" lazy_eval="false" />
     <xacro:property name="reflect_include_reference_points" value="${reflect_include_cfg['reference_points'] if 'reference_points' in reflect_include_cfg else list(component_desc['reference_points'].keys())}" lazy_eval="false" />
     <xacro:property name="limit_override_joints" value="${component_cfg['limit_override_joints'] if 'limit_override_joints' in component_cfg else dict()}" lazy_eval="false" />
+    <xacro:property name="origin_override_joints" value="${component_cfg.get('origin_override_joints', dict())}" lazy_eval="false" />
+    <xacro:openarm_require condition="${len([name for name in list(origin_override_joints) + list(limit_override_joints) if name not in component_desc['topology']['joints']]) == 0}"
+      message="${'Unknown joint override on component `%s`.' % component_name}" />
     <xacro:property name="connection" value="${component_cfg['connection'] if 'connection' in component_cfg else dict()}" lazy_eval="false" />
     <xacro:property name="parent_component_name" value="${connection['attach_to'] if 'attach_to' in connection else none_value}" lazy_eval="false" />
     <xacro:property name="has_parent_desc" value="${parent_desc != none_value}" lazy_eval="false" />
@@ -76,11 +79,11 @@ limitations under the License.
       <xacro:property name="resolved_connected_to"
         value="${parent_desc['link_name_map'][parent_ref_canonical_link] if parent_ref_canonical_link in parent_desc['link_name_map'] else parent_desc['prefix'] + parent_ref_canonical_link}" lazy_eval="false" />
       <xacro:property name="reference_origin" value="${parent_ref['origin']}" lazy_eval="false" />
-      <xacro:if value="${parent_ref_canonical_link == parent_desc['topology']['links'][0] and parent_desc.get('base_frame_shift', 'none') != 'none'}">
-        <xacro:openarm_compose_pose first="${parent_desc['base_frame_shift']}" second="${reference_origin}" out_name="reference_origin" />
-      </xacro:if>
       <xacro:if value="${parent_ref_should_reflect}">
         <xacro:openarm_reflect_pose origin="${reference_origin}" reflect_x="${parent_reflect_cfg['x']}" reflect_y="${parent_reflect_cfg['y']}" reflect_z="${parent_reflect_cfg['z']}" out_name="reference_origin" />
+      </xacro:if>
+      <xacro:if value="${parent_ref_canonical_link == parent_desc['topology']['links'][0] and parent_desc.get('base_frame_shift', 'none') != 'none'}">
+        <xacro:openarm_compose_pose first="${parent_desc['base_frame_shift']}" second="${reference_origin}" out_name="reference_origin" />
       </xacro:if>
       <xacro:openarm_compose_pose first="${reference_origin}" second="${connection_origin}" out_name="reference_mount_origin" />
       <xacro:property name="resolved_mount_origin" value="${reference_mount_origin}" lazy_eval="false" />
@@ -99,7 +102,7 @@ limitations under the License.
       lazy_eval="false" />
     <xacro:if value="${has_parent_reference_key and not has_parent_override and collapse_internal_empty_links and parent_terminal_link_empty and parent_ref_canonical_link == parent_desc['topology']['links'][-1]}">
       <xacro:property name="skip_mount_joint" value="${True}" lazy_eval="false" />
-  <xacro:openarm_reflect_pose origin="${reference_mount_origin}" reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}" out_name="base_frame_shift" />
+      <xacro:property name="base_frame_shift" value="${reference_mount_origin}" lazy_eval="false" />
     </xacro:if>
 
     <!-- A parent can expose at most one child that consumes its terminal empty link. -->
@@ -145,6 +148,7 @@ limitations under the License.
                    reflect_include_joints=reflect_include_joints,
                    reflect_include_reference_points=reflect_include_reference_points,
                    limit_override_joints=limit_override_joints,
+                   origin_override_joints=origin_override_joints,
                    resolved_connected_to=resolved_connected_to,
                    resolved_mount_origin=resolved_mount_origin,
                    skip_mount_joint=skip_mount_joint,
