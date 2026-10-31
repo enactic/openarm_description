@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!--
+Copyright 2026 Enactic, Inc.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="describe_component" params="component_name component_cfg config_root options out_name">
+    <xacro:property name="empty_dict" value="${dict()}" />
+    <xacro:property name="source_type" value="${component_cfg['type']}" />
+    <xacro:property name="product" value="${component_cfg['product']}" />
+    <xacro:property name="component_config" value="${component_cfg['config']}" />
+    <xacro:property name="component_prefix" value="${component_cfg.get('prefix', '')}" />
+    <xacro:openarm_require condition="${component_config != None and 'camera_model' in component_config}"
+      message="${'Camera component %s requires config.camera_model.' % component_name}" />
+    <xacro:property name="sensor_name" value="${component_config['camera_name'] if 'camera_name' in component_config else (component_prefix + product)}" lazy_eval="false" />
+    <xacro:property name="sensor_root_link" value="${sensor_name + '_camera_link'}" lazy_eval="false" />
+    <xacro:property
+      name="${out_name}"
+      value="${dict(name=component_name,
+                   source_type=source_type,
+                   component_type='sensor',
+                   product=product,
+                   config=component_config,
+                   camera_name=sensor_name,
+                   prefix=component_prefix,
+
+                   root_link_actual=sensor_root_link,
+                   topology=dict(links=[sensor_root_link], joints=dict()),
+                   reference_points=empty_dict,
+                   joint_origins=empty_dict,
+                   joint_axes=empty_dict,
+                   joint_limits=empty_dict,
+                   joint_mimics=empty_dict,
+                   inertials=empty_dict,
+                   visuals=empty_dict,
+                   collisions=empty_dict,
+                   link_name_map=empty_dict,
+                   default_mount_parent=sensor_root_link,
+                   collapse_empty_end=False,
+                   supports_frame_shift=False,
+                   reference_prefix=component_prefix,
+                   config_root=config_root)}"
+      scope="parent"
+      lazy_eval="false" />
+  </xacro:macro>
+
+  <xacro:macro name="emit_component" params="component_desc component_runtime options">
+    <xacro:include filename="${component_desc['component_dir'] + '/urdf_wrapper/openarm_zed_wrapper.xacro'}" />
+    <xacro:openarm_zed_wrapper
+      config="${component_desc['config']}"
+      connected_to="${component_runtime['resolved_connected_to']}"
+      mount_origin="${component_runtime['resolved_mount_origin']}"
+      camera_name="${component_desc['camera_name']}" />
+  </xacro:macro>
+</robot>

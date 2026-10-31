@@ -16,8 +16,7 @@ limitations under the License.
 
 
 
-  <xacro:include filename="$(find openarm_description)/assets/end_effector/pinch_gripper/urdf/pinch_gripper_macro.xacro" />
-
+  <xacro:include filename="$(find openarm_description)/assets/component_loader.xacro" />
   <xacro:arg name="ee_config_dir" default="$(find openarm_description)/assets/end_effector/pinch_gripper/config" />
   <xacro:arg name="ee_inertials_name" default="nominal" />
   <xacro:arg name="reflect_x" default="1" />
@@ -29,38 +28,10 @@ limitations under the License.
   <xacro:property name="reflect_y_value" value="${float('$(arg reflect_y)')}" lazy_eval="false" />
   <xacro:property name="reflect_z_value" value="${float('$(arg reflect_z)')}" lazy_eval="false" />
 
-  <xacro:openarm_require
-    condition="${reflect_x_value in [-1.0, 1.0] and reflect_y_value in [-1.0, 1.0] and reflect_z_value in [-1.0, 1.0]}"
-    message="${'Invalid standalone gripper reflection: each reflect axis must be either 1 or -1.'}" />
-  <xacro:openarm_require
-    condition="${(1 if reflect_x_value == -1.0 else 0) + (1 if reflect_y_value == -1.0 else 0) + (1 if reflect_z_value == -1.0 else 0) &lt;= 1}"
-    message="${'Invalid standalone gripper reflection: combined x/y/z reflections are not currently supported.'}" />
-
-  <link name="world" />
-
-  <xacro:property name="ee_topology" value="${xacro.load_yaml('$(arg ee_config_dir)/struct/topology.yaml')}" lazy_eval="false" />
-  <xacro:property name="ee_reference_points" value="${xacro.load_yaml('$(arg ee_config_dir)/struct/reference_points.yaml')}" lazy_eval="false" />
-
-  <xacro:openarm_pinch_gripper
-    prefix=""
-    connected_to="world"
-    topology="${ee_topology}"
-    ee_reference_points="${ee_reference_points}"
-    joint_origins="${xacro.load_yaml('$(arg ee_config_dir)/joint/joint_origins.yaml')}"
-    joint_axes="${xacro.load_yaml('$(arg ee_config_dir)/joint/joint_axes.yaml')}"
-    joint_limits="${xacro.load_yaml('$(arg ee_config_dir)/joint/joint_limits.yaml')}"
-    joint_mimics="${xacro.load_yaml('$(arg ee_config_dir)/joint/joint_mimics.yaml')}"
-    inertials="${xacro.load_yaml('$(arg ee_config_dir)/inertials/$(arg ee_inertials_name).yaml')}"
-    visuals="${xacro.load_yaml('$(arg ee_config_dir)/link/visuals.yaml')}"
-    collisions="${xacro.load_yaml('$(arg ee_config_dir)/link/collisions.yaml')}"
-    reflect_x="${reflect_x_value}"
-    reflect_y="${reflect_y_value}"
-    reflect_z="${reflect_z_value}"
-    component_reflects="${reflect_x_value != 1 or reflect_y_value != 1 or reflect_z_value != 1}"
-    reflect_include_links="${ee_topology['links']}"
-    reflect_include_joints="${list(ee_topology['joints'].keys())}"
-    reflect_include_reference_points="${list(ee_reference_points.keys())}"
-    limit_override_joints="${dict()}"
-    emit_grasp_frame="$(arg emit_grasp_frame)" />
-
+  <xacro:property name="options" value="${dict(emit_grasp_frame='$(arg emit_grasp_frame)'.lower() in ['true', '1'])}" />
+  <xacro:property name="component_cfg"
+    value="${dict(type='end_effector', product='pinch_gripper', config=None, inertials='$(arg ee_inertials_name)', prefix='', enabled=True, reflect=dict(x=reflect_x_value, y=reflect_y_value, z=reflect_z_value))}" />
+  <xacro:openarm_describe_auto_component component_name="gripper" component_cfg="${component_cfg}" options="${options}"
+    config_root_override="$(arg ee_config_dir)" out_name="description" />
+  <xacro:openarm_emit_standalone_component component_cfg="${component_cfg}" component_desc="${description}" options="${options}" />
 </robot>
