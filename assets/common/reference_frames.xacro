@@ -31,7 +31,7 @@ limitations under the License.
   </xacro:macro>
 
   <xacro:macro name="openarm_emit_reference_frames"
-    params="reference_points prefix link_prefix link_name_map:=${dict()} base_link_name:='' reflect_x:=1 reflect_y:=1 reflect_z:=1 reflect_include_reference_points:=^ frame_shift:=none force_emit_reference:='' index:=0">
+    params="reference_points prefix link_name_map:=${dict()} base_link_name:='' reflect_x:=1 reflect_y:=1 reflect_z:=1 reflect_include_reference_points:=^ frame_shift:=none force_emit_reference:='' index:=0">
     <xacro:property name="reference_names" value="${list(reference_points.keys())}" lazy_eval="false" />
     <xacro:if value="${index &lt; len(reference_names)}">
       <xacro:property name="reference_name" value="${reference_names[index]}" lazy_eval="false" />
@@ -41,7 +41,7 @@ limitations under the License.
         <xacro:property name="reference_reflects" value="${reference_name in reflect_include_reference_points}" lazy_eval="false" />
         <xacro:openarm_emit_reference_link
           link_name="${prefix + reference_name}"
-          parent_link="${link_name_map[reference_parent] if reference_parent in link_name_map else link_prefix + reference_parent}"
+          parent_link="${link_name_map[reference_parent] if reference_parent in link_name_map else prefix + reference_parent}"
           origin="${reference['origin']}"
           reflect_x="${reflect_x if reference_reflects else 1}"
           reflect_y="${reflect_y if reference_reflects else 1}"
@@ -49,7 +49,7 @@ limitations under the License.
           frame_shift="${frame_shift if reference_parent == base_link_name else 'none'}" />
       </xacro:if>
       <xacro:openarm_emit_reference_frames
-        reference_points="${reference_points}" prefix="${prefix}" link_prefix="${link_prefix}"
+        reference_points="${reference_points}" prefix="${prefix}"
         link_name_map="${link_name_map}" base_link_name="${base_link_name}"
         reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}"
         reflect_include_reference_points="${reflect_include_reference_points}"

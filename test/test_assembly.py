@@ -109,7 +109,7 @@ def test_reference_emission_preserves_composed_mount_pose():
     for emit in (False, True):
         parent['struct/reference_points.yaml']['port']['emit'] = emit
         robot = assemble(spec, {'parent': parent, 'child': child})
-        assert ('parent_root_port' in poses(robot)) == emit
+        assert ('parent_port' in poses(robot)) == emit
         near(poses(robot)['child_root'], expected)
 
 

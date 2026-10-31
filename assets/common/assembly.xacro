@@ -103,8 +103,7 @@ limitations under the License.
       <xacro:property name="resolved_mount_origin" value="${reference_mount_origin}" lazy_eval="false" />
       <xacro:property name="parent_reference_emitted" value="${parent_ref.get('emit', False)}" lazy_eval="false" />
       <xacro:if value="${parent_reference_emitted}">
-        <xacro:property name="reference_prefix" value="${parent_desc['reference_prefix']}" lazy_eval="false" />
-        <xacro:property name="resolved_connected_to" value="${reference_prefix + parent_ref_name}" lazy_eval="false" />
+        <xacro:property name="resolved_connected_to" value="${parent_desc['prefix'] + parent_ref_name}" lazy_eval="false" />
         <xacro:property name="resolved_mount_origin" value="${connection_origin}" lazy_eval="false" />
       </xacro:if>
     </xacro:if>

@@ -45,9 +45,9 @@ limitations under the License.
     <xacro:property name="component_inertials" value="${xacro.load_yaml(component_cfg_root + '/inertials/' + component_cfg['inertials'] + '.yaml')}" lazy_eval="false" />
     <xacro:property name="component_visuals" value="${xacro.load_yaml(component_cfg_root + '/link/visuals.yaml')}" lazy_eval="false" />
     <xacro:property name="component_collisions" value="${xacro.load_yaml(component_cfg_root + '/link/collisions.yaml')}" lazy_eval="false" />
-    <xacro:property name="component_link_name_map" value="${dict([(component_topology['links'][0], component_cfg['link_name'])]) if component_type == 'body' else empty_dict}" lazy_eval="false" />
-    <xacro:property name="component_root_link_actual" value="${component_cfg['link_name'] if component_type == 'body' else (component_prefix + component_topology['links'][0])}" lazy_eval="false" />
-    <xacro:property name="component_default_mount_parent" value="${component_cfg['link_name'] if component_type == 'body' else (component_prefix + component_topology['links'][-1])}" lazy_eval="false" />
+    <xacro:property name="component_link_name_map" value="${empty_dict}" lazy_eval="false" />
+    <xacro:property name="component_root_link_actual" value="${component_prefix + component_topology['links'][0]}" lazy_eval="false" />
+    <xacro:property name="component_default_mount_parent" value="${component_prefix + (component_topology['links'][0] if component_type == 'body' else component_topology['links'][-1])}" lazy_eval="false" />
     <xacro:property name="component_collapse_empty_end" value="${component_topology.get('collapse_empty_end', False) and len([j for j in component_topology['joints'] if component_topology['joints'][j]['parent'] == component_topology['links'][-1]]) == 0}" lazy_eval="false" />
 
     <xacro:property
@@ -73,8 +73,7 @@ limitations under the License.
                    link_name_map=component_link_name_map,
                    default_mount_parent=component_default_mount_parent,
                    collapse_empty_end=component_collapse_empty_end,
-                   supports_frame_shift=True,
-                   reference_prefix=(component_root_link_actual + '_' if component_type == 'body' else component_prefix))}"
+                   supports_frame_shift=True)}"
       scope="parent"
       lazy_eval="false" />
   </xacro:macro>
@@ -125,8 +124,7 @@ limitations under the License.
 
     <xacro:openarm_emit_reference_frames
       reference_points="${component_desc['reference_points']}"
-      prefix="${component_desc['reference_prefix']}"
-      link_prefix="${component_desc['prefix']}"
+      prefix="${component_desc['prefix']}"
       link_name_map="${component_desc['link_name_map']}"
       base_link_name="${component_desc['topology']['links'][0]}"
       reflect_x="${component_runtime['reflect_x']}"

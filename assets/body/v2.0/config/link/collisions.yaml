@@ -21,7 +21,7 @@ body_link0:
     pitch: 0.0
     yaw: 0.0
   geometry:
-    mesh: "package://openarm_description/assets/robot/openarm_v2.0/meshes/body/collision/body_link0_symp.stl"
+    mesh: "package://openarm_description/assets/body/v2.0/meshes/collision/body_link0_symp.stl"
     scale:
       x: 0.001
       y: 0.001

@@ -181,11 +181,6 @@ def preset(**components):
 
 
 def files_for(spec, models, version='v2.0'):
-    spec = deepcopy(spec)
-    for name, data in models.items():
-        if spec[name]['type'] == 'body':
-            spec[name]['link_name'] = spec[name].get(
-                'prefix', '') + data['struct/topology.yaml']['links'][0]
     files = {f'robot/openarm_{version}/config/robot_presets/fixture.yaml': spec}
     for name, data in models.items():
         cfg = spec[name]
