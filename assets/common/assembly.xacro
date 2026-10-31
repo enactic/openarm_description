@@ -32,7 +32,7 @@ limitations under the License.
   </xacro:macro>
 
   <xacro:macro name="openarm_resolve_component_runtime"
-    params="component_api component_name components robot_preset config_root root_frame component_cfg component_desc parent_desc:=none collapse_internal_empty_links:=false emit_grasp_frame:=false out_name">
+    params="component_api component_name components robot_preset config_root root_frame component_cfg component_desc parent_desc:=none emit_grasp_frame:=false out_name">
 
     <xacro:property name="none_value" value="${'none'}" lazy_eval="false" />
     <xacro:property name="zero_origin" value="${dict(x=0.0, y=0.0, z=0.0, roll=0.0, pitch=0.0, yaw=0.0)}" lazy_eval="false" />
@@ -135,7 +135,7 @@ limitations under the License.
       lazy_eval="false" />
 
     <xacro:openarm_collect_collapsible_children names="${collapse_candidate_names}" robot_preset="${robot_preset}"
-      component_api="${component_api}" options="${dict(emit_grasp_frame=emit_grasp_frame, collapse_empty_end=collapse_internal_empty_links)}" out_name="candidate_descriptions" />
+      component_api="${component_api}" options="${dict(emit_grasp_frame=emit_grasp_frame)}" out_name="candidate_descriptions" />
     <xacro:openarm_require condition="${len(candidate_descriptions) &lt;= 1}"
       message="${'Invalid robot preset: component %s has multiple children competing to collapse the same terminal empty link.' % component_name}" />
     <xacro:if value="${len(candidate_descriptions) == 1}">
@@ -170,7 +170,7 @@ limitations under the License.
   </xacro:macro>
 
   <xacro:macro name="openarm_emit_component_tree"
-    params="component_api component_name components robot_preset config_root root_frame parent_desc:=none preloaded_desc:=none collapse_internal_empty_links:=false emit_grasp_frame:=false">
+    params="component_api component_name components robot_preset config_root root_frame parent_desc:=none preloaded_desc:=none emit_grasp_frame:=false">
 
     <xacro:property name="none_value" value="${'none'}" lazy_eval="false" />
     <xacro:property name="component_cfg" value="${robot_preset[component_name]}" lazy_eval="false" />
@@ -180,7 +180,7 @@ limitations under the License.
       <xacro:call macro="${component_api['describe']}"
         component_name="${component_name}"
         component_cfg="${component_cfg}"
-        out_name="component_desc" options="${dict(emit_grasp_frame=emit_grasp_frame, collapse_empty_end=collapse_internal_empty_links)}" />
+        out_name="component_desc" options="${dict(emit_grasp_frame=emit_grasp_frame)}" />
     </xacro:if>
 
     <xacro:openarm_resolve_component_runtime component_api="${component_api}"
@@ -192,7 +192,6 @@ limitations under the License.
       component_cfg="${component_cfg}"
       component_desc="${component_desc}"
       parent_desc="${parent_desc}"
-      collapse_internal_empty_links="${collapse_internal_empty_links}"
       emit_grasp_frame="${emit_grasp_frame}"
       out_name="component_runtime" />
 
@@ -203,7 +202,7 @@ limitations under the License.
     <xacro:call macro="${component_api['emit']}"
       component_desc="${component_desc}"
       component_runtime="${component_runtime}"
-      options="${dict(emit_grasp_frame=emit_grasp_frame, collapse_empty_end=collapse_internal_empty_links)}" />
+      options="${dict(emit_grasp_frame=emit_grasp_frame)}" />
 
     <xacro:openarm_emit_attached_components component_api="${component_api}"
       index="0"
@@ -215,12 +214,11 @@ limitations under the License.
       parent_desc="${component_desc}"
       preloaded_component_name="${component_runtime['collapse_child_name']}"
       preloaded_component_desc="${component_runtime['collapse_child_desc']}"
-      collapse_internal_empty_links="${collapse_internal_empty_links}"
       emit_grasp_frame="${emit_grasp_frame}" />
   </xacro:macro>
 
   <xacro:macro name="openarm_emit_attached_components"
-    params="component_api index components parent_component_name robot_preset config_root root_frame parent_desc:=none preloaded_component_name:=none preloaded_component_desc:=none collapse_internal_empty_links:=false emit_grasp_frame:=false">
+    params="component_api index components parent_component_name robot_preset config_root root_frame parent_desc:=none preloaded_component_name:=none preloaded_component_desc:=none emit_grasp_frame:=false">
 
     <xacro:if value="${index &lt; len(components)}">
       <xacro:property name="none_value" value="${'none'}" lazy_eval="false" />
@@ -243,7 +241,6 @@ limitations under the License.
           root_frame="${root_frame}"
           parent_desc="${none_value if is_root_component else parent_desc}"
           preloaded_desc="${component_desc_override}"
-          collapse_internal_empty_links="${collapse_internal_empty_links}"
           emit_grasp_frame="${emit_grasp_frame}" />
       </xacro:if>
 
@@ -257,13 +254,12 @@ limitations under the License.
         parent_desc="${parent_desc}"
         preloaded_component_name="${preloaded_component_name}"
         preloaded_component_desc="${preloaded_component_desc}"
-        collapse_internal_empty_links="${collapse_internal_empty_links}"
         emit_grasp_frame="${emit_grasp_frame}" />
     </xacro:if>
   </xacro:macro>
 
   <xacro:macro name="openarm_assemble_robot"
-    params="component_api config_root robot_preset collapse_internal_empty_links:=false emit_grasp_frame:=false">
+    params="component_api config_root robot_preset emit_grasp_frame:=false">
 
     <xacro:property name="robot_cfg" value="${robot_preset['robot']}" lazy_eval="false" />
     <xacro:property name="root_frame" value="${robot_cfg['root_frame']}" lazy_eval="false" />
@@ -282,7 +278,6 @@ limitations under the License.
       robot_preset="${robot_preset}"
       config_root="${config_root}"
       root_frame="${root_frame}"
-      collapse_internal_empty_links="${collapse_internal_empty_links}"
       emit_grasp_frame="${emit_grasp_frame}" />
   </xacro:macro>
 

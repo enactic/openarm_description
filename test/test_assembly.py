@@ -203,6 +203,21 @@ def test_folding_preserves_physical_properties_and_frames():
         "link[@name='tool_ee_base_link']/inertial/mass").get('value')) == mass
 
 
+@pytest.mark.parametrize('mode', ['missing', 'off', 'on', 'physical', 'unattached'])
+def test_folding_requires_enabled_empty_tip_and_child(mode):
+    spec, data = installed_tool(mode not in ('missing', 'off'))
+    if mode == 'missing':
+        del data['arm']['struct/topology.yaml']['collapse_empty_end']
+    if mode == 'physical':
+        data['arm']['inertials/nominal.yaml']['tip'] = deepcopy(
+            data['arm']['inertials/nominal.yaml']['root'])
+    if mode == 'unattached':
+        spec = preset(arm=spec['arm'])
+        del data['tool']
+    robot = assemble(spec, data)
+    assert (robot.find("link[@name='arm_tip']") is None) == (mode == 'on')
+
+
 @pytest.mark.parametrize('error', ['joint_parent', 'mount_reference', 'parent_selectors'])
 def test_invalid_attachment_references_are_rejected(error):
     spec, data = installed_tool()

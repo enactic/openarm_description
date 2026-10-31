@@ -47,7 +47,6 @@ def robot_state_publisher_spawner(
     context: LaunchContext,
     arm_type,
     robot_preset,
-    collapse_internal_empty_links,
     emit_grasp_frame,
     bimanual,
     ros2_control,
@@ -83,7 +82,6 @@ def robot_state_publisher_spawner(
         mappings = {
             "arm_type": arm_type_str,
             "robot_preset": context.perform_substitution(robot_preset),
-            "collapse_internal_empty_links": context.perform_substitution(collapse_internal_empty_links),
             "emit_grasp_frame": context.perform_substitution(emit_grasp_frame),
         }
 
@@ -118,10 +116,6 @@ def generate_launch_description():
         "rviz_config",
         default_value="bimanual.rviz",
     )
-    collapse_arg = DeclareLaunchArgument(
-        "collapse_internal_empty_links",
-        default_value="true",
-    )
     grasp_frame_arg = DeclareLaunchArgument(
         "emit_grasp_frame",
         default_value="false",
@@ -147,7 +141,6 @@ def generate_launch_description():
     arm_type = LaunchConfiguration("arm_type")
     robot_preset = LaunchConfiguration("robot_preset")
     rviz_config = LaunchConfiguration("rviz_config")
-    collapse = LaunchConfiguration("collapse_internal_empty_links")
     grasp_frame = LaunchConfiguration("emit_grasp_frame")
     bimanual = LaunchConfiguration("bimanual")
     ros2_control = LaunchConfiguration("ros2_control")
@@ -160,7 +153,6 @@ def generate_launch_description():
         arm_type_arg,
         robot_preset_arg,
         rviz_config_arg,
-        collapse_arg,
         grasp_frame_arg,
         bimanual_arg,
         ros2_control_arg,
@@ -171,7 +163,6 @@ def generate_launch_description():
             args=[
                 arm_type,
                 robot_preset,
-                collapse,
                 grasp_frame,
                 bimanual,
                 ros2_control,
