@@ -16,11 +16,13 @@ limitations under the License.
 
   <xacro:include filename="$(find openarm_description)/assets/component_loader.xacro" />
 
-  <xacro:include filename="$(find openarm_description)/assets/robot/openarm_v2.0/urdf/ros2_control/openarm.bimanual.ros2_control.xacro" />
+  <xacro:include filename="$(find openarm_description)/assets/common/ros2_control.xacro" />
 
   <xacro:arg name="robot_preset" default="default_bimanual" />
   <xacro:arg name="emit_grasp_frame" default="false" />
 
+  <xacro:arg name="ros2_control" default="true" />
+  <xacro:arg name="fake_sensor_commands" default="false" />
   <xacro:arg name="use_fake_hardware" default="true" />
   <xacro:arg name="left_can_interface" default="can1" />
   <xacro:arg name="right_can_interface" default="can0" />
@@ -35,23 +37,10 @@ limitations under the License.
     robot_preset="${robot_preset_cfg}"
     emit_grasp_frame="$(arg emit_grasp_frame)" />
 
-  <xacro:property name="gains_file" value="${config_root}/arm/control/control_gains.yaml" />
-  <xacro:property name="gains_dict" value="${xacro.load_yaml(gains_file)}" />
-  <xacro:property name="pinch_mimics_file" value="$(find openarm_description)/assets/end_effector/pinch_gripper/config/joint/joint_mimics.yaml" />
-  <xacro:property name="pinch_mimics_dict" value="${xacro.load_yaml(pinch_mimics_file)}" />
-  <xacro:property name="pinch_finger_mimic_multiplier" value="${pinch_mimics_dict['finger_joint2']['multiplier'] if 'finger_joint2' in pinch_mimics_dict else 1.0}" />
-
-  <xacro:openarm_bimanual_ros2_control
-    arm_type="v20"
-    control_gains="${gains_dict}"
-    use_fake_hardware="$(arg use_fake_hardware)"
-    left_can_interface="$(arg left_can_interface)"
-    right_can_interface="$(arg right_can_interface)"
-    can_fd="$(arg can_fd)"
-    ee_type="pinch_gripper"
-    left_arm_prefix="left_"
-    right_arm_prefix="right_"
-    left_finger_mimic_multiplier="${pinch_finger_mimic_multiplier}"
-    right_finger_mimic_multiplier="${pinch_finger_mimic_multiplier}" />
+  <xacro:if value="$(arg ros2_control)">
+    <xacro:openarm_ros2_control robot_preset="${robot_preset_cfg}" config_root="${config_root}"
+      can_interfaces="${dict(left='$(arg left_can_interface)', right='$(arg right_can_interface)')}"
+      use_fake_hardware="$(arg use_fake_hardware)" fake_sensor_commands="$(arg fake_sensor_commands)" can_fd="$(arg can_fd)" />
+  </xacro:if>
 
 </robot>

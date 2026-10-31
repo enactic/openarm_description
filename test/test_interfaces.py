@@ -67,3 +67,59 @@ def test_broken_component_hook_does_not_use_fallback(interface):
     files['body/fixture_a/urdf/component.xacro'] = interface
     with pytest.raises((xacro.XacroException, ExpatError)):
         support.expand(files, robot_preset='fixture', ros2_control=False)
+
+
+def control_input():
+    names = ['root'] + [f'link{i}' for i in range(1, 8)]
+    data = support.model(names, {f'joint{i}': dict(
+        type='revolute', parent=names[i-1], child=names[i]) for i in range(1, 8)})
+    data['control/control_gains.yaml'] = {
+        f'joint{i}': dict(kp=10+i, kd=i/10) for i in range(1, 8)}
+    spec = support.preset(arm=support.component('robot', 'fixture_control', 'openarm_right_', control=dict(side='right')),
+                          tool=support.component('end_effector', 'pinch_gripper', 'openarm_right_', connection=dict(attach_to='arm')))
+    return spec, {'arm': data, 'tool': support.pinch()}
+
+
+def test_control_selection_follows_enabled_components():
+    spec, data = control_input()
+    assert not support.assemble(
+        spec, data, ros2_control=False).findall('ros2_control')
+    for tool_enabled in (False, True):
+        spec['tool']['enabled'] = tool_enabled
+        robot = support.assemble(
+            spec, data, ros2_control=True, use_fake_hardware=True)
+        active = {j.get('name') for j in robot.findall('joint') if j.get(
+            'type') != 'fixed' and j.find('mimic') is None}
+        assert {j.get('name')
+                for j in robot.findall('ros2_control/joint')} == active
+
+
+def test_control_names_follow_instance_prefixes():
+    spec, data = control_input()
+    spec['arm']['prefix'], spec['tool']['prefix'] = 'drive_', 'tool_'
+    robot = support.assemble(
+        spec, data, ros2_control=True, use_fake_hardware=True)
+    expected = {spec['arm']['prefix'] + j for j in data['arm']
+                ['struct/topology.yaml']['joints']}
+    expected.update(spec['tool']['prefix'] + j for j in data['tool']['struct/topology.yaml']['joints']
+                    if j not in data['tool']['joint/joint_mimics.yaml'])
+    assert {j.get('name')
+            for j in robot.findall('ros2_control/joint')} == expected
+
+
+def test_hardware_parameters_follow_input():
+    spec, data = control_input()
+    for side in ('left', 'right'):
+        spec['arm']['control']['side'] = side
+        for name in ('arm', 'tool'):
+            spec[name]['prefix'] = 'openarm_'+side+'_'
+        robot = support.assemble(spec, data, ros2_control=True, use_fake_hardware=False,
+                                 left_can_interface='can_left_test', right_can_interface='can_right_test', can_fd=False)
+        system = robot.find('ros2_control/hardware')
+        params = {p.get('name'): p.text for p in system.findall('param')}
+        assert params['can_interface'] == 'can_'+side+'_test'
+        assert params['can_fd'].lower() == 'false'
+        assert params['ee_type'] == spec['tool']['product']
+        for name, gains in data['arm']['control/control_gains.yaml'].items():
+            for key, value in gains.items():
+                assert float(params[key+name.removeprefix('joint')]) == value
