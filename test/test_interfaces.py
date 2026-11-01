@@ -19,6 +19,46 @@ import xacro
 import support
 
 
+def test_zed_adapter_forwards_configuration(tmp_path):
+    from copy import deepcopy
+    from unittest.mock import patch
+    vendor = tmp_path/'zed'
+    (vendor/'urdf').mkdir(parents=True)
+    (vendor/'urdf/zed_macro.urdf.xacro').write_text('''<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+      <xacro:macro name="zed_camera" params="name model custom_baseline enable_gnss *origin">
+        <link name="${name}_camera_link"/>
+        <delegate name="${name}" model="${model}" baseline="${custom_baseline}" gnss="${enable_gnss}">
+          <xacro:insert_block name="origin"/>
+        </delegate>
+      </xacro:macro>
+    </robot>''')
+    original = support.packages.get_package_share_directory
+    config = dict(camera_model='zedm', custom_baseline=.07,
+                  enable_gnss=True, gnss_origin=support.pose(x=.02))
+    mount = support.pose(.1, -.2, .3, .2, -.1, .4)
+    for camera_name in (None, 'inspection'):
+        cfg = deepcopy(config)
+        if camera_name is not None:
+            cfg['camera_name'] = camera_name
+        spec = support.preset(support=support.component(product='fixture_support', prefix='support_'),
+                              camera=dict(type='sensor', product='zed', config=cfg, prefix='front_', enabled=True,
+                                          connection=dict(attach_to='support', origin=mount)),
+                              child=support.component(connection=dict(attach_to='camera')))
+        with patch.object(support.packages, 'get_package_share_directory', lambda name: str(vendor) if name == 'zed_description' else original(name)):
+            robot = support.assemble(
+                spec, {'support': support.model(), 'child': support.model()})
+        name = camera_name or 'front_zed'
+        call = robot.find('delegate')
+        assert call.get('name') == name and call.get(
+            'model') == cfg['camera_model']
+        assert float(call.get('baseline')) == cfg['custom_baseline']
+        assert call.get('gnss').lower() == 'true'
+        support.near(support.transform(call.find('origin')),
+                     support.transform(cfg['gnss_origin']))
+        support.near(support.poses(robot)[
+                     name+'_camera_link'], support.transform(mount))
+
+
 def loader_input():
     spec = support.preset(a=support.component(product='fixture_a', prefix='first_'),
                           b=support.component(product='fixture_b', prefix='second_', connection=dict(attach_to='a')))

@@ -1,0 +1,14 @@
+base_link:
+  origin:
+    x: 0
+    y: 0
+    z: 0
+    roll: 0
+    pitch: 0
+    yaw: 0
+  geometry:
+    mesh: package://openarm_description/assets/accessory/zed_mount/meshes/visual/zed_mount.dae
+    scale:
+      x: 1
+      y: 1
+      z: 1
