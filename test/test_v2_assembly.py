@@ -227,6 +227,7 @@ class AssemblyTest(unittest.TestCase):
     def test_joint_type_and_parent_come_from_topology(self):
         def arm_change(value):
             joints = value['joints']
+            joints['joint6']['parent'] = 'link7'
             joint = joints['joint7']
             joint['type'] = 'fixed'
             joint['parent'] = 'link5'
@@ -234,9 +235,15 @@ class AssemblyTest(unittest.TestCase):
             value['joints'] = joints
             return value
 
-        robot = expand_modified(
-            {'robot/openarm_v2.0/config/arm/struct/topology.yaml': arm_change}, robot_preset='right_arm'
-        )
+        changes = {
+            'robot/openarm_v2.0/config/arm/struct/topology.yaml': arm_change}
+        unfolded = expand_modified(changes, robot_preset='right_arm_with_pinch_gripper',
+                                   collapse_empty_end=False)
+        robot = expand_modified(changes, robot_preset='right_arm_with_pinch_gripper',
+                                collapse_empty_end=True)
+        self.assertIsNotNone(robot.find("link[@name='openarm_right_link7']"))
+        self.assertEqual(set(poses(unfolded)), set(poses(robot)))
+        self.assert_common_poses(unfolded, robot)
         joint = robot.find("joint[@name='openarm_right_joint7']")
         self.assertEqual(joint.get('type'), 'fixed')
         self.assertEqual(joint.find('parent').get(
@@ -287,6 +294,26 @@ class AssemblyTest(unittest.TestCase):
         with self.assertRaisesRegex(xacro.XacroException, 'unknown link'):
             expand_modified(
                 {'robot/openarm_v2.0/config/arm/struct/topology.yaml': change})
+
+        standalone = ROOT / \
+            'assets/end_effector/pinch_gripper/urdf/pinch_gripper_standalone.urdf.xacro'
+        for invalid in ('unknown link', 'cycle'):
+            with self.subTest(entry='standalone', invalid=invalid), tempfile.TemporaryDirectory() as directory:
+                config = Path(directory) / 'config'
+                shutil.copytree(
+                    ROOT / 'assets/end_effector/pinch_gripper/config', config)
+                path = config / 'struct/topology.yaml'
+                topology = yaml.safe_load(path.read_text())
+                joints = topology['joints']
+                if invalid == 'unknown link':
+                    joints['finger_joint1']['parent'] = 'missing'
+                else:
+                    joints['finger_joint1']['parent'] = joints['finger_joint2']['child']
+                    joints['finger_joint2']['parent'] = joints['finger_joint1']['child']
+                path.write_text(yaml.safe_dump(topology, sort_keys=False))
+                with package_share_at(ROOT), self.assertRaisesRegex(xacro.XacroException, invalid):
+                    xacro.process_file(str(standalone), mappings={
+                                       'ee_config_dir': str(config)})
 
 
 if __name__ == '__main__':
