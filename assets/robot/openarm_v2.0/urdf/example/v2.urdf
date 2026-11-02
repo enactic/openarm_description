@@ -606,6 +606,18 @@ limitations under the License.
         <mesh filename="package://openarm_description/assets/accessory/zed_mount/meshes/visual/zed_mount.dae" scale="1 1 1"/>
       </geometry>
     </visual>
+    <collision name="openarm_body_zed_support_base_link_support_collision">
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://openarm_description/assets/accessory/zed_mount/meshes/collision/zed_mount_support.stl" scale="1 1 1"/>
+      </geometry>
+    </collision>
+    <collision name="openarm_body_zed_support_base_link_shell_collision">
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://openarm_description/assets/accessory/zed_mount/meshes/collision/zed_mount_shell.stl" scale="1 1 1"/>
+      </geometry>
+    </collision>
     <inertial>
       <origin rpy="0 0 0" xyz="0.014296 0.0034952 0.047826"/>
       <mass value="0.13704"/>
