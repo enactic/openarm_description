@@ -144,10 +144,16 @@ class AssemblyTest(unittest.TestCase):
                         for a, b in zip(row, target)), 1e-10)
 
     def test_arm_tip_reference_emit_with_and_without_collapse(self):
+        def serial_fingers(topology):
+            topology['joints']['finger_joint2']['parent'] = 'ee_link1'
+            return topology
+
+        folded_states = []
         for collapse in [False, True]:
             robots = [
                 expand_modified(
                     {
+                        'end_effector/pinch_gripper/config/struct/topology.yaml': serial_fingers,
                         'robot/openarm_v2.0/config/arm/struct/reference_points.yaml': set_reference_emit(
                             'ee_mount_point', emit
                         ),
@@ -157,6 +163,14 @@ class AssemblyTest(unittest.TestCase):
                 for emit in [False, True]
             ]
             self.assert_common_poses(*robots)
+            folded_states.append(poses(robots[0]))
+
+        for side in ['left', 'right']:
+            for finger in [1, 2]:
+                name = f'openarm_{side}_ee_link{finger}'
+                self.assertLess(max(abs(a-b) for row, other in zip(
+                    folded_states[0][name], folded_states[1][name])
+                    for a, b in zip(row, other)), 1e-10)
 
     def test_grasp_frame_emission(self):
         # grasp_frame is emitted once when either the reference point's

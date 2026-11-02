@@ -170,10 +170,10 @@ limitations under the License.
       lazy_eval="false" />
 
     <joint name="${prefix}${finger1_joint_source}" type="${topology['joints'][finger1_joint_source]['type']}">
-      <xacro:if value="${use_base_frame_shift}">
+      <xacro:if value="${use_base_frame_shift and topology['joints'][finger1_joint_source]['parent'] == base_link_name}">
         <xacro:openarm_emit_composed_origin first="${resolved_base_frame_shift}" second="${finger1_joint_origin_cfg}" reflect_x="${reflect_x if finger1_joint_reflects else 1}" reflect_y="${reflect_y if finger1_joint_reflects else 1}" reflect_z="${reflect_z if finger1_joint_reflects else 1}" />
       </xacro:if>
-      <xacro:unless value="${use_base_frame_shift}">
+      <xacro:unless value="${use_base_frame_shift and topology['joints'][finger1_joint_source]['parent'] == base_link_name}">
         <xacro:openarm_emit_origin origin="${finger1_joint_origin_cfg}" reflect_x="${reflect_x if finger1_joint_reflects else 1}" reflect_y="${reflect_y if finger1_joint_reflects else 1}" reflect_z="${reflect_z if finger1_joint_reflects else 1}" />
       </xacro:unless>
       <parent link="${prefix}${topology['joints'][finger1_joint_source]['parent']}" />
@@ -191,10 +191,10 @@ limitations under the License.
     </joint>
 
     <joint name="${prefix}${finger2_joint_source}" type="${topology['joints'][finger2_joint_source]['type']}">
-      <xacro:if value="${use_base_frame_shift}">
+      <xacro:if value="${use_base_frame_shift and topology['joints'][finger2_joint_source]['parent'] == base_link_name}">
         <xacro:openarm_emit_composed_origin first="${resolved_base_frame_shift}" second="${finger2_joint_origin_cfg}" reflect_x="${reflect_x if finger2_joint_reflects else 1}" reflect_y="${reflect_y if finger2_joint_reflects else 1}" reflect_z="${reflect_z if finger2_joint_reflects else 1}" />
       </xacro:if>
-      <xacro:unless value="${use_base_frame_shift}">
+      <xacro:unless value="${use_base_frame_shift and topology['joints'][finger2_joint_source]['parent'] == base_link_name}">
         <xacro:openarm_emit_origin origin="${finger2_joint_origin_cfg}" reflect_x="${reflect_x if finger2_joint_reflects else 1}" reflect_y="${reflect_y if finger2_joint_reflects else 1}" reflect_z="${reflect_z if finger2_joint_reflects else 1}" />
       </xacro:unless>
       <parent link="${prefix}${topology['joints'][finger2_joint_source]['parent']}" />
