@@ -322,6 +322,10 @@ class AssemblyTest(unittest.TestCase):
                                     for a, b in zip(row, other)), 1e-10)
 
     def test_pinch_overrides_precede_reflection_and_survive_collapse(self):
+        def serial_fingers(topology):
+            topology['joints']['finger_joint2']['parent'] = 'ee_link1'
+            return topology
+
         def override(preset):
             component = preset['primary_arm_end_effector']
             component['origin_override_joints'] = {'finger_joint1': {
@@ -333,7 +337,8 @@ class AssemblyTest(unittest.TestCase):
             return preset
 
         first, second = [expand_modified(
-            {'robot/openarm_v2.0/config/robot_presets/default_bimanual.yaml': override},
+            {'robot/openarm_v2.0/config/robot_presets/default_bimanual.yaml': override,
+             'end_effector/pinch_gripper/config/struct/topology.yaml': serial_fingers},
             collapse_empty_end=collapse,
         ) for collapse in [False, True]]
         for robot in [first, second]:
