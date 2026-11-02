@@ -140,14 +140,6 @@ limitations under the License.
     <xacro:property name="finger2_joint_origin_cfg" value="${joint_origins[finger2_joint_source]['origin']}" lazy_eval="false" />
     <xacro:property name="finger1_joint_axis_cfg" value="${joint_axes[finger1_joint_source]['axis']}" lazy_eval="false" />
     <xacro:property name="finger2_joint_axis_cfg" value="${joint_axes[finger2_joint_source]['axis']}" lazy_eval="false" />
-    <xacro:property
-      name="finger1_joint_axis_reflect_sign"
-      value="${-1 if ((reflect_x == -1 and finger1_joint_axis_cfg.x * finger1_joint_axis_cfg.x > 1e-18) or (reflect_y == -1 and finger1_joint_axis_cfg.y * finger1_joint_axis_cfg.y > 1e-18) or (reflect_z == -1 and finger1_joint_axis_cfg.z * finger1_joint_axis_cfg.z > 1e-18)) else 1}"
-      lazy_eval="false" />
-    <xacro:property
-      name="finger2_joint_axis_reflect_sign"
-      value="${-1 if ((reflect_x == -1 and finger2_joint_axis_cfg.x * finger2_joint_axis_cfg.x > 1e-18) or (reflect_y == -1 and finger2_joint_axis_cfg.y * finger2_joint_axis_cfg.y > 1e-18) or (reflect_z == -1 and finger2_joint_axis_cfg.z * finger2_joint_axis_cfg.z > 1e-18)) else 1}"
-      lazy_eval="false" />
     <xacro:property name="finger1_joint_limit_cfg" value="${joint_limits[finger1_joint_source]['limit']}" lazy_eval="false" />
     <xacro:property name="finger2_joint_limit_cfg" value="${joint_limits[finger2_joint_source]['limit']}" lazy_eval="false" />
     <xacro:property
@@ -187,7 +179,7 @@ limitations under the License.
       <parent link="${prefix}${topology['joints'][finger1_joint_source]['parent']}" />
       <child link="${prefix}${finger1_source}" />
       <xacro:if value="${topology['joints'][finger1_joint_source]['type'] != 'fixed'}">
-      <axis xyz="${finger1_joint_axis_reflect_sign * finger1_joint_axis_cfg.x} ${finger1_joint_axis_reflect_sign * finger1_joint_axis_cfg.y} ${finger1_joint_axis_reflect_sign * finger1_joint_axis_cfg.z}" />
+      <axis xyz="${(reflect_x if finger1_joint_reflects else 1) * finger1_joint_axis_cfg.x} ${(reflect_y if finger1_joint_reflects else 1) * finger1_joint_axis_cfg.y} ${(reflect_z if finger1_joint_reflects else 1) * finger1_joint_axis_cfg.z}" />
       <xacro:openarm_emit_limit limit="${finger1_joint_limit_effective}" />
       <xacro:if value="${finger1_mimic_override != 'none'}">
         <mimic
@@ -208,7 +200,7 @@ limitations under the License.
       <parent link="${prefix}${topology['joints'][finger2_joint_source]['parent']}" />
       <child link="${prefix}${finger2_source}" />
       <xacro:if value="${topology['joints'][finger2_joint_source]['type'] != 'fixed'}">
-      <axis xyz="${finger2_joint_axis_reflect_sign * finger2_joint_axis_cfg.x} ${finger2_joint_axis_reflect_sign * finger2_joint_axis_cfg.y} ${finger2_joint_axis_reflect_sign * finger2_joint_axis_cfg.z}" />
+      <axis xyz="${(reflect_x if finger2_joint_reflects else 1) * finger2_joint_axis_cfg.x} ${(reflect_y if finger2_joint_reflects else 1) * finger2_joint_axis_cfg.y} ${(reflect_z if finger2_joint_reflects else 1) * finger2_joint_axis_cfg.z}" />
       <xacro:openarm_emit_limit limit="${finger2_joint_limit_effective}" />
       <xacro:if value="${finger2_mimic_override != 'none'}">
         <mimic

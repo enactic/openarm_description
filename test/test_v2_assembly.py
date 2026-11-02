@@ -266,9 +266,21 @@ class AssemblyTest(unittest.TestCase):
                 joint['limit'].update(lower=.01, upper=.04)
             return value
 
+        def set_axis(value):
+            for joint in value.values():
+                joint['axis'].update(x=.6, y=.8, z=0.)
+            return value
+
+        def motion(joint, position):
+            axis = [float(v) for v in joint.find('axis').get('xyz').split()]
+            translation = [[float(i == j) for j in range(3)] + [axis[i] * position]
+                           for i in range(3)] + [[0., 0., 0., 1.]]
+            return multiply(transform(joint.find('origin')), translation)
+
         robot = expand_modified(
             {'end_effector/pinch_gripper/config/struct/topology.yaml': change,
-             'end_effector/pinch_gripper/config/joint/joint_limits.yaml': set_travel})
+             'end_effector/pinch_gripper/config/joint/joint_limits.yaml': set_travel,
+             'end_effector/pinch_gripper/config/joint/joint_axes.yaml': set_axis})
         for side in ['left', 'right']:
             for index in [1, 2]:
                 self.assertEqual(
@@ -281,6 +293,19 @@ class AssemblyTest(unittest.TestCase):
                     f"joint[@name='openarm_{side}_finger_joint{index}']")
                 self.assertEqual(float(joint.find('limit').get('lower')), .01)
                 self.assertEqual(float(joint.find('limit').get('upper')), .04)
+        reflection = [[float(i == j) * (1, -1, 1, 1)[i]
+                       for j in range(4)] for i in range(4)]
+        for index in [1, 2]:
+            left = robot.find(
+                f"joint[@name='openarm_left_finger_joint{index}']")
+            right = robot.find(
+                f"joint[@name='openarm_right_finger_joint{index}']")
+            for endpoint in ['lower', 'upper']:
+                position = float(right.find('limit').get(endpoint))
+                expected = multiply(reflection, multiply(
+                    motion(right, position), reflection))
+                self.assertLess(max(abs(a-b) for row, other in zip(motion(left, position), expected)
+                                    for a, b in zip(row, other)), 1e-10)
 
     def test_unknown_topology_link_rejected(self):
         def change(value):
