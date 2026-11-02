@@ -254,8 +254,14 @@ class AssemblyTest(unittest.TestCase):
             value['joints'] = joints
             return value
 
+        def set_travel(value):
+            for joint in value.values():
+                joint['limit'].update(lower=.01, upper=.04)
+            return value
+
         robot = expand_modified(
-            {'end_effector/pinch_gripper/config/struct/topology.yaml': change})
+            {'end_effector/pinch_gripper/config/struct/topology.yaml': change,
+             'end_effector/pinch_gripper/config/joint/joint_limits.yaml': set_travel})
         for side in ['left', 'right']:
             for index in [1, 2]:
                 self.assertEqual(
@@ -264,6 +270,10 @@ class AssemblyTest(unittest.TestCase):
                     ).get('type'),
                     'prismatic',
                 )
+                joint = robot.find(
+                    f"joint[@name='openarm_{side}_finger_joint{index}']")
+                self.assertEqual(float(joint.find('limit').get('lower')), .01)
+                self.assertEqual(float(joint.find('limit').get('upper')), .04)
 
     def test_unknown_topology_link_rejected(self):
         def change(value):

@@ -150,11 +150,11 @@ limitations under the License.
     <xacro:property name="finger2_joint_limit_cfg" value="${joint_limits[finger2_joint_source]['limit']}" lazy_eval="false" />
     <xacro:property
       name="finger1_limit_should_mirror"
-      value="${finger1_joint_reflects}"
+      value="${finger1_joint_reflects and topology['joints'][finger1_joint_source]['type'] != 'prismatic'}"
       lazy_eval="false" />
     <xacro:property
       name="finger2_limit_should_mirror"
-      value="${finger2_joint_reflects}"
+      value="${finger2_joint_reflects and topology['joints'][finger2_joint_source]['type'] != 'prismatic'}"
       lazy_eval="false" />
     <xacro:property
       name="finger1_joint_limit_override"
