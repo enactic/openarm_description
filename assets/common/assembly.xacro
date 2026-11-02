@@ -1,0 +1,278 @@
+<?xml version="1.0"?>
+<!--
+Copyright 2026 Enactic, Inc.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find openarm_description)/assets/common/transforms.xacro" />
+  <xacro:include filename="$(find openarm_description)/assets/common/validation.xacro" />
+
+  <xacro:macro name="openarm_resolve_component_runtime"
+    params="component_api component_name components robot_preset config_root root_frame component_cfg component_desc parent_desc:=none collapse_internal_empty_links:=false emit_grasp_frame:=false out_name">
+
+    <xacro:property name="none_value" value="${'none'}" lazy_eval="false" />
+    <xacro:property name="zero_origin" value="${dict(x=0.0, y=0.0, z=0.0, roll=0.0, pitch=0.0, yaw=0.0)}" lazy_eval="false" />
+    <xacro:property name="reflect_cfg" value="${component_cfg['reflect'] if 'reflect' in component_cfg else dict(x=1, y=1, z=1)}" lazy_eval="false" />
+    <xacro:property name="reflect_include_cfg" value="${reflect_cfg['include'] if 'include' in reflect_cfg else dict()}" lazy_eval="false" />
+    <xacro:property name="reflect_x" value="${reflect_cfg['x']}" lazy_eval="false" />
+    <xacro:property name="reflect_y" value="${reflect_cfg['y']}" lazy_eval="false" />
+    <xacro:property name="reflect_z" value="${reflect_cfg['z']}" lazy_eval="false" />
+    <xacro:property name="component_reflects" value="${reflect_x == -1 or reflect_y == -1 or reflect_z == -1}" lazy_eval="false" />
+    <xacro:property name="reflect_include_links" value="${reflect_include_cfg['links'] if 'links' in reflect_include_cfg else component_desc['topology']['links']}" lazy_eval="false" />
+    <xacro:property name="reflect_include_joints" value="${reflect_include_cfg['joints'] if 'joints' in reflect_include_cfg else list(component_desc['topology']['joints'].keys())}" lazy_eval="false" />
+    <xacro:property name="reflect_include_reference_points" value="${reflect_include_cfg['reference_points'] if 'reference_points' in reflect_include_cfg else list(component_desc['reference_points'].keys())}" lazy_eval="false" />
+    <xacro:property name="limit_override_joints" value="${component_cfg['limit_override_joints'] if 'limit_override_joints' in component_cfg else dict()}" lazy_eval="false" />
+    <xacro:property name="connection" value="${component_cfg['connection'] if 'connection' in component_cfg else dict()}" lazy_eval="false" />
+    <xacro:property name="parent_component_name" value="${connection['attach_to'] if 'attach_to' in connection else none_value}" lazy_eval="false" />
+    <xacro:property name="has_parent_desc" value="${parent_desc != none_value}" lazy_eval="false" />
+    <xacro:property name="connected_to_default" value="${connection['parent'] if 'parent' in connection and connection['parent'] != None else (parent_desc['default_mount_parent'] if has_parent_desc else root_frame)}" lazy_eval="false" />
+    <xacro:property name="mount_origin_default" value="${connection['origin'] if 'origin' in connection and connection['origin'] != None else zero_origin}" lazy_eval="false" />
+    <xacro:property name="resolved_connected_to" value="${connected_to_default}" lazy_eval="false" />
+    <xacro:property name="resolved_mount_origin" value="${mount_origin_default}" lazy_eval="false" />
+    <xacro:property name="collapse_source_link" value="${none_value}" lazy_eval="false" />
+    <xacro:property name="collapse_child_link" value="${none_value}" lazy_eval="false" />
+    <xacro:property name="collapse_child_name" value="${none_value}" lazy_eval="false" />
+    <xacro:property name="collapse_child_desc" value="${none_value}" lazy_eval="false" />
+    <xacro:property name="skip_mount_joint" value="${False}" lazy_eval="false" />
+    <xacro:property name="base_frame_shift" value="${none_value}" lazy_eval="false" />
+    <xacro:property name="has_parent_reference_key" value="${'parent_reference_point' in connection and connection['parent_reference_point'] != None}" lazy_eval="false" />
+    <xacro:property name="has_parent_override" value="${'parent' in connection and connection['parent'] != None}" lazy_eval="false" />
+    <xacro:property name="has_origin_override" value="${'origin' in connection and connection['origin'] != None}" lazy_eval="false" />
+
+    <xacro:openarm_require
+      condition="${not (has_parent_reference_key and has_parent_override)}"
+      message="${'Component `%s` must choose parent or parent_reference_point, not both.' % component_name}" />
+    <xacro:property name="origin_cfg" value="${connection['origin'] if has_origin_override else zero_origin}" lazy_eval="false" />
+    <xacro:property name="connection_origin"
+      value="${dict(x=origin_cfg.get('x') or 0.0, y=origin_cfg.get('y') or 0.0, z=origin_cfg.get('z') or 0.0, roll=origin_cfg.get('roll') or 0.0, pitch=origin_cfg.get('pitch') or 0.0, yaw=origin_cfg.get('yaw') or 0.0)}"
+      lazy_eval="false" />
+    <xacro:property name="resolved_mount_origin" value="${connection_origin}" lazy_eval="false" />
+    <xacro:if value="${has_parent_reference_key}">
+      <xacro:openarm_require
+        condition="${has_parent_desc}"
+        message="${'Invalid robot preset: component `%s` sets parent_reference_point without attach_to.' % component_name}" />
+      <xacro:property name="parent_ref_name" value="${connection['parent_reference_point']}" lazy_eval="false" />
+      <xacro:openarm_require
+        condition="${parent_ref_name in parent_desc['reference_points']}"
+        message="${'Invalid robot preset: component `%s` references missing parent_reference_point `%s` on `%s`.' % (component_name, parent_ref_name, parent_desc['name'])}" />
+      <xacro:property name="parent_component_cfg" value="${robot_preset[parent_component_name]}" lazy_eval="false" />
+      <xacro:property name="parent_reflect_cfg" value="${parent_component_cfg['reflect'] if 'reflect' in parent_component_cfg else dict(x=1, y=1, z=1)}" lazy_eval="false" />
+      <xacro:property name="parent_reflect_include_cfg" value="${parent_reflect_cfg['include'] if 'include' in parent_reflect_cfg else dict()}" lazy_eval="false" />
+      <xacro:property name="parent_component_reflects" value="${parent_reflect_cfg['x'] == -1 or parent_reflect_cfg['y'] == -1 or parent_reflect_cfg['z'] == -1}" lazy_eval="false" />
+      <xacro:property name="parent_reflect_include_reference_points" value="${parent_reflect_include_cfg['reference_points'] if 'reference_points' in parent_reflect_include_cfg else list(parent_desc['reference_points'].keys())}" lazy_eval="false" />
+      <xacro:property name="parent_ref" value="${parent_desc['reference_points'][parent_ref_name]}" lazy_eval="false" />
+      <xacro:property name="parent_ref_should_reflect" value="${parent_component_reflects and parent_ref_name in parent_reflect_include_reference_points}" lazy_eval="false" />
+      <xacro:property name="parent_ref_canonical_link" value="${parent_ref['parent']}" lazy_eval="false" />
+      <xacro:property name="resolved_connected_to"
+        value="${parent_desc['link_name_map'][parent_ref_canonical_link] if parent_ref_canonical_link in parent_desc['link_name_map'] else parent_desc['link_prefix'] + parent_ref_canonical_link}" lazy_eval="false" />
+      <xacro:property name="reference_origin" value="${parent_ref['origin']}" lazy_eval="false" />
+      <xacro:if value="${parent_ref_canonical_link == parent_desc['topology']['links'][0] and parent_desc.get('base_frame_shift', 'none') != 'none'}">
+        <xacro:openarm_compose_pose first="${parent_desc['base_frame_shift']}" second="${reference_origin}" out_name="reference_origin" />
+      </xacro:if>
+      <xacro:if value="${parent_ref_should_reflect}">
+        <xacro:openarm_reflect_pose origin="${reference_origin}" reflect_x="${parent_reflect_cfg['x']}" reflect_y="${parent_reflect_cfg['y']}" reflect_z="${parent_reflect_cfg['z']}" out_name="reference_origin" />
+      </xacro:if>
+      <xacro:openarm_compose_pose first="${reference_origin}" second="${connection_origin}" out_name="reference_mount_origin" />
+      <xacro:property name="resolved_mount_origin" value="${reference_mount_origin}" lazy_eval="false" />
+      <xacro:property name="parent_reference_emitted" value="${parent_ref.get('emit', False) or (emit_grasp_frame and parent_desc['component_type'] == 'end_effector' and parent_ref_name == 'grasp_frame')}" lazy_eval="false" />
+      <xacro:if value="${parent_reference_emitted}">
+        <xacro:property name="reference_prefix" value="${parent_desc['root_link_actual'] + '_' if parent_desc['component_type'] == 'body' else parent_desc['prefix']}" lazy_eval="false" />
+        <xacro:property name="resolved_connected_to" value="${reference_prefix + parent_ref_name}" lazy_eval="false" />
+        <xacro:property name="resolved_mount_origin" value="${connection_origin}" lazy_eval="false" />
+      </xacro:if>
+    </xacro:if>
+
+    <!-- reference point child empty links are already absorbed into config; runtime collapse only targets the parent's terminal empty link -->
+    <xacro:property
+      name="parent_terminal_link_empty"
+      value="${has_parent_desc and parent_desc['supports_tip_collapse'] and parent_desc['topology']['links'][-1] not in parent_desc['inertials'] and parent_desc['topology']['links'][-1] not in parent_desc['visuals'] and parent_desc['topology']['links'][-1] not in parent_desc['collisions']}"
+      lazy_eval="false" />
+    <xacro:if value="${has_parent_reference_key and not has_parent_override and collapse_internal_empty_links and parent_terminal_link_empty and parent_ref_canonical_link == parent_desc['topology']['links'][-1]}">
+      <xacro:property name="skip_mount_joint" value="${True}" lazy_eval="false" />
+      <xacro:openarm_reflect_pose origin="${reference_mount_origin}" reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}" out_name="base_frame_shift" />
+    </xacro:if>
+
+    <!-- A parent can expose at most one child that consumes its terminal empty link. -->
+    <xacro:property
+      name="attached_children"
+      value="${[name for name in components if name in robot_preset and robot_preset[name]['enabled'] and 'connection' in robot_preset[name] and 'attach_to' in robot_preset[name]['connection'] and robot_preset[name]['connection']['attach_to'] == component_name]}"
+      lazy_eval="false" />
+    <xacro:property name="component_terminal_link" value="${component_desc['topology']['links'][-1]}" lazy_eval="false" />
+    <xacro:property
+      name="component_terminal_link_empty"
+      value="${component_desc['supports_tip_collapse'] and component_terminal_link not in component_desc['inertials'] and component_terminal_link not in component_desc['visuals'] and component_terminal_link not in component_desc['collisions']}"
+      lazy_eval="false" />
+    <xacro:property
+      name="collapse_candidate_names"
+      value="${[name for name in attached_children if collapse_internal_empty_links and component_terminal_link_empty and 'parent_reference_point' in robot_preset[name]['connection'] and robot_preset[name]['connection']['parent_reference_point'] != None and ('parent' not in robot_preset[name]['connection'] or robot_preset[name]['connection']['parent'] == None) and robot_preset[name]['connection']['parent_reference_point'] in component_desc['reference_points'] and component_desc['reference_points'][robot_preset[name]['connection']['parent_reference_point']]['parent'] == component_terminal_link]}"
+      lazy_eval="false" />
+
+    <xacro:openarm_require
+      condition="${len(collapse_candidate_names) &lt;= 1}"
+      message="${'Invalid robot preset: component `%s` has multiple children competing to collapse the same terminal empty link: %s.' % (component_name, collapse_candidate_names)}" />
+
+    <xacro:if value="${len(collapse_candidate_names) == 1}">
+      <xacro:property name="collapse_child_name" value="${collapse_candidate_names[0]}" lazy_eval="false" />
+      <xacro:property name="collapse_child_cfg" value="${robot_preset[collapse_child_name]}" lazy_eval="false" />
+      <!-- Preload the child descriptor once so the later recursion step can reuse it. -->
+      <xacro:call macro="${component_api['describe']}"
+        component_name="${collapse_child_name}"
+        component_cfg="${collapse_child_cfg}"
+        config_root="${config_root}"
+        out_name="collapse_child_desc" />
+      <xacro:property name="collapse_source_link" value="${component_terminal_link}" lazy_eval="false" />
+      <xacro:property name="collapse_child_link" value="${collapse_child_desc['root_link_actual']}" lazy_eval="false" />
+    </xacro:if>
+
+    <xacro:property
+      name="${out_name}"
+      value="${dict(component_type=component_desc['component_type'],
+                   component_reflects=component_reflects,
+                   reflect_x=reflect_x,
+                   reflect_y=reflect_y,
+                   reflect_z=reflect_z,
+                   reflect_include_links=reflect_include_links,
+                   reflect_include_joints=reflect_include_joints,
+                   reflect_include_reference_points=reflect_include_reference_points,
+                   limit_override_joints=limit_override_joints,
+                   resolved_connected_to=resolved_connected_to,
+                   resolved_mount_origin=resolved_mount_origin,
+                   skip_mount_joint=skip_mount_joint,
+                   base_frame_shift=base_frame_shift,
+                   collapse_source_link=collapse_source_link,
+                   collapse_child_link=collapse_child_link,
+                   collapse_child_name=collapse_child_name,
+                   collapse_child_desc=collapse_child_desc)}"
+      scope="parent"
+      lazy_eval="false" />
+  </xacro:macro>
+
+  <xacro:macro name="openarm_emit_component_tree"
+    params="component_api component_name components robot_preset config_root root_frame parent_desc:=none preloaded_desc:=none collapse_internal_empty_links:=false emit_grasp_frame:=false">
+
+    <xacro:property name="none_value" value="${'none'}" lazy_eval="false" />
+    <xacro:property name="component_cfg" value="${robot_preset[component_name]}" lazy_eval="false" />
+    <xacro:property name="component_desc" value="${preloaded_desc}" lazy_eval="false" />
+
+    <xacro:if value="${component_desc == none_value}">
+      <xacro:call macro="${component_api['describe']}"
+        component_name="${component_name}"
+        component_cfg="${component_cfg}"
+        config_root="${config_root}"
+        out_name="component_desc" />
+    </xacro:if>
+
+    <xacro:openarm_resolve_component_runtime component_api="${component_api}"
+      component_name="${component_name}"
+      components="${components}"
+      robot_preset="${robot_preset}"
+      config_root="${config_root}"
+      root_frame="${root_frame}"
+      component_cfg="${component_cfg}"
+      component_desc="${component_desc}"
+      parent_desc="${parent_desc}"
+      collapse_internal_empty_links="${collapse_internal_empty_links}"
+      emit_grasp_frame="${emit_grasp_frame}"
+      out_name="component_runtime" />
+
+    <xacro:property name="runtime_link_name_map"
+      value="${dict(list(component_desc['link_name_map'].items()) + ([(component_runtime['collapse_source_link'], component_runtime['collapse_child_link'])] if component_runtime['collapse_source_link'] != 'none' else []))}" lazy_eval="false" />
+    <xacro:property name="component_desc" value="${dict(component_desc, link_name_map=runtime_link_name_map, base_frame_shift=component_runtime['base_frame_shift'])}" lazy_eval="false" />
+
+    <xacro:call macro="${component_api['emit']}"
+      component_desc="${component_desc}"
+      component_runtime="${component_runtime}"
+      emit_grasp_frame="${emit_grasp_frame}" />
+
+    <xacro:openarm_emit_attached_components component_api="${component_api}"
+      index="0"
+      components="${components}"
+      parent_component_name="${component_name}"
+      robot_preset="${robot_preset}"
+      config_root="${config_root}"
+      root_frame="${root_frame}"
+      parent_desc="${component_desc}"
+      preloaded_component_name="${component_runtime['collapse_child_name']}"
+      preloaded_component_desc="${component_runtime['collapse_child_desc']}"
+      collapse_internal_empty_links="${collapse_internal_empty_links}"
+      emit_grasp_frame="${emit_grasp_frame}" />
+  </xacro:macro>
+
+  <xacro:macro name="openarm_emit_attached_components"
+    params="component_api index components parent_component_name robot_preset config_root root_frame parent_desc:=none preloaded_component_name:=none preloaded_component_desc:=none collapse_internal_empty_links:=false emit_grasp_frame:=false">
+
+    <xacro:if value="${index &lt; len(components)}">
+      <xacro:property name="none_value" value="${'none'}" lazy_eval="false" />
+      <xacro:property name="component_name" value="${components[index]}" lazy_eval="false" />
+      <xacro:property name="component_cfg" value="${robot_preset[component_name]}" lazy_eval="false" />
+      <xacro:property name="component_enabled" value="${component_cfg['enabled']}" lazy_eval="false" />
+      <xacro:property name="connection" value="${component_cfg['connection'] if 'connection' in component_cfg else dict()}" lazy_eval="false" />
+      <xacro:property name="attach_to" value="${connection['attach_to'] if 'attach_to' in connection else None}" lazy_eval="false" />
+      <xacro:property name="is_root_component" value="${parent_component_name == '__root__' and attach_to == None}" lazy_eval="false" />
+      <xacro:property name="is_attached_child" value="${attach_to == parent_component_name}" lazy_eval="false" />
+      <!-- Reuse a preloaded descriptor when collapse analysis already loaded it for this child. -->
+      <xacro:property name="component_desc_override" value="${preloaded_component_desc if component_name == preloaded_component_name else none_value}" lazy_eval="false" />
+
+      <xacro:if value="${component_enabled and (is_root_component or is_attached_child)}">
+        <xacro:openarm_emit_component_tree component_api="${component_api}"
+          component_name="${component_name}"
+          components="${components}"
+          robot_preset="${robot_preset}"
+          config_root="${config_root}"
+          root_frame="${root_frame}"
+          parent_desc="${none_value if is_root_component else parent_desc}"
+          preloaded_desc="${component_desc_override}"
+          collapse_internal_empty_links="${collapse_internal_empty_links}"
+          emit_grasp_frame="${emit_grasp_frame}" />
+      </xacro:if>
+
+      <xacro:openarm_emit_attached_components component_api="${component_api}"
+        index="${index + 1}"
+        components="${components}"
+        parent_component_name="${parent_component_name}"
+        robot_preset="${robot_preset}"
+        config_root="${config_root}"
+        root_frame="${root_frame}"
+        parent_desc="${parent_desc}"
+        preloaded_component_name="${preloaded_component_name}"
+        preloaded_component_desc="${preloaded_component_desc}"
+        collapse_internal_empty_links="${collapse_internal_empty_links}"
+        emit_grasp_frame="${emit_grasp_frame}" />
+    </xacro:if>
+  </xacro:macro>
+
+  <xacro:macro name="openarm_assemble_robot"
+    params="component_api config_root robot_preset collapse_internal_empty_links:=false emit_grasp_frame:=false">
+
+    <xacro:property name="robot_cfg" value="${robot_preset['robot']}" lazy_eval="false" />
+    <xacro:property name="root_frame" value="${robot_cfg['root_frame']}" lazy_eval="false" />
+    <xacro:property name="components" value="${robot_cfg['components'] if 'components' in robot_cfg else []}" lazy_eval="false" />
+
+    <xacro:openarm_validate_robot_preset
+      components="${components}"
+      robot_preset="${robot_preset}" />
+
+    <link name="${root_frame}" />
+
+    <xacro:openarm_emit_attached_components component_api="${component_api}"
+      index="0"
+      components="${components}"
+      parent_component_name="__root__"
+      robot_preset="${robot_preset}"
+      config_root="${config_root}"
+      root_frame="${root_frame}"
+      collapse_internal_empty_links="${collapse_internal_empty_links}"
+      emit_grasp_frame="${emit_grasp_frame}" />
+  </xacro:macro>
+
+</robot>

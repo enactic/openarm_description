@@ -18,11 +18,6 @@ limitations under the License.
   <xacro:include filename="$(find openarm_description)/assets/common/reference_frames.xacro" />
   <xacro:include filename="$(find openarm_description)/assets/robot/openarm_v2.0/urdf/utils/openarm_v20_ee.xacro" />
 
-  <xacro:macro name="openarm_v20_require" params="condition message">
-    <xacro:unless value="${condition}">
-      <xacro:property name="openarm_v20_requirement_failed" value="${xacro.fatal(message)}" lazy_eval="false" />
-    </xacro:unless>
-  </xacro:macro>
 
   <xacro:arg name="ee_config_dir" default="$(find openarm_description)/assets/end_effector/pinch_gripper/config" />
   <xacro:arg name="ee_inertials_name" default="nominal" />
@@ -35,10 +30,10 @@ limitations under the License.
   <xacro:property name="reflect_y_value" value="${float('$(arg reflect_y)')}" lazy_eval="false" />
   <xacro:property name="reflect_z_value" value="${float('$(arg reflect_z)')}" lazy_eval="false" />
 
-  <xacro:openarm_v20_require
+  <xacro:openarm_require
     condition="${reflect_x_value in [-1.0, 1.0] and reflect_y_value in [-1.0, 1.0] and reflect_z_value in [-1.0, 1.0]}"
     message="${'Invalid standalone gripper reflection: each reflect axis must be either 1 or -1.'}" />
-  <xacro:openarm_v20_require
+  <xacro:openarm_require
     condition="${(1 if reflect_x_value == -1.0 else 0) + (1 if reflect_y_value == -1.0 else 0) + (1 if reflect_z_value == -1.0 else 0) &lt;= 1}"
     message="${'Invalid standalone gripper reflection: combined x/y/z reflections are not currently supported.'}" />
 
