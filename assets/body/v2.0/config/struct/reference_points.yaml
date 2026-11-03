@@ -56,6 +56,17 @@ right_arm_mount_point:
       original_name: body_right_arm_mount_point
       canonical_name: null
 
+arm_origin:
+  parent: body_link0
+  emit: true
+  origin:
+    x: 0.0
+    y: 0.0
+    z: 0.697
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+
 # Example body-mounted camera reference point. Tune this pose from CAD or
 # calibration before using it on hardware.
 # zed_front_mount_point:
