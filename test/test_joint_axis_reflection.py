@@ -112,14 +112,19 @@ class JointAxisReflectionTest(unittest.TestCase):
 
     def test_oblique_prismatic_direction_matches_reflected_translation(self):
         right = expand((0.36, -0.48, 0.8), joint_type='prismatic')
-        for reflect in REFLECTIONS[1:]:
-            left = expand((0.36, -0.48, 0.8), reflect, joint_type='prismatic')
+        limits = right.find('limit').attrib
+        positions = [float(limits['lower']), 0.2, float(limits['upper'])]
+        for reflect, explicit in itertools.product(REFLECTIONS, [False, True]):
+            left = expand((0.36, -0.48, 0.8), reflect, explicit,
+                          joint_type='prismatic')
+            self.assertEqual(left.find('limit').attrib, limits)
             signs = (*reflect, 1)
             reflection = [[float(signs[i]) if i == j else 0.
                            for j in range(4)] for i in range(4)]
-            expected = multiply(reflection, multiply(
-                joint_pose(right, 0.2), reflection))
-            self.assert_matrix_close(joint_pose(left, 0.2), expected)
+            for position in positions:
+                expected = multiply(reflection, multiply(
+                    joint_pose(right, position), reflection))
+                self.assert_matrix_close(joint_pose(left, position), expected)
 
     def test_principal_axes_and_existing_limit_policy_are_preserved(self):
         axes = [tuple(sign if i == axis else 0 for i in range(3))

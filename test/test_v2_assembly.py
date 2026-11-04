@@ -144,10 +144,16 @@ class AssemblyTest(unittest.TestCase):
                         for a, b in zip(row, target)), 1e-10)
 
     def test_arm_tip_reference_emit_with_and_without_collapse(self):
+        def serial_fingers(topology):
+            topology['joints']['finger_joint2']['parent'] = 'ee_link1'
+            return topology
+
+        folded_states = []
         for collapse in [False, True]:
             robots = [
                 expand_modified(
                     {
+                        'end_effector/pinch_gripper/config/struct/topology.yaml': serial_fingers,
                         'robot/openarm_v2.0/config/arm/struct/reference_points.yaml': set_reference_emit(
                             'ee_mount_point', emit
                         ),
@@ -157,6 +163,14 @@ class AssemblyTest(unittest.TestCase):
                 for emit in [False, True]
             ]
             self.assert_common_poses(*robots)
+            folded_states.append(poses(robots[0]))
+
+        for side in ['left', 'right']:
+            for finger in [1, 2]:
+                name = f'openarm_{side}_ee_link{finger}'
+                self.assertLess(max(abs(a-b) for row, other in zip(
+                    folded_states[0][name], folded_states[1][name])
+                    for a, b in zip(row, other)), 1e-10)
 
     def test_grasp_frame_emission(self):
         # grasp_frame is emitted once when either the reference point's
@@ -193,6 +207,152 @@ class AssemblyTest(unittest.TestCase):
         ):
             expand_modified(
                 {'robot/openarm_v2.0/config/robot_presets/default_bimanual.yaml': conflict})
+
+    def test_joint_order_does_not_define_the_arm_chain(self):
+        def reorder(value):
+            value['joints'] = dict(reversed(list(value['joints'].items())))
+            return value
+
+        original = expand_modified()
+        reordered = expand_modified(
+            {'robot/openarm_v2.0/config/arm/struct/topology.yaml': reorder})
+        self.assert_common_poses(original, reordered)
+
+    def test_arm_joint_names_come_from_topology(self):
+        def rename_topology(value):
+            joints = value['joints']
+            joints['wrist'] = joints.pop('joint7')
+            value['joints'] = joints
+            return value
+
+        def rename_parameters(value):
+            value['wrist'] = value.pop('joint7')
+            return value
+
+        changes = {
+            'robot/openarm_v2.0/config/arm/struct/topology.yaml': rename_topology}
+        for filename in ['joint_origins.yaml', 'joint_axes.yaml', 'joint_limits.yaml']:
+            changes['robot/openarm_v2.0/config/arm/joint/' +
+                    filename] = rename_parameters
+        robot = expand_modified(changes, robot_preset='right_arm')
+        self.assertIsNotNone(robot.find("joint[@name='openarm_right_wrist']"))
+        self.assertIsNone(robot.find("joint[@name='openarm_right_joint7']"))
+
+    def test_joint_type_and_parent_come_from_topology(self):
+        def arm_change(value):
+            joints = value['joints']
+            joints['joint6']['parent'] = 'link7'
+            joint = joints['joint7']
+            joint['type'] = 'fixed'
+            joint['parent'] = 'link5'
+            joints['joint7'] = joint
+            value['joints'] = joints
+            return value
+
+        changes = {
+            'robot/openarm_v2.0/config/arm/struct/topology.yaml': arm_change}
+        unfolded = expand_modified(changes, robot_preset='right_arm_with_pinch_gripper',
+                                   collapse_empty_end=False)
+        robot = expand_modified(changes, robot_preset='right_arm_with_pinch_gripper',
+                                collapse_empty_end=True)
+        self.assertIsNotNone(robot.find("link[@name='openarm_right_link7']"))
+        self.assertEqual(set(poses(unfolded)), set(poses(robot)))
+        self.assert_common_poses(unfolded, robot)
+        joint = robot.find("joint[@name='openarm_right_joint7']")
+        self.assertEqual(joint.get('type'), 'fixed')
+        self.assertEqual(joint.find('parent').get(
+            'link'), 'openarm_right_link5')
+        self.assertIsNone(joint.find('axis'))
+        self.assertIsNone(joint.find('limit'))
+
+    def test_gripper_joint_type_comes_from_topology(self):
+        def change(value):
+            joints = value['joints']
+            for name in joints:
+                joint = joints[name]
+                joint['type'] = 'prismatic'
+                joints[name] = joint
+            value['joints'] = joints
+            return value
+
+        def set_travel(value):
+            for joint in value.values():
+                joint['limit'].update(lower=.01, upper=.04)
+            return value
+
+        def set_axis(value):
+            for joint in value.values():
+                joint['axis'].update(x=.6, y=.8, z=0.)
+            return value
+
+        def motion(joint, position):
+            axis = [float(v) for v in joint.find('axis').get('xyz').split()]
+            translation = [[float(i == j) for j in range(3)] + [axis[i] * position]
+                           for i in range(3)] + [[0., 0., 0., 1.]]
+            return multiply(transform(joint.find('origin')), translation)
+
+        robot = expand_modified(
+            {'end_effector/pinch_gripper/config/struct/topology.yaml': change,
+             'end_effector/pinch_gripper/config/joint/joint_limits.yaml': set_travel,
+             'end_effector/pinch_gripper/config/joint/joint_axes.yaml': set_axis})
+        for side in ['left', 'right']:
+            for index in [1, 2]:
+                self.assertEqual(
+                    robot.find(
+                        f"joint[@name='openarm_{side}_finger_joint{index}']"
+                    ).get('type'),
+                    'prismatic',
+                )
+                joint = robot.find(
+                    f"joint[@name='openarm_{side}_finger_joint{index}']")
+                self.assertEqual(float(joint.find('limit').get('lower')), .01)
+                self.assertEqual(float(joint.find('limit').get('upper')), .04)
+        reflection = [[float(i == j) * (1, -1, 1, 1)[i]
+                       for j in range(4)] for i in range(4)]
+        for index in [1, 2]:
+            left = robot.find(
+                f"joint[@name='openarm_left_finger_joint{index}']")
+            right = robot.find(
+                f"joint[@name='openarm_right_finger_joint{index}']")
+            for endpoint in ['lower', 'upper']:
+                position = float(right.find('limit').get(endpoint))
+                expected = multiply(reflection, multiply(
+                    motion(right, position), reflection))
+                self.assertLess(max(abs(a-b) for row, other in zip(motion(left, position), expected)
+                                    for a, b in zip(row, other)), 1e-10)
+
+    def test_unknown_topology_link_rejected(self):
+        def change(value):
+            joints = value['joints']
+            joint = joints['joint7']
+            joint['parent'] = 'missing'
+            joints['joint7'] = joint
+            value['joints'] = joints
+            return value
+
+        with self.assertRaisesRegex(xacro.XacroException, 'unknown link'):
+            expand_modified(
+                {'robot/openarm_v2.0/config/arm/struct/topology.yaml': change})
+
+        standalone = ROOT / \
+            'assets/end_effector/pinch_gripper/urdf/pinch_gripper_standalone.urdf.xacro'
+        for invalid in ('unknown link', 'cycle'):
+            with self.subTest(entry='standalone', invalid=invalid), tempfile.TemporaryDirectory() as directory:
+                config = Path(directory) / 'config'
+                shutil.copytree(
+                    ROOT / 'assets/end_effector/pinch_gripper/config', config)
+                path = config / 'struct/topology.yaml'
+                topology = yaml.safe_load(path.read_text())
+                joints = topology['joints']
+                if invalid == 'unknown link':
+                    joints['finger_joint1']['parent'] = 'missing'
+                else:
+                    joints['finger_joint1']['parent'] = joints['finger_joint2']['child']
+                    joints['finger_joint2']['parent'] = joints['finger_joint1']['child']
+                path.write_text(yaml.safe_dump(topology, sort_keys=False))
+                with package_share_at(ROOT), self.assertRaisesRegex(xacro.XacroException, invalid):
+                    xacro.process_file(str(standalone), mappings={
+                                       'ee_config_dir': str(config)})
 
 
 if __name__ == '__main__':

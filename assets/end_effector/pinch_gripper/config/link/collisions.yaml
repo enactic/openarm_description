@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-base_link:
+ee_base_link:
   origin:
     x: 0
     y: 0
@@ -26,7 +26,7 @@ base_link:
       x: 1
       y: 1
       z: 1
-link1:
+ee_link1:
   origin:
     x: 0
     y: 0
@@ -40,7 +40,7 @@ link1:
       x: 1
       y: 1
       z: 1
-link2:
+ee_link2:
   origin:
     x: 0
     y: 0

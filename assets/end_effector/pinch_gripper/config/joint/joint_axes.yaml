@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-joint1:
+finger_joint1:
   axis:
     x: -1
     y: 0
     z: 0
-joint2:
+finger_joint2:
   axis:
     x: 1
     y: 0

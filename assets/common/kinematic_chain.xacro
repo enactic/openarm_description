@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!--
+Copyright 2026 Enactic, Inc.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:include filename="$(find openarm_description)/assets/common/links.xacro" />
+  <xacro:include filename="$(find openarm_description)/assets/common/validation.xacro" />
+
+  <xacro:macro name="openarm_emit_chain"
+    params="index joint_names topology prefix joint_origins joint_axes joint_limits joint_mimics inertials visuals collisions reflect_x reflect_y reflect_z reflect_include_links reflect_include_joints origin_override_joints limit_override_joints tip_collapse_source_link tip_collapse_child_link base_frame_shift">
+    <xacro:if value="${index &lt; len(joint_names)}">
+      <xacro:property name="name" value="${joint_names[index]}" />
+      <xacro:property name="joint" value="${topology['joints'][name]}" />
+      <xacro:property name="child" value="${joint['child']}" />
+      <xacro:property name="link_reflects" value="${child in reflect_include_links}" />
+      <xacro:property name="joint_reflects" value="${name in reflect_include_joints}" />
+      <xacro:property name="collapse_child" value="${child == tip_collapse_source_link}" />
+      <xacro:unless value="${collapse_child}">
+        <xacro:openarm_emit_link link_name="${prefix + child}" source_name="${child}"
+          inertials="${inertials}" visuals="${visuals}" collisions="${collisions}"
+          reflect_x="${reflect_x if link_reflects else 1}" reflect_y="${reflect_y if link_reflects else 1}" reflect_z="${reflect_z if link_reflects else 1}" />
+      </xacro:unless>
+      <xacro:property name="mimic" value="${joint_mimics[name] if name in joint_mimics else 'none'}" />
+      <xacro:openarm_emit_joint joint_name="${prefix + name}" joint_type="${joint['type']}"
+        parent_link="${prefix + joint['parent']}" child_link="${tip_collapse_child_link if collapse_child else prefix + child}"
+        joint_origins="${joint_origins}" joint_axes="${joint_axes}" joint_limits="${joint_limits}" source_name="${name}"
+        origin_override="${origin_override_joints.get(name, 'none')}" limit_override="${limit_override_joints.get(name, 'none')}"
+        mimic_override="${dict(joint=prefix + mimic['joint'], multiplier=mimic['multiplier'], offset=mimic['offset']) if mimic != 'none' else 'none'}"
+        reflect_x="${reflect_x if joint_reflects else 1}" reflect_y="${reflect_y if joint_reflects else 1}" reflect_z="${reflect_z if joint_reflects else 1}"
+        reflect_rotation="${True}" mirror_limit_sign="${joint_reflects and (reflect_x == -1 or reflect_y == -1 or reflect_z == -1)}"
+        frame_shift="${base_frame_shift if joint['parent'] == topology['links'][0] else 'none'}" />
+      <xacro:openarm_emit_chain index="${index + 1}" joint_names="${joint_names}" topology="${topology}" prefix="${prefix}"
+        joint_origins="${joint_origins}" joint_axes="${joint_axes}" joint_limits="${joint_limits}" joint_mimics="${joint_mimics}"
+        inertials="${inertials}" visuals="${visuals}" collisions="${collisions}"
+        reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}"
+        reflect_include_links="${reflect_include_links}" reflect_include_joints="${reflect_include_joints}"
+        origin_override_joints="${origin_override_joints}" limit_override_joints="${limit_override_joints}"
+        tip_collapse_source_link="${tip_collapse_source_link}" tip_collapse_child_link="${tip_collapse_child_link}" base_frame_shift="${base_frame_shift}" />
+    </xacro:if>
+  </xacro:macro>
+
+  <xacro:macro name="openarm_emit_kinematic_component"
+    params="connected_to mount_origin topology prefix joint_origins joint_axes joint_limits joint_mimics:=${dict()} inertials visuals collisions reflect_x:=1 reflect_y:=1 reflect_z:=1 reflect_include_links:=${[]} reflect_include_joints:=${[]} origin_override_joints:=${dict()} limit_override_joints:=${dict()} tip_collapse_source_link:=none tip_collapse_child_link:=none skip_mount_joint:=${False} base_frame_shift:=none">
+    <xacro:openarm_validate_topology topology="${topology}" component="${prefix}" />
+    <xacro:property name="base" value="${topology['links'][0]}" />
+    <xacro:property name="base_reflects" value="${base in reflect_include_links}" />
+    <xacro:openarm_emit_link link_name="${prefix + base}" source_name="${base}"
+      inertials="${inertials}" visuals="${visuals}" collisions="${collisions}"
+      reflect_x="${reflect_x if base_reflects else 1}" reflect_y="${reflect_y if base_reflects else 1}" reflect_z="${reflect_z if base_reflects else 1}"
+      frame_shift="${base_frame_shift}" />
+    <xacro:unless value="${skip_mount_joint}">
+      <joint name="${prefix + base}_mount_joint" type="fixed">
+        <xacro:openarm_emit_origin origin="${mount_origin}" />
+        <parent link="${connected_to}" /><child link="${prefix + base}" />
+      </joint>
+    </xacro:unless>
+    <xacro:openarm_emit_chain index="0" joint_names="${list(topology['joints'].keys())}" topology="${topology}" prefix="${prefix}"
+      joint_origins="${joint_origins}" joint_axes="${joint_axes}" joint_limits="${joint_limits}" joint_mimics="${joint_mimics}"
+      inertials="${inertials}" visuals="${visuals}" collisions="${collisions}"
+      reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}"
+      reflect_include_links="${reflect_include_links}" reflect_include_joints="${reflect_include_joints}"
+      origin_override_joints="${origin_override_joints}" limit_override_joints="${limit_override_joints}"
+      tip_collapse_source_link="${tip_collapse_source_link}" tip_collapse_child_link="${tip_collapse_child_link}" base_frame_shift="${base_frame_shift}" />
+  </xacro:macro>
+</robot>
