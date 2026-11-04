@@ -48,7 +48,7 @@ limitations under the License.
     <xacro:property name="component_link_name_map" value="${dict([(component_topology['links'][0], component_cfg['link_name'])]) if component_type == 'body' else empty_dict}" lazy_eval="false" />
     <xacro:property name="component_root_link_actual" value="${component_cfg['link_name'] if component_type == 'body' else (component_prefix + component_topology['links'][0])}" lazy_eval="false" />
     <xacro:property name="component_default_mount_parent" value="${component_cfg['link_name'] if component_type == 'body' else (component_prefix + component_topology['links'][-1])}" lazy_eval="false" />
-    <xacro:property name="component_collapse_empty_end" value="${component_type == 'arm' and options.get('collapse_empty_end', False) and len([j for j in component_topology['joints'] if component_topology['joints'][j]['parent'] == component_topology['links'][-1]]) == 0}" lazy_eval="false" />
+    <xacro:property name="component_collapse_empty_end" value="${component_topology.get('collapse_empty_end', False) and len([j for j in component_topology['joints'] if component_topology['joints'][j]['parent'] == component_topology['links'][-1]]) == 0}" lazy_eval="false" />
 
     <xacro:property
       name="${out_name}"

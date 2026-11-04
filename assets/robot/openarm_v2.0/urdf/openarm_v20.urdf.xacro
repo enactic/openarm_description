@@ -19,7 +19,6 @@ limitations under the License.
   <xacro:include filename="$(find openarm_description)/assets/robot/openarm_v2.0/urdf/ros2_control/openarm.bimanual.ros2_control.xacro" />
 
   <xacro:arg name="robot_preset" default="default_bimanual" />
-  <xacro:arg name="collapse_internal_empty_links" default="true" />
   <xacro:arg name="emit_grasp_frame" default="false" />
 
   <xacro:arg name="use_fake_hardware" default="true" />
@@ -34,7 +33,6 @@ limitations under the License.
   <xacro:openarm_assemble_robot component_api="${dict(describe='openarm_describe_auto_component', emit='openarm_emit_auto_component')}"
     config_root="${config_root}"
     robot_preset="${robot_preset_cfg}"
-    collapse_internal_empty_links="$(arg collapse_internal_empty_links)"
     emit_grasp_frame="$(arg emit_grasp_frame)" />
 
   <xacro:property name="gains_file" value="${config_root}/arm/control/control_gains.yaml" />

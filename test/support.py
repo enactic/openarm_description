@@ -111,11 +111,10 @@ def expand(files=None, version='v2.0', entry=None, **arguments):
         files['fixture.urdf.xacro'] = '''<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="fixture">
   <xacro:include filename="$(find openarm_description)/assets/component_loader.xacro"/>
   <xacro:arg name="emit_grasp_frame" default="false"/>
-  <xacro:arg name="collapse_internal_empty_links" default="false"/>
   <xacro:property name="root" value="$(find openarm_description)/assets/robot/openarm_v2.0/config"/>
   <xacro:property name="preset" value="${xacro.load_yaml(root + '/robot_presets/fixture.yaml')}"/>
   <xacro:openarm_assemble_robot component_api="${dict(describe='openarm_describe_auto_component', emit='openarm_emit_auto_component')}"
-    config_root="${root}" robot_preset="${preset}" emit_grasp_frame="$(arg emit_grasp_frame)" collapse_internal_empty_links="$(arg collapse_internal_empty_links)"/>
+    config_root="${root}" robot_preset="${preset}" emit_grasp_frame="$(arg emit_grasp_frame)"/>
 </robot>'''
         entry = 'assets/fixture.urdf.xacro'
     entry = entry or f'assets/robot/openarm_{version}/urdf/openarm_{"v10" if version == "v1.0" else "v20"}.urdf.xacro'
@@ -199,8 +198,6 @@ def files_for(spec, models, version='v2.0'):
 def assemble(spec, models, version='v2.0', **arguments):
     args = dict(robot_preset='fixture', ros2_control=False)
     args.update(arguments)
-    args['collapse_internal_empty_links'] = any(
-        data['struct/topology.yaml'].get('collapse_empty_end', False) for data in models.values())
     return expand(files_for(spec, models, version), version=version, **args)
 
 
