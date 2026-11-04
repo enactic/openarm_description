@@ -32,7 +32,14 @@ export PYTHONDONTWRITEBYTECODE=1
 mkdir -p "${build_dir}"
 cd "${build_dir}"
 
-colcon build --base-paths "${source_dir}"
+build_paths=("${source_dir}")
+if [ -f "${source_dir}/.ci/zed_description/package.xml" ]; then
+    build_paths+=("${source_dir}/.ci/zed_description")
+fi
+colcon build --paths "${build_paths[@]}"
+set +u
+source install/setup.bash
+set -u
 # Run only our pytest tests. ament_lint_auto also registers
 # ament_lint_common linters but we use pre-commit for lint.
 colcon test \

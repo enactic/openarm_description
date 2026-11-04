@@ -13,27 +13,27 @@ limitations under the License.
 -->
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="parallel_link">
-
-  <xacro:include filename="$(find openarm_description)/assets/robot/openarm_v1.0/urdf/ee/openarm_ee_macro.xacro" />
-  <xacro:include filename="$(find openarm_description)/assets/robot/openarm_v1.0/urdf/ee/parallel_link/openarm_parallel_gripper.xacro" />
-
+  <xacro:include filename="$(find openarm_description)/assets/component_loader.xacro" />
   <xacro:arg name="ee_config_dir" default="$(find openarm_description)/assets/end_effector/parallel_link/config" />
-  <xacro:arg name="mesh_root" default="$(find openarm_description)/assets/end_effector/parallel_link/meshes" />
+  <xacro:arg name="mesh_root" default="" />
+  <xacro:arg name="reflect_y" default="1" />
   <xacro:arg name="tcp_xyz" default="0 0 0.09" />
   <xacro:arg name="tcp_rpy" default="0 0 0" />
-
-  <link name="base_link" />
-  <xacro:openarm_parallel_gripper
-    connected_to="base_link"
-    arm_type=""
-    ee_type="parallel_link"
-    no_prefix="true"
-    mesh_root="$(arg mesh_root)"
-    tcp_xyz="$(arg tcp_xyz)"
-    tcp_rpy="$(arg tcp_rpy)"
-    ee_inertials="${xacro.load_yaml('$(arg ee_config_dir)/inertials.yaml')}"
-    ee_kinematics="${xacro.load_yaml('$(arg ee_config_dir)/kinematics.yaml')}"
-    ee_kinematics_link="${xacro.load_yaml('$(arg ee_config_dir)/kinematics_link.yaml')}"
-    ee_joints_limits="${xacro.load_yaml('$(arg ee_config_dir)/joint_limits.yaml')}" />
-
+  <xacro:property name="reflect_y" value="${float('$(arg reflect_y)')}" />
+  <xacro:property name="component_cfg"
+    value="${dict(type='end_effector', product='parallel_link', config=None, inertials='nominal', prefix='', enabled=True, reflect=dict(x=1, y=reflect_y, z=1, include=dict(links=['link7'], joints=[], reference_points=[])))}" />
+  <xacro:openarm_describe_auto_component component_name="gripper" component_cfg="${component_cfg}" options="${dict()}"
+    config_root_override="$(arg ee_config_dir)" out_name="description" />
+  <xacro:property name="references" value="${description['reference_points']}" />
+  <xacro:property name="pos" value="${[float(v) for v in '$(arg tcp_xyz)'.split()]}" />
+  <xacro:property name="rot" value="${[float(v) for v in '$(arg tcp_rpy)'.split()]}" />
+  <xacro:property name="references" value="${dict(references, hand_tcp=dict(references['hand_tcp'], origin=dict(x=pos[0], y=pos[1], z=pos[2], roll=rot[0], pitch=rot[1], yaw=rot[2])))}" lazy_eval="false" />
+  <xacro:property name="visuals" value="${description['visuals']}" />
+  <xacro:property name="collisions" value="${description['collisions']}" />
+  <xacro:if value="${'$(arg mesh_root)' != ''}">
+    <xacro:property name="visuals" value="${dict([(name, dict(visuals[name], geometry=dict(visuals[name]['geometry'], mesh='$(arg mesh_root)/visual/' + visuals[name]['geometry']['mesh'].split('/')[-1]))) for name in visuals])}" lazy_eval="false" />
+    <xacro:property name="collisions" value="${dict([(name, dict(collisions[name], geometry=dict(collisions[name]['geometry'], mesh='$(arg mesh_root)/collision/' + collisions[name]['geometry']['mesh'].split('/')[-1]))) for name in collisions])}" lazy_eval="false" />
+  </xacro:if>
+  <xacro:property name="description" value="${dict(description, reference_points=references, visuals=visuals, collisions=collisions)}" lazy_eval="false" />
+  <xacro:openarm_emit_standalone_component component_cfg="${component_cfg}" component_desc="${description}" />
 </robot>

@@ -18,6 +18,10 @@ Recommended starting point:
 - for all new robot assembly, presets, xacro, and URDF generation work, start with `assets/robot/openarm_v2.0`
 - only use `assets/robot/openarm_v1.0` when you need the old `v10 + parallel_link` compatibility path -->
 
+## V2 camera assembly
+
+The V2 `default_bimanual` preset includes both arms, pinch grippers, the camera mount, and the official ZED Mini model. Single-arm presets are also available. Use `ros2_control:=false` when exporting a model without control interfaces.
+
 ## Component interfaces
 
 Robot entries load `assets/component_loader.xacro`. The loader locates each component using the existing `type`, `product`, and `config` fields, then optionally loads `<component directory>/urdf/component.xacro`. Components without this file use the standard YAML model generator.
@@ -49,3 +53,5 @@ Copyright 2025 Enactic, Inc.
 
 All participation in the OpenArm project is governed by our
 [Code of Conduct](CODE_OF_CONDUCT.md).
+
+Control settings live directly under each component's `control` mapping. Set `hardware_plugin`, `can_interface` and `can_fd` in the preset; `use_fake_hardware:=true` selects `mock_components/GenericSystem`. The optional `system_name` defaults to `<component_name>_hardware_interface`. Explicit control parameters override generated defaults and are emitted once. Components declare their generated topology, names and mimic relationships in `describe_component`; assembly and control consume that shared description.
