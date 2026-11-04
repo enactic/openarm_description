@@ -80,31 +80,31 @@ def control_input():
     return spec, {'arm': data, 'tool': support.pinch()}
 
 
-def test_control_selection_follows_enabled_components():
+def test_control_joints_follow_model_names_and_enabled_components():
     spec, data = control_input()
+    spec['arm']['prefix'], spec['tool']['prefix'] = 'drive_', 'tool_'
+    arm_joints = data['arm']['struct/topology.yaml']['joints']
+    arm_joints['wrist'] = arm_joints.pop('joint7')
+    for filename in ('joint_origins', 'joint_axes', 'joint_limits'):
+        values = data['arm'][f'joint/{filename}.yaml']
+        values['wrist'] = values.pop('joint7')
+
     assert not support.assemble(
         spec, data, ros2_control=False).findall('ros2_control')
     for tool_enabled in (False, True):
         spec['tool']['enabled'] = tool_enabled
         robot = support.assemble(
             spec, data, ros2_control=True, use_fake_hardware=True)
-        active = {j.get('name') for j in robot.findall('joint') if j.get(
-            'type') != 'fixed' and j.find('mimic') is None}
-        assert {j.get('name')
-                for j in robot.findall('ros2_control/joint')} == active
-
-
-def test_control_names_follow_instance_prefixes():
-    spec, data = control_input()
-    spec['arm']['prefix'], spec['tool']['prefix'] = 'drive_', 'tool_'
-    robot = support.assemble(
-        spec, data, ros2_control=True, use_fake_hardware=True)
-    expected = {spec['arm']['prefix'] + j for j in data['arm']
-                ['struct/topology.yaml']['joints']}
-    expected.update(spec['tool']['prefix'] + j for j in data['tool']['struct/topology.yaml']['joints']
-                    if j not in data['tool']['joint/joint_mimics.yaml'])
-    assert {j.get('name')
-            for j in robot.findall('ros2_control/joint')} == expected
+        expected = {spec['arm']['prefix'] + name for name in arm_joints}
+        if tool_enabled:
+            expected.update(spec['tool']['prefix'] + name
+                            for name in data['tool']['struct/topology.yaml']['joints']
+                            if name not in data['tool']['joint/joint_mimics.yaml'])
+        active = {joint.get('name') for joint in robot.findall('joint')
+                  if joint.get('type') != 'fixed' and joint.find('mimic') is None}
+        assert active == expected
+        assert {joint.get('name')
+                for joint in robot.findall('ros2_control/joint')} == active
 
 
 def test_hardware_parameters_follow_input():
