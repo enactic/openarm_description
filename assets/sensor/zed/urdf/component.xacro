@@ -48,7 +48,6 @@ limitations under the License.
                    default_mount_parent=sensor_root_link,
                    collapse_empty_end=False,
                    supports_frame_shift=False,
-                   reference_prefix=component_prefix,
                    config_root=config_root)}"
       scope="parent"
       lazy_eval="false" />

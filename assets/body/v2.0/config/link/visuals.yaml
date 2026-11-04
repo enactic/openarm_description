@@ -21,7 +21,7 @@ body_link0:
     pitch: 0.0
     yaw: 0.0
   geometry:
-    mesh: "package://openarm_description/assets/robot/openarm_v2.0/meshes/body/visual/body_link0.dae"
+    mesh: "package://openarm_description/assets/body/v2.0/meshes/visual/body_link0.dae"
     scale:
       x: 1.0
       y: 1.0

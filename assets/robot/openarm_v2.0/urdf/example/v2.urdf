@@ -22,13 +22,13 @@ limitations under the License.
       <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
       <!-- Preserve the mesh's embedded materials. -->
       <geometry>
-        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/body/visual/body_link0.dae" scale="1.0 1.0 1.0"/>
+        <mesh filename="package://openarm_description/assets/body/v2.0/meshes/visual/body_link0.dae" scale="1.0 1.0 1.0"/>
       </geometry>
     </visual>
     <collision name="openarm_body_link0_collision">
       <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/body/collision/body_link0_symp.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://openarm_description/assets/body/v2.0/meshes/collision/body_link0_symp.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>

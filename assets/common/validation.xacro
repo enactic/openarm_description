@@ -87,8 +87,8 @@ limitations under the License.
           message="${'Invalid robot preset: robot component `%s` has unsupported config `%s`.' % (component_name, component_config)}" />
       </xacro:if>
       <xacro:if value="${component_type == 'body'}">
-        <xacro:openarm_require condition="${component_config == None and 'link_name' in component_cfg}"
-          message="${'Body `%s` requires config: null and link_name.' % component_name}" />
+        <xacro:openarm_require condition="${component_config == None}"
+          message="${'Body `%s` requires config: null.' % component_name}" />
       </xacro:if>
       <xacro:openarm_require
         condition="${reflect_cfg['x'] in [-1, 1] and reflect_cfg['y'] in [-1, 1] and reflect_cfg['z'] in [-1, 1]}"
