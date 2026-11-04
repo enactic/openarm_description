@@ -94,10 +94,13 @@ class JointAxisReflectionTest(unittest.TestCase):
         self.assertEqual(float(joint.find('limit').get('upper')), 0.4)
 
     def test_oblique_revolute_motion_matches_reflected_pose(self):
-        right = expand((0.36, -0.48, 0.8))
+        axis = (0.36, -0.48, 0.8)
+        right = expand(axis)
+        self.assertEqual(tuple(float(value) for value in
+                               right.find('axis').get('xyz').split()), axis)
         for reflect, position in itertools.product(REFLECTIONS[1:], [-0.3, 0, 0.7]):
             with self.subTest(reflect=reflect, position=position):
-                left = expand((0.36, -0.48, 0.8), reflect, True)
+                left = expand(axis, reflect, True)
                 signs = (*reflect, 1)
                 reflection = [[float(signs[i]) if i == j else 0.
                                for j in range(4)] for i in range(4)]
@@ -138,12 +141,6 @@ class JointAxisReflectionTest(unittest.TestCase):
                                        for k in ['lower', 'upper']), expected_limits)
                 self.assertEqual(float(joint.find('limit').get('effort')), 7)
                 self.assertEqual(float(joint.find('limit').get('velocity')), 3)
-
-    def test_no_reflection_preserves_oblique_axis(self):
-        axis = (0.36, -0.48, 0.8)
-        joint = expand(axis)
-        self.assertEqual(tuple(float(v)
-                         for v in joint.find('axis').get('xyz').split()), axis)
 
 
 if __name__ == '__main__':
