@@ -93,6 +93,11 @@ limitations under the License.
     <xacro:openarm_emit_origin origin="${composed_origin}" reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}" reflect_position="${reflect_position}" reflect_rotation="${reflect_rotation}" />
   </xacro:macro>
 
-
+  <xacro:macro name="openarm_emit_shifted_origin" params="frame_shift origin reflect_x:=1 reflect_y:=1 reflect_z:=1 reflect_rotation:=${True}">
+    <xacro:property name="reflected_origin"
+      value="${dict(x=reflect_x * origin['x'], y=reflect_y * origin['y'], z=reflect_z * origin['z'], roll=reflect_y * reflect_z * origin['roll'] if reflect_rotation else origin['roll'], pitch=reflect_x * reflect_z * origin['pitch'] if reflect_rotation else origin['pitch'], yaw=reflect_x * reflect_y * origin['yaw'] if reflect_rotation else origin['yaw'])}" />
+    <xacro:openarm_compose_pose first="${frame_shift}" second="${reflected_origin}" out_name="shifted_origin" />
+    <xacro:openarm_emit_origin origin="${shifted_origin}" />
+  </xacro:macro>
 
 </robot>

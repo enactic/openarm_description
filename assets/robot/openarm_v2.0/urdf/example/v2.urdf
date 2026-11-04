@@ -236,17 +236,16 @@ limitations under the License.
     <axis xyz="1 0 0"/>
     <limit effort="7" lower="-1.5708" upper="1.5708" velocity="20.944"/>
   </joint>
-  <!-- The base link is emitted inline because its naming and frame-shift behavior differ from the finger links. -->
   <link name="openarm_left_ee_base_link">
     <visual name="openarm_left_ee_base_link_visual">
-      <origin rpy="0.0 -0.0 0.0" xyz="0.0205 -0.0 0.0"/>
+      <origin rpy="0.0 -0.0 0.0" xyz="0.0205 0.0 0.0"/>
       <!-- Preserve the mesh's embedded materials. -->
       <geometry>
         <mesh filename="package://openarm_description/assets/end_effector/pinch_gripper/meshes/visual/ee_base_link.dae" scale="1 -1 1"/>
       </geometry>
     </visual>
     <collision name="openarm_left_ee_base_link_collision">
-      <origin rpy="0.0 -0.0 0.0" xyz="0.0205 -0.0 0.0"/>
+      <origin rpy="0.0 -0.0 0.0" xyz="0.0205 0.0 0.0"/>
       <geometry>
         <mesh filename="package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/ee_base_link.stl" scale="1 -1 1"/>
       </geometry>
@@ -512,7 +511,6 @@ limitations under the License.
     <axis xyz="1 0 0"/>
     <limit effort="7" lower="-1.5708" upper="1.5708" velocity="20.944"/>
   </joint>
-  <!-- The base link is emitted inline because its naming and frame-shift behavior differ from the finger links. -->
   <link name="openarm_right_ee_base_link">
     <visual name="openarm_right_ee_base_link_visual">
       <origin rpy="0.0 -0.0 0.0" xyz="0.0205 0.0 0.0"/>
