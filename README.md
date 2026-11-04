@@ -49,3 +49,5 @@ Copyright 2025 Enactic, Inc.
 
 All participation in the OpenArm project is governed by our
 [Code of Conduct](CODE_OF_CONDUCT.md).
+
+Control settings live directly under each component's `control` mapping. Set `hardware_plugin`, `can_interface` and `can_fd` in the preset; `use_fake_hardware:=true` selects `mock_components/GenericSystem`. The optional `system_name` defaults to `<component_name>_hardware_interface`. Explicit control parameters override generated defaults and are emitted once. Components declare their generated topology, names and mimic relationships in `describe_component`; assembly and control consume that shared description.

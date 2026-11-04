@@ -24,9 +24,6 @@ limitations under the License.
   <xacro:arg name="ros2_control" default="true" />
   <xacro:arg name="fake_sensor_commands" default="false" />
   <xacro:arg name="use_fake_hardware" default="true" />
-  <xacro:arg name="left_can_interface" default="can1" />
-  <xacro:arg name="right_can_interface" default="can0" />
-  <xacro:arg name="can_fd" default="true" />
 
   <xacro:property name="robot_root" value="$(find openarm_description)/assets/robot/openarm_v2.0" />
   <xacro:property name="config_root" value="${robot_root + '/config'}" />
@@ -38,9 +35,8 @@ limitations under the License.
     emit_grasp_frame="$(arg emit_grasp_frame)" />
 
   <xacro:if value="$(arg ros2_control)">
-    <xacro:openarm_ros2_control component_descriptions="${component_descriptions}" robot_preset="${robot_preset_cfg}" config_root="${config_root}"
-      can_interfaces="${dict(left='$(arg left_can_interface)', right='$(arg right_can_interface)')}"
-      use_fake_hardware="$(arg use_fake_hardware)" fake_sensor_commands="$(arg fake_sensor_commands)" can_fd="$(arg can_fd)" />
+    <xacro:openarm_ros2_control robot_preset="${robot_preset_cfg}" component_descriptions="${component_descriptions}"
+      use_fake_hardware="$(arg use_fake_hardware)" fake_sensor_commands="$(arg fake_sensor_commands)" />
   </xacro:if>
 
 </robot>

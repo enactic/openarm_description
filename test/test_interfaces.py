@@ -75,7 +75,7 @@ def control_input():
         type='revolute', parent=names[i-1], child=names[i]) for i in range(1, 8)})
     data['control/control_gains.yaml'] = {
         f'joint{i}': dict(kp=10+i, kd=i/10) for i in range(1, 8)}
-    spec = support.preset(arm=support.component('robot', 'fixture_control', 'openarm_right_', control=dict(side='right')),
+    spec = support.preset(arm=support.component('robot', 'fixture_control', 'openarm_right_', control=dict(hardware_plugin='openarm_hardware/OpenArmHW', can_interface='can_test', can_fd=True)),
                           tool=support.component('end_effector', 'pinch_gripper', 'openarm_right_', connection=dict(attach_to='arm')))
     return spec, {'arm': data, 'tool': support.pinch()}
 
@@ -129,17 +129,31 @@ def test_control_joints_follow_model_names_and_enabled_components():
 
 def test_hardware_parameters_follow_input():
     spec, data = control_input()
-    for side in ('left', 'right'):
-        spec['arm']['control']['side'] = side
+    for prefix, can_interface in [('openarm_left_', 'can_left_test'),
+                                  ('openarm_right_', 'can_right_test')]:
+        control = spec['arm']['control']
+        control.update(can_interface=can_interface, can_fd=False)
         for name in ('arm', 'tool'):
-            spec[name]['prefix'] = 'openarm_'+side+'_'
-        robot = support.assemble(spec, data, ros2_control=True, use_fake_hardware=False,
-                                 left_can_interface='can_left_test', right_can_interface='can_right_test', can_fd=False)
-        system = robot.find('ros2_control/hardware')
-        params = {p.get('name'): p.text for p in system.findall('param')}
-        assert params['can_interface'] == 'can_'+side+'_test'
+            spec[name]['prefix'] = prefix
+        robot = support.assemble(spec, data, ros2_control=True,
+                                 use_fake_hardware=False)
+        hardware = robot.find('ros2_control/hardware')
+        assert hardware.find('plugin').text == control['hardware_plugin']
+        params = {p.get('name'): p.text for p in hardware.findall('param')}
+        assert len(params) == len(hardware.findall('param'))
+        assert params['can_interface'] == control['can_interface']
         assert params['can_fd'].lower() == 'false'
+        assert params['arm_prefix'] == prefix.removeprefix('openarm_')
         assert params['ee_type'] == spec['tool']['product']
         for name, gains in data['arm']['control/control_gains.yaml'].items():
             for key, value in gains.items():
                 assert float(params[key+name.removeprefix('joint')]) == value
+
+    robot = support.assemble(spec, data, ros2_control=True,
+                             use_fake_hardware=True, fake_sensor_commands=True)
+    hardware = robot.find('ros2_control/hardware')
+    assert hardware.find('plugin').text == 'mock_components/GenericSystem'
+    params = {p.get('name'): p.text for p in hardware.findall('param')}
+    assert params['mock_sensor_commands'].lower() == 'true'
+    assert float(params['position_state_following_offset']) == 0.0
+    assert 'fake_sensor_commands' not in params and 'state_following_offset' not in params
