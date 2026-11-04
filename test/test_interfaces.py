@@ -106,6 +106,26 @@ def test_control_joints_follow_model_names_and_enabled_components():
         assert {joint.get('name')
                 for joint in robot.findall('ros2_control/joint')} == active
 
+    data['arm']['struct/topology.yaml']['collapse_empty_end'] = True
+    spec['tool']['connection']['parent_reference_point'] = 'port'
+    files = support.files_for(spec, data)
+    files['end_effector/pinch_gripper/urdf/component.xacro'] = '''<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+      <xacro:macro name="describe_component" params="component_name component_cfg config_root options out_name">
+        <xacro:openarm_describe_config_component component_name="${component_name}" component_cfg="${component_cfg}"
+          config_root="${config_root}" options="${options}" out_name="description"/>
+        <xacro:property name="${out_name}" value="${dict(description, joint_mimics=dict())}" scope="parent" lazy_eval="false"/>
+      </xacro:macro>
+    </robot>'''
+    robot = support.expand(files, robot_preset='fixture',
+                           ros2_control=True, use_fake_hardware=True)
+    assert robot.find("joint[@name='tool_finger_joint2']/mimic") is None
+    expected.add('tool_finger_joint2')
+    active = {joint.get('name') for joint in robot.findall('joint')
+              if joint.get('type') != 'fixed' and joint.find('mimic') is None}
+    assert active == expected
+    assert {joint.get('name')
+            for joint in robot.findall('ros2_control/joint')} == active
+
 
 def test_hardware_parameters_follow_input():
     spec, data = control_input()

@@ -82,8 +82,8 @@ limitations under the License.
     </ros2_control>
   </xacro:macro>
   <xacro:macro name="openarm_ros2_control"
-    params="robot_preset config_root can_interfaces arm_type:=v20 use_fake_hardware:=true fake_sensor_commands:=false can_fd:=true index:=0">
-    <xacro:property name="components" value="${robot_preset['robot']['components']}" lazy_eval="false" />
+    params="robot_preset component_descriptions config_root can_interfaces arm_type:=v20 use_fake_hardware:=true fake_sensor_commands:=false can_fd:=true index:=0">
+    <xacro:property name="components" value="${list(component_descriptions)}" lazy_eval="false" />
     <xacro:if value="${index &lt; len(components)}">
       <xacro:property name="name" value="${components[index]}" lazy_eval="false" />
       <xacro:property name="component" value="${robot_preset[name]}" lazy_eval="false" />
@@ -92,9 +92,9 @@ limitations under the License.
         <xacro:openarm_require condition="${side in can_interfaces}" message="${'Unknown control side `%s` on `%s`.' % (side, name)}" />
         <xacro:property name="controlled_arms" value="${[c for c in components if robot_preset[c]['enabled'] and robot_preset[c]['type'] == 'robot' and robot_preset[c]['config'] == 'arm']}" lazy_eval="false" />
         <xacro:openarm_require condition="${len([c for c in controlled_arms if robot_preset[c]['control']['side'] == side]) == 1}" message="${'Multiple arms select the `%s` hardware interface.' % side}" />
-        <xacro:property name="prefix" value="${component.get('prefix', '')}" lazy_eval="false" />
-        <xacro:property name="arm_config_root" value="${'$(find openarm_description)/assets/robot/' + component['product'] + '/config/' + component['config']}" />
-        <xacro:property name="arm_topology" value="${xacro.load_yaml(arm_config_root + '/struct/topology.yaml')}" lazy_eval="false" />
+        <xacro:property name="prefix" value="${component_descriptions[name]['prefix']}" lazy_eval="false" />
+        <xacro:property name="arm_config_root" value="${component_descriptions[name]['config_root']}" />
+        <xacro:property name="arm_topology" value="${component_descriptions[name]['topology']}" lazy_eval="false" />
         <xacro:property name="control_gains" value="${xacro.load_yaml(arm_config_root + '/control/control_gains.yaml')}" lazy_eval="false" />
         <xacro:property name="joint_names" value="${[prefix + joint for joint in arm_topology['joints'] if arm_topology['joints'][joint]['type'] != 'fixed']}" lazy_eval="false" />
         <xacro:property name="grippers" value="${[c for c in components if robot_preset[c]['enabled'] and robot_preset[c]['type'] == 'end_effector' and robot_preset[c].get('connection', dict()).get('attach_to') == name]}" lazy_eval="false" />
@@ -103,10 +103,9 @@ limitations under the License.
         <xacro:if value="${len(grippers) == 1}">
           <xacro:property name="gripper" value="${robot_preset[grippers[0]]}" lazy_eval="false" />
           <xacro:property name="ee_type" value="${gripper['product']}" lazy_eval="false" />
-          <xacro:property name="gripper_root" value="${'$(find openarm_description)/assets/end_effector/' + ee_type + ('/' + gripper['config'] if gripper.get('config') != None else '') + '/config'}" lazy_eval="false" />
-          <xacro:property name="gripper_topology" value="${xacro.load_yaml(gripper_root + '/struct/topology.yaml')}" lazy_eval="false" />
-          <xacro:property name="gripper_mimics" value="${xacro.load_yaml(gripper_root + '/joint/joint_mimics.yaml')}" lazy_eval="false" />
-          <xacro:property name="gripper_prefix" value="${gripper.get('prefix', '')}" lazy_eval="false" />
+          <xacro:property name="gripper_topology" value="${component_descriptions[grippers[0]]['topology']}" lazy_eval="false" />
+          <xacro:property name="gripper_mimics" value="${component_descriptions[grippers[0]]['joint_mimics']}" lazy_eval="false" />
+          <xacro:property name="gripper_prefix" value="${component_descriptions[grippers[0]]['prefix']}" lazy_eval="false" />
           <xacro:property name="joint_names" value="${joint_names + [gripper_prefix + joint for joint in gripper_topology['joints'] if gripper_topology['joints'][joint]['type'] != 'fixed' and joint not in gripper_mimics]}" lazy_eval="false" />
         </xacro:if>
         <xacro:openarm_arm_ros2_control
@@ -116,7 +115,7 @@ limitations under the License.
           arm_type="${arm_type}" extra_parameters="${component['control'].get('parameters', dict())}"
           use_fake_hardware="${use_fake_hardware}" fake_sensor_commands="${fake_sensor_commands}" can_fd="${can_fd}" />
       </xacro:if>
-      <xacro:openarm_ros2_control robot_preset="${robot_preset}" config_root="${config_root}" can_interfaces="${can_interfaces}" arm_type="${arm_type}"
+      <xacro:openarm_ros2_control component_descriptions="${component_descriptions}" robot_preset="${robot_preset}" config_root="${config_root}" can_interfaces="${can_interfaces}" arm_type="${arm_type}"
         use_fake_hardware="${use_fake_hardware}" fake_sensor_commands="${fake_sensor_commands}" can_fd="${can_fd}" index="${index + 1}" />
     </xacro:if>
   </xacro:macro>
