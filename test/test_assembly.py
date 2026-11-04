@@ -218,6 +218,20 @@ def test_folding_requires_enabled_empty_tip_and_child(mode):
     assert (robot.find("link[@name='arm_tip']") is None) == (mode == 'on')
 
 
+def test_compound_collisions_follow_input_geometry():
+    data = model()
+    boxes = [dict(name='first', origin=pose(x=.2), geometry=dict(box=dict(x=.2, y=.3, z=.4))),
+             dict(name='second', origin=pose(y=.7), geometry=dict(box=dict(x=.1, y=.8, z=.2)))]
+    data['link/collisions.yaml']['root'] = boxes
+    robot = assemble(preset(unit=component()), {'unit': data})
+    generated = robot.findall("link[@name='unit_root']/collision")
+    assert len(generated) == len(boxes)
+    for item, source in zip(generated, boxes):
+        near(transform(item.find('origin')), transform(source['origin']))
+        assert [float(v) for v in item.find(
+            'geometry/box').get('size').split()] == list(source['geometry']['box'].values())
+
+
 @pytest.mark.parametrize('error', ['joint_parent', 'mount_reference', 'parent_selectors'])
 def test_invalid_attachment_references_are_rejected(error):
     spec, data = installed_tool()
