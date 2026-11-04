@@ -12,7 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# *.urdf
+# Ignore generated URDFs at package root (launch builds on the fly)
+*.urdf
+!assets/**/*.urdf
+!assets/**/*.urdf.xacro
 **/build/*
 /backup
 **/base_urdf_ws
@@ -38,3 +41,6 @@ __pycache__
 
 docs/
 scripts/
+# Accidental gen scratch files (never ship)
+/openarmv2.urdf
+/output.urdf
