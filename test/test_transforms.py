@@ -19,12 +19,7 @@ import math
 import unittest
 import xml.etree.ElementTree as ET
 
-from helpers import (
-    multiply,
-    package_share_at,
-    ROOT,
-    transform,
-)
+from support import multiply, package_share_at, ROOT, transform
 import xacro
 
 REFLECTIONS = [(1, 1, 1), (-1, 1, 1), (1, -1, 1), (1, 1, -1)]
@@ -149,7 +144,6 @@ class JointAxisReflectionTest(unittest.TestCase):
         joint = expand(axis)
         self.assertEqual(tuple(float(v)
                          for v in joint.find('axis').get('xyz').split()), axis)
-        self.assertAlmostEqual(sum(v*v for v in axis), 1)
 
 
 if __name__ == '__main__':

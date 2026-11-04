@@ -15,7 +15,6 @@ limitations under the License.
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="openarm_v20">
 
   <xacro:include filename="$(find openarm_description)/assets/component_loader.xacro" />
-  <xacro:include filename="$(find openarm_description)/assets/common/assembly.xacro" />
 
   <xacro:include filename="$(find openarm_description)/assets/robot/openarm_v2.0/urdf/ros2_control/openarm.bimanual.ros2_control.xacro" />
 
@@ -32,7 +31,7 @@ limitations under the License.
   <xacro:property name="config_root" value="${robot_root + '/config'}" />
   <xacro:property name="robot_preset_cfg" value="${xacro.load_yaml(config_root + '/robot_presets/' + '$(arg robot_preset)' + '.yaml')}" />
 
-  <xacro:openarm_assemble_robot component_api="${dict(describe='openarm_load_component_descriptor', emit='openarm_emit_component_from_runtime')}"
+  <xacro:openarm_assemble_robot component_api="${dict(describe='openarm_describe_auto_component', emit='openarm_emit_auto_component')}"
     config_root="${config_root}"
     robot_preset="${robot_preset_cfg}"
     collapse_internal_empty_links="$(arg collapse_internal_empty_links)"

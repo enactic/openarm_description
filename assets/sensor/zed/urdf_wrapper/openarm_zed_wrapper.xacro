@@ -15,11 +15,10 @@ limitations under the License.
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <xacro:macro name="openarm_zed_wrapper"
-    params="config connected_to mount_origin prefix:=''">
+    params="config connected_to mount_origin camera_name">
 
     <xacro:include filename="$(find zed_description)/urdf/zed_macro.urdf.xacro" />
 
-    <xacro:property name="camera_name" value="${config['camera_name'] if 'camera_name' in config else prefix + 'zed'}" lazy_eval="false" />
     <xacro:property name="camera_model" value="${config['camera_model']}" lazy_eval="false" />
     <xacro:property name="custom_baseline" value="${config['custom_baseline'] if 'custom_baseline' in config else 0.0}" lazy_eval="false" />
     <xacro:property name="enable_gnss" value="${config['enable_gnss'] if 'enable_gnss' in config else False}" lazy_eval="false" />

@@ -1,0 +1,138 @@
+<?xml version="1.0"?>
+<!--
+Copyright 2026 Enactic, Inc.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find openarm_description)/assets/common/links.xacro" />
+  <xacro:include filename="$(find openarm_description)/assets/common/reference_frames.xacro" />
+  <xacro:include filename="$(find openarm_description)/assets/common/validation.xacro" />
+  <xacro:include filename="$(find openarm_description)/assets/common/kinematic_chain.xacro" />
+
+  <xacro:macro name="openarm_describe_config_component"
+    params="component_name component_cfg config_root options out_name">
+    <xacro:property name="empty_dict" value="${dict()}" />
+    <xacro:property name="source_type" value="${component_cfg['type']}" />
+    <xacro:property name="product" value="${component_cfg['product']}" />
+    <xacro:property name="component_config" value="${component_cfg['config']}" />
+    <xacro:property name="component_prefix" value="${component_cfg.get('prefix', '')}" />
+    <xacro:property name="component_type" value="${component_config if source_type == 'robot' else source_type}" />
+    <xacro:property name="component_cfg_root" value="${config_root}" />
+    <xacro:property name="component_topology" value="${xacro.load_yaml(component_cfg_root + '/struct/topology.yaml')}" lazy_eval="false" />
+
+    <xacro:openarm_validate_topology topology="${component_topology}" component="${component_name}" />
+    <xacro:property name="component_reference_points" value="${xacro.load_yaml(component_cfg_root + '/struct/reference_points.yaml')}" lazy_eval="false" />
+    <xacro:if value="${component_type in ['body', 'accessory']}">
+      <xacro:openarm_require
+        condition="${len(component_topology['links']) == 1 and len(component_topology['joints']) == 0}"
+        message="${'Component `%s` must define one rigid link and no internal joints.' % component_name}" />
+    </xacro:if>
+
+    <xacro:property name="component_joint_origins" value="${xacro.load_yaml(component_cfg_root + '/joint/joint_origins.yaml') if component_topology['joints'] else empty_dict}" lazy_eval="false" />
+    <xacro:property name="component_joint_axes" value="${xacro.load_yaml(component_cfg_root + '/joint/joint_axes.yaml') if component_topology['joints'] else empty_dict}" lazy_eval="false" />
+    <xacro:property name="component_joint_limits" value="${xacro.load_yaml(component_cfg_root + '/joint/joint_limits.yaml') if component_topology['joints'] else empty_dict}" lazy_eval="false" />
+    <xacro:property name="component_joint_mimics" value="${xacro.load_yaml(component_cfg_root + '/joint/joint_mimics.yaml') if component_type == 'end_effector' else empty_dict}" lazy_eval="false" />
+    <xacro:property name="component_inertials" value="${xacro.load_yaml(component_cfg_root + '/inertials/' + component_cfg['inertials'] + '.yaml')}" lazy_eval="false" />
+    <xacro:property name="component_visuals" value="${xacro.load_yaml(component_cfg_root + '/link/visuals.yaml')}" lazy_eval="false" />
+    <xacro:property name="component_collisions" value="${xacro.load_yaml(component_cfg_root + '/link/collisions.yaml')}" lazy_eval="false" />
+    <xacro:property name="component_link_name_map" value="${dict([(component_topology['links'][0], component_cfg['link_name'])]) if component_type == 'body' else empty_dict}" lazy_eval="false" />
+    <xacro:property name="component_root_link_actual" value="${component_cfg['link_name'] if component_type == 'body' else (component_prefix + component_topology['links'][0])}" lazy_eval="false" />
+    <xacro:property name="component_default_mount_parent" value="${component_cfg['link_name'] if component_type == 'body' else (component_prefix + component_topology['links'][-1])}" lazy_eval="false" />
+    <xacro:property name="component_collapse_empty_end" value="${component_type == 'arm' and options.get('collapse_empty_end', False) and len([j for j in component_topology['joints'] if component_topology['joints'][j]['parent'] == component_topology['links'][-1]]) == 0}" lazy_eval="false" />
+
+    <xacro:property
+      name="${out_name}"
+      value="${dict(name=component_name,
+                   source_type=source_type,
+                   component_type=component_type,
+                   product=product,
+                   config=component_config,
+                   config_root=component_cfg_root,
+                   prefix=component_prefix,
+
+                   root_link_actual=component_root_link_actual,
+                   topology=component_topology,
+                   reference_points=component_reference_points,
+                   joint_origins=component_joint_origins,
+                   joint_axes=component_joint_axes,
+                   joint_limits=component_joint_limits,
+                   joint_mimics=component_joint_mimics,
+                   inertials=component_inertials,
+                   visuals=component_visuals,
+                   collisions=component_collisions,
+                   link_name_map=component_link_name_map,
+                   default_mount_parent=component_default_mount_parent,
+                   collapse_empty_end=component_collapse_empty_end,
+                   supports_frame_shift=True,
+                   reference_prefix=(component_root_link_actual + '_' if component_type == 'body' else component_prefix))}"
+      scope="parent"
+      lazy_eval="false" />
+  </xacro:macro>
+
+  <xacro:macro name="openarm_emit_config_component" params="component_desc component_runtime options">
+    <xacro:if value="${not component_desc['topology']['joints']}">
+      <xacro:openarm_emit_rigid_component
+        link_name="${component_desc['root_link_actual']}"
+        connected_to="${component_runtime['resolved_connected_to']}"
+        mount_origin="${component_runtime['resolved_mount_origin']}"
+        topology="${component_desc['topology']}"
+        inertials="${component_desc['inertials']}"
+        visuals="${component_desc['visuals']}"
+        collisions="${component_desc['collisions']}"
+        reflect_x="${component_runtime['reflect_x']}"
+        reflect_y="${component_runtime['reflect_y']}"
+        reflect_z="${component_runtime['reflect_z']}"
+        reflect_include_links="${component_runtime['reflect_include_links']}"
+        skip_mount_joint="${component_runtime['skip_mount_joint']}"
+        base_frame_shift="${component_runtime['base_frame_shift']}" />
+    </xacro:if>
+
+    <xacro:if value="${component_desc['topology']['joints']}">
+      <xacro:openarm_emit_kinematic_component
+        prefix="${component_desc['prefix']}"
+        connected_to="${component_runtime['resolved_connected_to']}"
+        mount_origin="${component_runtime['resolved_mount_origin']}"
+        topology="${component_desc['topology']}"
+        joint_origins="${component_desc['joint_origins']}"
+        joint_axes="${component_desc['joint_axes']}"
+        joint_limits="${component_desc['joint_limits']}"
+        joint_mimics="${component_desc['joint_mimics']}"
+        origin_override_joints="${component_runtime['origin_override_joints']}"
+        inertials="${component_desc['inertials']}"
+        visuals="${component_desc['visuals']}"
+        collisions="${component_desc['collisions']}"
+        reflect_x="${component_runtime['reflect_x']}"
+        reflect_y="${component_runtime['reflect_y']}"
+        reflect_z="${component_runtime['reflect_z']}"
+        reflect_include_links="${component_runtime['reflect_include_links']}"
+        reflect_include_joints="${component_runtime['reflect_include_joints']}"
+        limit_override_joints="${component_runtime['limit_override_joints']}"
+        tip_collapse_source_link="${component_runtime['collapse_source_link']}"
+        tip_collapse_child_link="${component_runtime['collapse_child_link']}"
+        skip_mount_joint="${component_runtime['skip_mount_joint']}"
+        base_frame_shift="${component_runtime['base_frame_shift']}" />
+    </xacro:if>
+
+    <xacro:openarm_emit_reference_frames
+      reference_points="${component_desc['reference_points']}"
+      prefix="${component_desc['reference_prefix']}"
+      link_prefix="${component_desc['prefix']}"
+      link_name_map="${component_desc['link_name_map']}"
+      base_link_name="${component_desc['topology']['links'][0]}"
+      reflect_x="${component_runtime['reflect_x']}"
+      reflect_y="${component_runtime['reflect_y']}"
+      reflect_z="${component_runtime['reflect_z']}"
+      reflect_include_reference_points="${component_runtime['reflect_include_reference_points']}"
+      frame_shift="${component_runtime['base_frame_shift']}" />
+  </xacro:macro>
+</robot>
