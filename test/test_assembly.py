@@ -54,6 +54,12 @@ def test_topology_and_values_come_from_configuration(kind):
 @pytest.mark.parametrize('product', ['fixture_tool', 'pinch_gripper'])
 def test_names_and_mimics_follow_configuration(product):
     data = pinch()
+    topology = data['struct/topology.yaml']
+    topology['joints']['joint1']['name'] = 'drive'
+    topology['joints']['joint2']['name'] = 'follower'
+    topology['links']['link1']['name'] = 'tool_base'
+    topology['links']['link2']['name'] = 'moving_finger'
+    topology['links']['link3'].pop('name')
     for item in data['struct/topology.yaml']['joints'].values():
         item['type'] = 'prismatic'
     for joint in data['joint/joint_axes.yaml'].values():
@@ -62,23 +68,29 @@ def test_names_and_mimics_follow_configuration(product):
                   b=component('end_effector', product, 'beta_', connection=dict(attach_to='a'),
                               reflect=dict(x=1, y=-1, z=1)))
     robot = assemble(spec, {'a': data, 'b': data})
-    mimic = data['joint/joint_mimics.yaml']['finger_joint2']
+    names = {key: cfg.get('name', key) for key, cfg in
+             data['struct/topology.yaml']['joints'].items()}
+    assert {link.get('name') for link in robot.findall('link')} == {'world'} | {
+        prefix + cfg.get('name', key) for prefix in ('alpha_', 'beta_')
+        for key, cfg in topology['links'].items()}
+    mimic = data['joint/joint_mimics.yaml']['joint2']
     for prefix in ('alpha_', 'beta_'):
-        joint = robot.find(f"joint[@name='{prefix}finger_joint2']")
+        joint = robot.find(f"joint[@name='{prefix}follower']")
         assert joint.get('type') == 'prismatic'
         for name, configured in data['joint/joint_limits.yaml'].items():
-            limit = robot.find(f"joint[@name='{prefix}{name}']/limit")
+            limit = robot.find(f"joint[@name='{prefix}{names[name]}']/limit")
             for key in ('lower', 'upper'):
                 assert float(limit.get(key)) == configured['limit'][key]
-        assert joint.find('mimic').get('joint') == prefix + mimic['joint']
+        assert joint.find('mimic').get(
+            'joint') == prefix + names[mimic['joint']]
         for key in ('multiplier', 'offset'):
             assert float(joint.find('mimic').get(key)) == mimic[key]
 
     reflection = [[float(i == j) * (1, -1, 1, 1)[i]
                    for j in range(4)] for i in range(4)]
     for name in data['struct/topology.yaml']['joints']:
-        right = robot.find(f"joint[@name='alpha_{name}']")
-        left = robot.find(f"joint[@name='beta_{name}']")
+        right = robot.find(f"joint[@name='alpha_{names[name]}']")
+        left = robot.find(f"joint[@name='beta_{names[name]}']")
         for endpoint in ['lower', 'upper']:
             position = float(right.find('limit').get(endpoint))
             motions = []
@@ -126,7 +138,7 @@ def test_grasp_emission_combines_configuration_and_argument():
 @pytest.mark.parametrize('tool', [False, True])
 def test_overrides_are_applied_before_reflection(tool):
     data = pinch() if tool else chain()
-    name = 'finger_joint1' if tool else 'pivot'
+    name = 'joint1' if tool else 'pivot'
     origin = pose(.03, .04, .05, .2, -.3, .4)
     limit = dict(lower=-.2, upper=.7, effort=12, velocity=4)
     spec = preset(unit=component('end_effector' if tool else 'robot',
@@ -134,7 +146,9 @@ def test_overrides_are_applied_before_reflection(tool):
                                  reflect=dict(x=1, y=-1, z=1),
                                  origin_override_joints={name: origin}, limit_override_joints={name: limit}))
     robot = assemble(spec, {'unit': data})
-    joint = robot.find(f"joint[@name='unit_{name}']")
+    emitted_name = data['struct/topology.yaml']['joints'][name].get(
+        'name', name)
+    joint = robot.find(f"joint[@name='unit_{emitted_name}']")
     expected = deepcopy(origin)
     for key in ('y', 'roll', 'yaw'):
         expected[key] *= -1
@@ -151,10 +165,10 @@ def test_reflection_selection_preserves_unselected_joints(product):
     for joint in data['joint/joint_axes.yaml'].values():
         joint['axis'].update(x=.6, y=.8, z=0.)
     spec = preset(tool=component('end_effector', product, 'tool_',
-                                 reflect=dict(x=1, y=-1, z=1, include=dict(links=['ee_base_link'], joints=[], reference_points=[]))))
+                                 reflect=dict(x=1, y=-1, z=1, include=dict(links=['link1'], joints=[], reference_points=[]))))
     robot = assemble(spec, {'tool': data})
     base = robot.find("link[@name='tool_ee_base_link']/inertial")
-    source = data['inertials/nominal.yaml']['ee_base_link']
+    source = data['inertials/nominal.yaml']['link1']
     assert float(base.find('mass').get('value')) == source['mass']
     expected = deepcopy(source['origin'])
     expected['y'] *= -1
@@ -163,7 +177,9 @@ def test_reflection_selection_preserves_unselected_joints(product):
         sign = -1 if key in ('xy', 'yz') else 1
         assert float(base.find('inertia').get('i'+key)) == sign * value
     for name in data['struct/topology.yaml']['joints']:
-        joint = robot.find(f"joint[@name='tool_{name}']")
+        emitted_name = data['struct/topology.yaml']['joints'][name].get(
+            'name', name)
+        joint = robot.find(f"joint[@name='tool_{emitted_name}']")
         near(transform(joint.find('origin')), transform(
             data['joint/joint_origins.yaml'][name]['origin']))
         assert [float(v) for v in joint.find('axis').get('xyz').split()] == list(
@@ -181,24 +197,24 @@ def test_folding_preserves_physical_properties_and_frames():
     assert robot.find("link[@name='arm_tip']") is not None
 
     spec, data = installed_tool(False)
-    data['tool']['struct/topology.yaml']['joints']['finger_joint2']['parent'] = 'ee_link1'
+    data['tool']['struct/topology.yaml']['joints']['joint2']['parent'] = 'link2'
     data['arm']['struct/reference_points.yaml']['port']['emit'] = True
     geometry = dict(mesh='package://fixture_meshes/shape.stl',
                     scale=dict(x=1, y=1, z=1))
     shape = dict(origin=pose(.02, -.04, .01, .2, .1, -.3), geometry=geometry)
-    data['tool']['link/visuals.yaml']['ee_base_link'] = deepcopy(shape)
-    data['tool']['link/collisions.yaml']['ee_base_link'] = deepcopy(shape)
+    data['tool']['link/visuals.yaml']['link1'] = deepcopy(shape)
+    data['tool']['link/collisions.yaml']['link1'] = deepcopy(shape)
     spec['tool']['reflect'] = dict(x=1, y=-1, z=1, include=dict(
-        links=['ee_base_link'], joints=[], reference_points=[]))
+        links=['link1'], joints=[], reference_points=[]))
     spec['tool']['origin_override_joints'] = {
-        'finger_joint1': pose(.04, .03, .02, .3, .2, .1)}
+        'joint1': pose(.04, .03, .02, .3, .2, .1)}
     first = assemble(spec, data, emit_grasp_frame=True)
     data['arm']['struct/topology.yaml']['collapse_empty_end'] = True
     second = assemble(spec, data, emit_grasp_frame=True)
     physical_equal(first, second)
     for frame in ('arm_port', 'tool_grasp_frame'):
         near(poses(first)[frame], poses(second)[frame])
-    mass = data['tool']['inertials/nominal.yaml']['ee_base_link']['mass']
+    mass = data['tool']['inertials/nominal.yaml']['link1']['mass']
     assert float(second.find(
         "link[@name='tool_ee_base_link']/inertial/mass").get('value')) == mass
 
