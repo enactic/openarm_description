@@ -13,7 +13,7 @@
 # limitations under the License.
 
 left_arm_mount_point:
-  parent: body_link0
+  parent: link1
   emit: false
   origin:
     x: 0
@@ -23,7 +23,7 @@ left_arm_mount_point:
     pitch: 0
     yaw: 0
 right_arm_mount_point:
-  parent: body_link0
+  parent: link1
   emit: false
   origin:
     x: 0

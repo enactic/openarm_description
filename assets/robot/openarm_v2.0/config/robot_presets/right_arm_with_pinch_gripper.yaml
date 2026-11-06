@@ -132,4 +132,4 @@ systems:
         joint6: {idx: 6}
         joint7: {idx: 7}
       primary_arm_end_effector:
-        finger_joint1: {idx: 8}
+        joint1: {idx: 8}

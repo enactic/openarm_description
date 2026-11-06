@@ -120,7 +120,7 @@ def control_input():
     spec['systems'] = {'fixture_system': dict(
         hardware_plugin='openarm_hardware/OpenArmHW', can_interface='can_test', can_fd=True,
         joints=dict(arm={name: dict(idx=i) for i, name in enumerate(data['struct/topology.yaml']['joints'])},
-                    tool=dict(finger_joint1=dict(idx=8))))}
+                    tool=dict(joint1=dict(idx=8))))}
     return spec, {'arm': data, 'tool': support.pinch()}
 
 
@@ -128,13 +128,8 @@ def test_control_joints_follow_model_names_and_enabled_components():
     spec, data = control_input()
     spec['arm']['prefix'], spec['tool']['prefix'] = 'drive_', 'tool_'
     arm_joints = data['arm']['struct/topology.yaml']['joints']
-    arm_joints['wrist'] = arm_joints.pop('joint7')
-    for filename in ('joint_origins', 'joint_axes', 'joint_limits'):
-        values = data['arm'][f'joint/{filename}.yaml']
-        values['wrist'] = values.pop('joint7')
-
+    arm_joints['joint7']['name'] = 'wrist'
     selection = spec['systems']['fixture_system']['joints']['arm']
-    selection['wrist'] = selection.pop('joint7')
     spec['systems']['fixture_system']['joints']['arm'] = dict(
         reversed(list(selection.items())))
     assert not support.assemble(
@@ -143,17 +138,18 @@ def test_control_joints_follow_model_names_and_enabled_components():
         spec['tool']['enabled'] = tool_enabled
         robot = support.assemble(
             spec, data, ros2_control=True, use_fake_hardware=True)
-        expected = {spec['arm']['prefix'] + name for name in arm_joints}
+        expected = {spec['arm']['prefix'] + cfg.get('name', name)
+                    for name, cfg in arm_joints.items()}
         if tool_enabled:
-            expected.update(spec['tool']['prefix'] + name
-                            for name in data['tool']['struct/topology.yaml']['joints']
+            expected.update(spec['tool']['prefix'] + cfg.get('name', name)
+                            for name, cfg in data['tool']['struct/topology.yaml']['joints'].items()
                             if name not in data['tool']['joint/joint_mimics.yaml'])
         active = {joint.get('name') for joint in robot.findall('joint')
                   if joint.get('type') != 'fixed' and joint.find('mimic') is None}
         assert active == expected
         assert {joint.get('name')
                 for joint in robot.findall('ros2_control/joint')} == active
-        expected_indices = {spec[component]['prefix'] + name: cfg['idx']
+        expected_indices = {spec[component]['prefix'] + data[component]['struct/topology.yaml']['joints'][name].get('name', name): cfg['idx']
                             for component, joints in spec['systems']['fixture_system']['joints'].items()
                             if spec[component]['enabled'] for name, cfg in joints.items()}
         actual_indices = {joint.get('name'): int(joint.find("param[@name='idx']").text)
@@ -164,7 +160,7 @@ def test_control_joints_follow_model_names_and_enabled_components():
 
     data['arm']['struct/topology.yaml']['collapse_empty_end'] = True
     spec['tool']['connection']['parent_reference_point'] = 'port'
-    spec['systems']['fixture_system']['joints']['tool']['finger_joint2'] = dict(
+    spec['systems']['fixture_system']['joints']['tool']['joint2'] = dict(
         idx=9)
     files = support.files_for(spec, data)
     files['end_effector/pinch_gripper/urdf/component.xacro'] = '''<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
@@ -189,11 +185,11 @@ def test_control_joints_follow_model_names_and_enabled_components():
     spec['systems'] = {
         'shoulder': dict(joints=dict(arm={name: dict(idx=2*i-1) for i, name in enumerate(joints[:4], 1)})),
         'wrist': dict(joints=dict(arm={name: dict(idx=2*i-1) for i, name in enumerate(joints[4:], 1)},
-                                  tool=dict(finger_joint1=dict(idx=7))))}
+                                  tool=dict(joint1=dict(idx=7))))}
     robot = support.assemble(
         spec, data, ros2_control=True, use_fake_hardware=True)
     for name, cfg in spec['systems'].items():
-        expected = {spec[component]['prefix'] + joint for component,
+        expected = {spec[component]['prefix'] + data[component]['struct/topology.yaml']['joints'][joint].get('name', joint) for component,
                     names in cfg['joints'].items() for joint in names}
         assert {joint.get('name') for joint in robot.find(
             f"ros2_control[@name='{name}']").findall('joint')} == expected
@@ -211,11 +207,11 @@ def test_control_joints_follow_model_names_and_enabled_components():
         support.assemble(spec, data, ros2_control=True, use_fake_hardware=True)
     del spec['systems']['wrist']['joints']['arm']['missing']
     for invalid_idx in (-1, True, 1.5):
-        spec['systems']['wrist']['joints']['tool']['finger_joint1']['idx'] = invalid_idx
+        spec['systems']['wrist']['joints']['tool']['joint1']['idx'] = invalid_idx
         with pytest.raises(xacro.XacroException, match='non-negative integer idx'):
             support.assemble(spec, data, ros2_control=True,
                              use_fake_hardware=True)
-    spec['systems']['wrist']['joints']['tool']['finger_joint1']['idx'] = 1
+    spec['systems']['wrist']['joints']['tool']['joint1']['idx'] = 1
     with pytest.raises(xacro.XacroException, match='duplicate idx'):
         support.assemble(spec, data, ros2_control=True, use_fake_hardware=True)
 

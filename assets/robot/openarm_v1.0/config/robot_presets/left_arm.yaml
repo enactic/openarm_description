@@ -38,12 +38,12 @@ arm:
     z: 1
     include:
       links:
-      - link0
       - link1
       - link2
-      - link5
+      - link3
       - link6
-      - arm_end_link
+      - link7
+      - link8
       joints:
       - joint1
       - joint2

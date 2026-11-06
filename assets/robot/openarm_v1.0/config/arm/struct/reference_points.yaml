@@ -13,7 +13,7 @@
 # limitations under the License.
 
 ee_mount_point:
-  parent: arm_end_link
+  parent: link8
   emit: false
   origin:
     x: 0

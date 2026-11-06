@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-hand_joint:
+joint1:
   origin:
     x: 0
     y: 0
@@ -20,7 +20,7 @@ hand_joint:
     roll: 0
     pitch: 0
     yaw: 0
-finger_joint1:
+joint2:
   origin:
     x: 0
     y: -0.005
@@ -28,7 +28,7 @@ finger_joint1:
     roll: 0
     pitch: 0
     yaw: 0
-finger_joint2:
+joint3:
   origin:
     x: 0
     y: 0.005

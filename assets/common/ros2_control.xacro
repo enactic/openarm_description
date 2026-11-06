@@ -88,7 +88,7 @@ limitations under the License.
       <xacro:openarm_require condition="${len(python.set(indices)) == len(indices)}"
         message="${'System `%s` contains duplicate idx values.' % system_name}" />
       <xacro:property name="ordered_bindings" value="${python.sorted([(selection[name][joint]['idx'], name, joint) for name, joint in bindings])}" lazy_eval="false" />
-      <xacro:property name="joint_names" value="${[component_descriptions[name]['prefix'] + joint for idx, name, joint in ordered_bindings]}" lazy_eval="false" />
+      <xacro:property name="joint_names" value="${[component_descriptions[name]['joint_name_map'][joint] for idx, name, joint in ordered_bindings]}" lazy_eval="false" />
       <xacro:property name="joint_indices" value="${[idx for idx, name, joint in ordered_bindings]}" lazy_eval="false" />
       <xacro:openarm_require condition="${len(python.set(joint_names)) == len(joint_names) and python.all(name not in claimed_joints for name in joint_names)}"
         message="${'System `%s` contains a duplicate joint assignment.' % system_name}" />

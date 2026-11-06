@@ -1,3 +1,4 @@
 links:
-- base_link
+  link1:
+    name: base_link
 joints: {}

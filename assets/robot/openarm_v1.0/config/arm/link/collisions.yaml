@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-link0:
+link1:
   origin:
     x: 0.0
     y: 0.0
@@ -26,7 +26,7 @@ link0:
       x: 0.001
       y: 0.001
       z: 0.001
-link1:
+link2:
   origin:
     x: -0.0
     y: 0.0
@@ -40,7 +40,7 @@ link1:
       x: 0.001
       y: 0.001
       z: 0.001
-link2:
+link3:
   origin:
     x: 0.0
     y: 0.0
@@ -54,7 +54,7 @@ link2:
       x: 0.001
       y: 0.001
       z: 0.001
-link3:
+link4:
   origin:
     x: -0.0
     y: -0.0
@@ -68,7 +68,7 @@ link3:
       x: 0.001
       y: 0.001
       z: 0.001
-link4:
+link5:
   origin:
     x: 0.0
     y: 0.0
@@ -82,7 +82,7 @@ link4:
       x: 0.001
       y: 0.001
       z: 0.001
-link5:
+link6:
   origin:
     x: -0.0
     y: -0.0
@@ -96,7 +96,7 @@ link5:
       x: 0.001
       y: 0.001
       z: 0.001
-link6:
+link7:
   origin:
     x: 0.0
     y: -0.0

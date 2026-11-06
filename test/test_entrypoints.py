@@ -42,7 +42,7 @@ def test_parallel_entry_forwards_tcp_arguments(tmp_path):
 
 def test_pinch_entry_forwards_reference_options(tmp_path):
     data = pinch()
-    reference = dict(parent='ee_base_link', emit=True,
+    reference = dict(parent='link1', emit=True,
                      origin=pose(.01, .02, .03, .2, -.1, .3))
     data['struct/reference_points.yaml']['probe'] = reference
     write_configuration(tmp_path, data)
@@ -58,10 +58,10 @@ def test_pinch_entry_forwards_reference_options(tmp_path):
         data = pinch()
         joints = data['struct/topology.yaml']['joints']
         if invalid == 'unknown link':
-            joints['finger_joint1']['parent'] = 'missing'
+            joints['joint1']['parent'] = 'missing'
         else:
-            joints['finger_joint1']['parent'] = joints['finger_joint2']['child']
-            joints['finger_joint2']['parent'] = joints['finger_joint1']['child']
+            joints['joint1']['parent'] = joints['joint2']['child']
+            joints['joint2']['parent'] = joints['joint1']['child']
         write_configuration(tmp_path, data)
         with pytest.raises(xacro.XacroException, match=invalid):
             expand(entry='assets/end_effector/pinch_gripper/urdf/pinch_gripper_standalone.urdf.xacro',

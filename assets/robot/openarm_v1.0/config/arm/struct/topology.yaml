@@ -14,40 +14,48 @@
 
 collapse_empty_end: true
 links:
-- link0
-- link1
-- link2
-- link3
-- link4
-- link5
-- link6
-- arm_end_link
+  link1:
+    name: link0
+  link2:
+    name: link1
+  link3:
+    name: link2
+  link4:
+    name: link3
+  link5:
+    name: link4
+  link6:
+    name: link5
+  link7:
+    name: link6
+  link8:
+    name: arm_end_link
 joints:
   joint1:
     type: revolute
-    parent: link0
-    child: link1
-  joint2:
-    type: revolute
     parent: link1
     child: link2
-  joint3:
+  joint2:
     type: revolute
     parent: link2
     child: link3
-  joint4:
+  joint3:
     type: revolute
     parent: link3
     child: link4
-  joint5:
+  joint4:
     type: revolute
     parent: link4
     child: link5
-  joint6:
+  joint5:
     type: revolute
     parent: link5
     child: link6
-  joint7:
+  joint6:
     type: revolute
     parent: link6
-    child: arm_end_link
+    child: link7
+  joint7:
+    type: revolute
+    parent: link7
+    child: link8

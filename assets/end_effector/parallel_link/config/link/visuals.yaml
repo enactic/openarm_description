@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-link7:
+link1:
   origin:
     x: 0.0
     y: -0.0
@@ -26,7 +26,7 @@ link7:
       x: 0.001
       y: 0.001
       z: 0.001
-hand:
+link2:
   origin:
     x: 0.0
     y: 0.0
@@ -40,7 +40,7 @@ hand:
       x: 0.001
       y: 0.001
       z: 0.001
-left_finger:
+link4:
   origin:
     x: 0.0
     y: -0.05
@@ -54,7 +54,7 @@ left_finger:
       x: 0.001
       y: 0.001
       z: 0.001
-right_finger:
+link3:
   origin:
     x: 0.0
     y: 0.05

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 left_arm_mount_point:
-  parent: body_link0
+  parent: link1
   origin:
     x: 0.0
     y: 0.030
@@ -29,13 +29,13 @@ left_arm_mount_point:
       type: fixed
     parent_link:
       original_name: body_link0
-      canonical_name: body_link0
+      canonical_name: link1
     child_link:
       original_name: body_left_arm_mount_point
       canonical_name: null
 
 right_arm_mount_point:
-  parent: body_link0
+  parent: link1
   origin:
     x: 0.0
     y: -0.030
@@ -51,14 +51,14 @@ right_arm_mount_point:
       type: fixed
     parent_link:
       original_name: body_link0
-      canonical_name: body_link0
+      canonical_name: link1
     child_link:
       original_name: body_right_arm_mount_point
       canonical_name: null
 
 
 arm_origin:
-  parent: body_link0
+  parent: link1
   emit: true
   origin:
     x: 0.0
@@ -69,7 +69,7 @@ arm_origin:
     yaw: 0.0
 
 camera_mount_point:
-  parent: body_link0
+  parent: link1
   emit: true
   origin:
     x: 0.03

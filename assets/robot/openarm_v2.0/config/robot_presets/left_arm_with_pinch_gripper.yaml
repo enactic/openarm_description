@@ -61,7 +61,7 @@ primary_arm:
     y: -1
     z: 1
     include:
-      links: [base_link, link1, link2, link5, link6, link7]
+      links: [link1, link2, link3, link6, link7, link8]
       joints: [joint1, joint2, joint3, joint5, joint6, joint7]
       reference_points: [ee_mount_point]
   limit_override_joints: {}
@@ -136,4 +136,4 @@ systems:
         joint6: {idx: 6}
         joint7: {idx: 7}
       primary_arm_end_effector:
-        finger_joint1: {idx: 8}
+        joint1: {idx: 8}

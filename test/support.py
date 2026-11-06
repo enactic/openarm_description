@@ -132,7 +132,7 @@ def expand(files=None, version='v2.0', entry=None, **arguments):
 
 def model(links=('root',), joints=None):
     joints = joints or {}
-    return {'struct/topology.yaml': dict(links=list(links), joints=deepcopy(joints)),
+    return {'struct/topology.yaml': dict(links={name: {} for name in links}, joints=deepcopy(joints)),
             'struct/reference_points.yaml': {'port': dict(parent=links[-1], emit=False, origin=pose(.1, .2, .3, .2, -.1, .3))},
             'joint/joint_origins.yaml': {j: dict(origin=pose(z=.1)) for j in joints},
             'joint/joint_axes.yaml': {j: dict(axis=dict(x=0, y=0, z=1)) for j in joints},
@@ -150,13 +150,16 @@ def chain():
 
 
 def pinch():
-    data = model(('ee_base_link', 'ee_link1', 'ee_link2'), {
-        'finger_joint1': dict(type='revolute', parent='ee_base_link', child='ee_link1'),
-        'finger_joint2': dict(type='revolute', parent='ee_base_link', child='ee_link2')})
-    data['joint/joint_mimics.yaml'] = {'finger_joint2': dict(
-        joint='finger_joint1', multiplier=-1, offset=.1)}
+    data = model(('link1', 'link2', 'link3'), {
+        'joint1': dict(name='finger_joint1', type='revolute', parent='link1', child='link2'),
+        'joint2': dict(name='finger_joint2', type='revolute', parent='link1', child='link3')})
+    data['struct/topology.yaml']['links'] = {
+        'link1': dict(name='ee_base_link'),
+        'link2': dict(name='ee_link1'), 'link3': dict(name='ee_link2')}
+    data['joint/joint_mimics.yaml'] = {'joint2': dict(
+        joint='joint1', multiplier=-1, offset=.1)}
     data['struct/reference_points.yaml'] = {'grasp_frame': dict(
-        parent='ee_base_link', emit=False, origin=pose(z=.12))}
+        parent='link1', emit=False, origin=pose(z=.12))}
     return data
 
 

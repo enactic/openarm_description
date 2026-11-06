@@ -94,7 +94,7 @@ limitations under the License.
       <xacro:if value="${parent_ref_should_reflect}">
         <xacro:openarm_reflect_pose origin="${reference_origin}" reflect_x="${parent_reflect_cfg['x']}" reflect_y="${parent_reflect_cfg['y']}" reflect_z="${parent_reflect_cfg['z']}" out_name="reference_origin" />
       </xacro:if>
-      <xacro:if value="${parent_ref_canonical_link == parent_desc['topology']['links'][0] and parent_desc.get('base_frame_shift', 'none') != 'none'}">
+      <xacro:if value="${parent_ref_canonical_link == list(parent_desc['topology']['links'])[0] and parent_desc.get('base_frame_shift', 'none') != 'none'}">
         <xacro:openarm_compose_pose first="${parent_desc['base_frame_shift']}" second="${reference_origin}" out_name="reference_origin" />
       </xacro:if>
       <xacro:openarm_compose_pose first="${reference_origin}" second="${connection_origin}" out_name="reference_mount_origin" />
@@ -109,9 +109,9 @@ limitations under the License.
     <!-- reference point child empty links are already absorbed into config; runtime collapse only targets the parent's terminal empty link -->
     <xacro:property
       name="parent_terminal_link_empty"
-      value="${has_parent_desc and parent_desc['collapse_empty_end'] and parent_desc['topology']['links'][-1] not in parent_desc['inertials'] and parent_desc['topology']['links'][-1] not in parent_desc['visuals'] and parent_desc['topology']['links'][-1] not in parent_desc['collisions']}"
+      value="${has_parent_desc and parent_desc['collapse_empty_end'] and list(parent_desc['topology']['links'])[-1] not in parent_desc['inertials'] and list(parent_desc['topology']['links'])[-1] not in parent_desc['visuals'] and list(parent_desc['topology']['links'])[-1] not in parent_desc['collisions']}"
       lazy_eval="false" />
-    <xacro:if value="${has_parent_reference_key and not has_parent_override and parent_terminal_link_empty and parent_ref_canonical_link == parent_desc['topology']['links'][-1] and component_desc.get('supports_frame_shift', False)}">
+    <xacro:if value="${has_parent_reference_key and not has_parent_override and parent_terminal_link_empty and parent_ref_canonical_link == list(parent_desc['topology']['links'])[-1] and component_desc.get('supports_frame_shift', False)}">
       <xacro:property name="skip_mount_joint" value="${True}" lazy_eval="false" />
       <xacro:property name="base_frame_shift" value="${reference_mount_origin}" lazy_eval="false" />
     </xacro:if>
@@ -121,7 +121,7 @@ limitations under the License.
       name="attached_children"
       value="${[name for name in components if name in robot_preset and robot_preset[name]['enabled'] and 'connection' in robot_preset[name] and 'attach_to' in robot_preset[name]['connection'] and robot_preset[name]['connection']['attach_to'] == component_name]}"
       lazy_eval="false" />
-    <xacro:property name="component_terminal_link" value="${component_desc['topology']['links'][-1]}" lazy_eval="false" />
+    <xacro:property name="component_terminal_link" value="${list(component_desc['topology']['links'])[-1]}" lazy_eval="false" />
     <xacro:property
       name="component_terminal_link_empty"
       value="${component_desc['collapse_empty_end'] and component_terminal_link not in component_desc['inertials'] and component_terminal_link not in component_desc['visuals'] and component_terminal_link not in component_desc['collisions']}"

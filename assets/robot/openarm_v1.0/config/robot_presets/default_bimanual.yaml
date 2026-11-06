@@ -52,12 +52,12 @@ primary_arm:
     z: 1
     include:
       links:
-      - link0
       - link1
       - link2
-      - link5
+      - link3
       - link6
-      - arm_end_link
+      - link7
+      - link8
       joints:
       - joint1
       - joint2
@@ -97,7 +97,7 @@ primary_arm_end_effector:
     z: 1
     include:
       links:
-      - link7
+      - link1
       joints: []
       reference_points: []
 secondary_arm:
@@ -144,7 +144,7 @@ secondary_arm_end_effector:
     z: 1
     include:
       links:
-      - link7
+      - link1
       joints: []
       reference_points: []
 
@@ -160,7 +160,7 @@ systems:
         joint6: {idx: 6}
         joint7: {idx: 7}
       primary_arm_end_effector:
-        finger_joint1: {idx: 8}
+        joint2: {idx: 8}
   openarm_right_hardware_interface:
     joints:
       secondary_arm:
@@ -172,4 +172,4 @@ systems:
         joint6: {idx: 6}
         joint7: {idx: 7}
       secondary_arm_end_effector:
-        finger_joint1: {idx: 8}
+        joint2: {idx: 8}

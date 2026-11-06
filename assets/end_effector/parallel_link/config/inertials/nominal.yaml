@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-link7:
+link1:
   origin:
     x: -9.897454675528511e-05
     y: 0.003372444724450437
@@ -28,7 +28,7 @@ link7:
     xy: 0.0
     xz: 0.0
     yz: 7.094884219324384e-05
-hand:
+link2:
   origin:
     x: 0
     y: 0
@@ -44,7 +44,7 @@ hand:
     xy: 1.18380219510342e-05
     xz: 0.0
     yz: 0.0
-left_finger:
+link4:
   origin:
     x: -0.004646697332048465
     y: 0.01217890651468325
@@ -60,7 +60,7 @@ left_finger:
     xy: -4.813534779503441e-07
     xz: -4.110240982958172e-06
     yz: 3.504307786795564e-06
-right_finger:
+link3:
   origin:
     x: 0.004646697332048465
     y: -0.01217890651468325
