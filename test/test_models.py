@@ -20,7 +20,7 @@ from support import ROOT, expand, packages
 
 def test_shipped_presets_expand_and_resolve_resources():
     robots = []
-    for version in ('v2.0',):
+    for version in ('v1.0', 'v2.0'):
         folder = ROOT/f'assets/robot/openarm_{version}/config/robot_presets'
         robots.append((version, '<default>', expand(version=version, ros2_control=True,
                        use_fake_hardware=True, emit_grasp_frame=True)))
@@ -28,7 +28,7 @@ def test_shipped_presets_expand_and_resolve_resources():
             robot = expand(version=version, robot_preset=path.stem, ros2_control=True,
                            use_fake_hardware=True, emit_grasp_frame=True)
             robots.append((version, path.stem, robot))
-    for path in sorted((ROOT/'assets/end_effector').glob('pinch_gripper/urdf/*_standalone.urdf.xacro')):
+    for path in sorted((ROOT/'assets/end_effector').glob('*/urdf/*_standalone.urdf.xacro')):
         robots.append(('standalone', path.name, expand(
             entry=str(path.relative_to(ROOT)))))
     for version, name, robot in robots:
