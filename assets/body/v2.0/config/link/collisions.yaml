@@ -13,6 +13,20 @@
 # limitations under the License.
 
 link1:
+- name: column
+  origin:
+    x: 0.0
+    y: 0.0
+    z: 0.383
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    box:
+      x: 0.06
+      y: 0.06
+      z: 0.75
+- name: diagonal_brace
   origin:
     x: 0.0
     y: 0.0
@@ -21,8 +35,63 @@ link1:
     pitch: 0.0
     yaw: 0.0
   geometry:
-    mesh: "package://openarm_description/assets/body/v2.0/meshes/collision/body_link0_symp.stl"
+    mesh: package://openarm_description/assets/body/v2.0/meshes/collision/diagonal_brace.stl
     scale:
-      x: 0.001
-      y: 0.001
-      z: 0.001
+      x: 1.0
+      y: 1.0
+      z: 1.0
+- name: chest_cover
+  origin:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    mesh: package://openarm_description/assets/body/v2.0/meshes/collision/chest_cover.stl
+    scale:
+      x: 1.0
+      y: 1.0
+      z: 1.0
+- name: base_plate
+  origin:
+    x: -0.03
+    y: 0.0
+    z: 0.004
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    box:
+      x: 0.25
+      y: 0.19
+      z: 0.008
+- name: base_bracket_left
+  origin:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    mesh: package://openarm_description/assets/body/v2.0/meshes/collision/base_bracket_left.stl
+    scale:
+      x: 1.0
+      y: 1.0
+      z: 1.0
+- name: base_bracket_right
+  origin:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    mesh: package://openarm_description/assets/body/v2.0/meshes/collision/base_bracket_right.stl
+    scale:
+      x: 1.0
+      y: 1.0
+      z: 1.0

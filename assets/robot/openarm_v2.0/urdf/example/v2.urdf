@@ -25,10 +25,40 @@ limitations under the License.
         <mesh filename="package://openarm_description/assets/body/v2.0/meshes/visual/body_link0.dae" scale="1.0 1.0 1.0"/>
       </geometry>
     </visual>
-    <collision name="openarm_body_link0_collision">
+    <collision name="openarm_body_link0_column_collision">
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.383"/>
+      <geometry>
+        <box size="0.06 0.06 0.75"/>
+      </geometry>
+    </collision>
+    <collision name="openarm_body_link0_diagonal_brace_collision">
       <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
       <geometry>
-        <mesh filename="package://openarm_description/assets/body/v2.0/meshes/collision/body_link0_symp.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://openarm_description/assets/body/v2.0/meshes/collision/diagonal_brace.stl" scale="1.0 1.0 1.0"/>
+      </geometry>
+    </collision>
+    <collision name="openarm_body_link0_chest_cover_collision">
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="package://openarm_description/assets/body/v2.0/meshes/collision/chest_cover.stl" scale="1.0 1.0 1.0"/>
+      </geometry>
+    </collision>
+    <collision name="openarm_body_link0_base_plate_collision">
+      <origin rpy="0.0 0.0 0.0" xyz="-0.03 0.0 0.004"/>
+      <geometry>
+        <box size="0.25 0.19 0.008"/>
+      </geometry>
+    </collision>
+    <collision name="openarm_body_link0_base_bracket_left_collision">
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="package://openarm_description/assets/body/v2.0/meshes/collision/base_bracket_left.stl" scale="1.0 1.0 1.0"/>
+      </geometry>
+    </collision>
+    <collision name="openarm_body_link0_base_bracket_right_collision">
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="package://openarm_description/assets/body/v2.0/meshes/collision/base_bracket_right.stl" scale="1.0 1.0 1.0"/>
       </geometry>
     </collision>
     <inertial>
