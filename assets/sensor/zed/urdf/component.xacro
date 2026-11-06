@@ -35,7 +35,7 @@ limitations under the License.
                    prefix=component_prefix,
 
                    root_link_actual=sensor_root_link,
-                   topology=dict(links=[sensor_root_link], joints=dict()),
+                   topology=dict(links=dict(link1=dict(name=sensor_root_link)), joints=dict()),
                    reference_points=empty_dict,
                    joint_origins=empty_dict,
                    joint_axes=empty_dict,
@@ -44,7 +44,8 @@ limitations under the License.
                    inertials=empty_dict,
                    visuals=empty_dict,
                    collisions=empty_dict,
-                   link_name_map=empty_dict,
+                   link_name_map=dict(link1=sensor_root_link),
+                   joint_name_map=empty_dict,
                    default_mount_parent=sensor_root_link,
                    collapse_empty_end=False,
                    supports_frame_shift=False,

@@ -15,6 +15,7 @@ limitations under the License.
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <xacro:include filename="$(find openarm_description)/assets/common/transforms.xacro" />
+  <xacro:include filename="$(find openarm_description)/assets/common/collisions.xacro" />
 
   <xacro:macro name="openarm_emit_limit" params="limit">
     <limit
@@ -45,20 +46,9 @@ limitations under the License.
       </xacro:if>
 
       <xacro:if value="${collision_override != 'none' or source_name in collisions}">
-        <collision name="${link_name}_collision">
-          <xacro:property name="collision_cfg" value="${collision_override if collision_override != 'none' else collisions[source_name]}" lazy_eval="false" />
-          <xacro:if value="${frame_shift != 'none'}">
-            <xacro:openarm_emit_shifted_origin frame_shift="${frame_shift}" origin="${collision_cfg['origin']}" reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}" reflect_rotation="${True}" />
-          </xacro:if>
-          <xacro:unless value="${frame_shift != 'none'}">
-            <xacro:openarm_emit_origin origin="${collision_cfg['origin']}" reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}" reflect_rotation="${True}" />
-          </xacro:unless>
-          <geometry>
-            <mesh
-              filename="${collision_cfg['geometry']['mesh']}"
-              scale="${reflect_x * collision_cfg['geometry']['scale']['x']} ${reflect_y * collision_cfg['geometry']['scale']['y']} ${reflect_z * collision_cfg['geometry']['scale']['z']}" />
-          </geometry>
-        </collision>
+        <xacro:property name="collision_cfg" value="${collision_override if collision_override != 'none' else collisions[source_name]}" lazy_eval="false" />
+        <xacro:openarm_emit_collisions link_name="${link_name}" entries="${[collision_cfg] if 'geometry' in collision_cfg else collision_cfg}"
+          reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}" frame_shift="${frame_shift}" />
       </xacro:if>
 
       <xacro:if value="${inertial_override != 'none' or source_name in inertials}">
@@ -136,7 +126,7 @@ limitations under the License.
   <xacro:macro name="openarm_emit_rigid_component"
     params="link_name connected_to mount_origin topology inertials visuals collisions reflect_x:=1 reflect_y:=1 reflect_z:=1 reflect_include_links:=^ skip_mount_joint:=false base_frame_shift:=none">
 
-    <xacro:property name="base_link_name" value="${topology['links'][0]}" lazy_eval="false" />
+    <xacro:property name="base_link_name" value="${list(topology['links'])[0]}" lazy_eval="false" />
     <xacro:property name="resolved_base_frame_shift" value="${base_frame_shift if base_frame_shift != 'none' else 'none'}" lazy_eval="false" />
     <xacro:property name="base_link_reflects" value="${base_link_name in reflect_include_links}" lazy_eval="false" />
 
