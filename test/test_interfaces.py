@@ -79,7 +79,7 @@ def control_input():
                           tool=support.component('end_effector', 'pinch_gripper', 'openarm_right_', connection=dict(attach_to='arm')))
     spec['systems'] = {'fixture_system': dict(
         hardware_plugin='openarm_hardware/OpenArmHW', can_interface='can_test', can_fd=True,
-        joints=dict(arm={name: dict(idx=i) for i, name in enumerate(data['struct/topology.yaml']['joints'], 1)},
+        joints=dict(arm={name: dict(idx=i) for i, name in enumerate(data['struct/topology.yaml']['joints'])},
                     tool=dict(finger_joint1=dict(idx=8))))}
     return spec, {'arm': data, 'tool': support.pinch()}
 
@@ -170,6 +170,11 @@ def test_control_joints_follow_model_names_and_enabled_components():
     with pytest.raises(xacro.XacroException, match='unknown joint'):
         support.assemble(spec, data, ros2_control=True, use_fake_hardware=True)
     del spec['systems']['wrist']['joints']['arm']['missing']
+    for invalid_idx in (-1, True, 1.5):
+        spec['systems']['wrist']['joints']['tool']['finger_joint1']['idx'] = invalid_idx
+        with pytest.raises(xacro.XacroException, match='non-negative integer idx'):
+            support.assemble(spec, data, ros2_control=True,
+                             use_fake_hardware=True)
     spec['systems']['wrist']['joints']['tool']['finger_joint1']['idx'] = 1
     with pytest.raises(xacro.XacroException, match='duplicate idx'):
         support.assemble(spec, data, ros2_control=True, use_fake_hardware=True)

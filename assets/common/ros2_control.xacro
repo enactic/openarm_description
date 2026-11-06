@@ -83,8 +83,8 @@ limitations under the License.
       <xacro:openarm_require condition="${not command_interfaces or python.all(component_descriptions[name]['topology']['joints'][joint]['type'] != 'fixed' and joint not in component_descriptions[name]['joint_mimics'] for name, joint in bindings)}"
         message="${'System `%s` assigns commands to a fixed or mimic joint.' % system_name}" />
       <xacro:property name="indices" value="${[selection[name][joint].get('idx') for name, joint in bindings]}" lazy_eval="false" />
-      <xacro:openarm_require condition="${python.all(python.type(idx) == int and idx &gt; 0 for idx in indices)}"
-        message="${'System `%s` requires a positive integer idx for each joint.' % system_name}" />
+      <xacro:openarm_require condition="${python.all(python.type(idx) == int and idx &gt;= 0 for idx in indices)}"
+        message="${'System `%s` requires a non-negative integer idx for each joint.' % system_name}" />
       <xacro:openarm_require condition="${len(python.set(indices)) == len(indices)}"
         message="${'System `%s` contains duplicate idx values.' % system_name}" />
       <xacro:property name="ordered_bindings" value="${python.sorted([(selection[name][joint]['idx'], name, joint) for name, joint in bindings])}" lazy_eval="false" />
