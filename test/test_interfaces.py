@@ -75,8 +75,12 @@ def control_input():
         type='revolute', parent=names[i-1], child=names[i]) for i in range(1, 8)})
     data['control/control_gains.yaml'] = {
         f'joint{i}': dict(kp=10+i, kd=i/10) for i in range(1, 8)}
-    spec = support.preset(arm=support.component('robot', 'fixture_control', 'openarm_right_', control=dict(hardware_plugin='openarm_hardware/OpenArmHW', can_interface='can_test', can_fd=True)),
+    spec = support.preset(arm=support.component('robot', 'fixture_control', 'openarm_right_'),
                           tool=support.component('end_effector', 'pinch_gripper', 'openarm_right_', connection=dict(attach_to='arm')))
+    spec['systems'] = {'fixture_system': dict(
+        hardware_plugin='openarm_hardware/OpenArmHW', can_interface='can_test', can_fd=True,
+        joints=dict(arm={name: dict(idx=i) for i, name in enumerate(data['struct/topology.yaml']['joints'], 1)},
+                    tool=dict(finger_joint1=dict(idx=8))))}
     return spec, {'arm': data, 'tool': support.pinch()}
 
 
@@ -89,6 +93,10 @@ def test_control_joints_follow_model_names_and_enabled_components():
         values = data['arm'][f'joint/{filename}.yaml']
         values['wrist'] = values.pop('joint7')
 
+    selection = spec['systems']['fixture_system']['joints']['arm']
+    selection['wrist'] = selection.pop('joint7')
+    spec['systems']['fixture_system']['joints']['arm'] = dict(
+        reversed(list(selection.items())))
     assert not support.assemble(
         spec, data, ros2_control=False).findall('ros2_control')
     for tool_enabled in (False, True):
@@ -105,9 +113,19 @@ def test_control_joints_follow_model_names_and_enabled_components():
         assert active == expected
         assert {joint.get('name')
                 for joint in robot.findall('ros2_control/joint')} == active
+        expected_indices = {spec[component]['prefix'] + name: cfg['idx']
+                            for component, joints in spec['systems']['fixture_system']['joints'].items()
+                            if spec[component]['enabled'] for name, cfg in joints.items()}
+        actual_indices = {joint.get('name'): int(joint.find("param[@name='idx']").text)
+                          for joint in robot.findall('ros2_control/joint')}
+        assert actual_indices == expected_indices
+        assert list(actual_indices.values()) == sorted(
+            expected_indices.values())
 
     data['arm']['struct/topology.yaml']['collapse_empty_end'] = True
     spec['tool']['connection']['parent_reference_point'] = 'port'
+    spec['systems']['fixture_system']['joints']['tool']['finger_joint2'] = dict(
+        idx=9)
     files = support.files_for(spec, data)
     files['end_effector/pinch_gripper/urdf/component.xacro'] = '''<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
       <xacro:macro name="describe_component" params="component_name component_cfg config_root options out_name">
@@ -126,12 +144,42 @@ def test_control_joints_follow_model_names_and_enabled_components():
     assert {joint.get('name')
             for joint in robot.findall('ros2_control/joint')} == active
 
+    spec, data = control_input()
+    joints = list(data['arm']['struct/topology.yaml']['joints'])
+    spec['systems'] = {
+        'shoulder': dict(joints=dict(arm={name: dict(idx=2*i-1) for i, name in enumerate(joints[:4], 1)})),
+        'wrist': dict(joints=dict(arm={name: dict(idx=2*i-1) for i, name in enumerate(joints[4:], 1)},
+                                  tool=dict(finger_joint1=dict(idx=7))))}
+    robot = support.assemble(
+        spec, data, ros2_control=True, use_fake_hardware=True)
+    for name, cfg in spec['systems'].items():
+        expected = {spec[component]['prefix'] + joint for component,
+                    names in cfg['joints'].items() for joint in names}
+        assert {joint.get('name') for joint in robot.find(
+            f"ros2_control[@name='{name}']").findall('joint')} == expected
+    spec['systems']['shoulder'].update(
+        hardware_plugin='openarm_hardware/OpenArmHW', can_interface='can_test')
+    with pytest.raises(xacro.XacroException, match='seven arm joints'):
+        support.assemble(spec, data, ros2_control=True,
+                         use_fake_hardware=False)
+    spec['systems']['wrist']['joints']['arm'][joints[0]] = dict(idx=9)
+    with pytest.raises(xacro.XacroException, match='duplicate joint assignment'):
+        support.assemble(spec, data, ros2_control=True, use_fake_hardware=True)
+    spec['systems']['wrist']['joints']['arm']['missing'] = spec['systems']['wrist']['joints']['arm'].pop(
+        joints[0])
+    with pytest.raises(xacro.XacroException, match='unknown joint'):
+        support.assemble(spec, data, ros2_control=True, use_fake_hardware=True)
+    del spec['systems']['wrist']['joints']['arm']['missing']
+    spec['systems']['wrist']['joints']['tool']['finger_joint1']['idx'] = 1
+    with pytest.raises(xacro.XacroException, match='duplicate idx'):
+        support.assemble(spec, data, ros2_control=True, use_fake_hardware=True)
+
 
 def test_hardware_parameters_follow_input():
     spec, data = control_input()
+    control = spec['systems']['fixture_system']
     for prefix, can_interface in [('openarm_left_', 'can_left_test'),
                                   ('openarm_right_', 'can_right_test')]:
-        control = spec['arm']['control']
         control.update(can_interface=can_interface, can_fd=False)
         for name in ('arm', 'tool'):
             spec[name]['prefix'] = prefix
@@ -150,8 +198,8 @@ def test_hardware_parameters_follow_input():
                 assert float(params[key+name.removeprefix('joint')]) == value
 
     for side in ('left', 'right'):
-        control.update(
-            system_name=f'openarm_{side}_hardware_interface', can_fd=True)
+        spec['systems'] = {f'openarm_{side}_hardware_interface': control}
+        control.update(can_fd=True)
         overrides = dict(left_can_interface='runtime_left',
                          right_can_interface='runtime_right', can_fd=False)
         robot = support.assemble(spec, data, ros2_control=True,
@@ -169,3 +217,13 @@ def test_hardware_parameters_follow_input():
     assert params['mock_sensor_commands'].lower() == 'true'
     assert float(params['position_state_following_offset']) == 0.0
     assert 'fake_sensor_commands' not in params and 'state_following_offset' not in params
+
+    control.update(command_interfaces=[
+                   'position'], state_interfaces=['position'])
+    robot = support.assemble(
+        spec, data, ros2_control=True, use_fake_hardware=True)
+    for joint in robot.findall('ros2_control/joint'):
+        assert [i.get('name') for i in joint.findall(
+            'command_interface')] == ['position']
+        assert [i.get('name')
+                for i in joint.findall('state_interface')] == ['position']

@@ -45,11 +45,6 @@ primary_arm:
   enabled: true
   product: openarm_v2.0
   config: arm
-  control:
-    system_name: openarm_left_hardware_interface
-    hardware_plugin: openarm_hardware/OpenArmHW
-    can_interface: can1
-    can_fd: true
   inertials: nominal
   prefix: openarm_left_
   connection:
@@ -76,11 +71,6 @@ secondary_arm:
   enabled: false
   product: openarm_v2.0
   config: arm
-  control:
-    system_name: openarm_right_hardware_interface
-    hardware_plugin: openarm_hardware/OpenArmHW
-    can_interface: can0
-    can_fd: true
   inertials: nominal
   prefix: openarm_right_
   connection:
@@ -133,3 +123,17 @@ secondary_arm_end_effector:
     y: 1
     z: 1
   limit_override_joints: {}
+
+systems:
+  openarm_left_hardware_interface:
+    joints:
+      primary_arm:
+        joint1: {idx: 1}
+        joint2: {idx: 2}
+        joint3: {idx: 3}
+        joint4: {idx: 4}
+        joint5: {idx: 5}
+        joint6: {idx: 6}
+        joint7: {idx: 7}
+      primary_arm_end_effector:
+        finger_joint1: {idx: 8}
