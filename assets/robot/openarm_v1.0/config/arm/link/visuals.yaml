@@ -42,7 +42,7 @@ link1:
       z: 0.001
 link2:
   origin:
-    x: 0.0301
+    x: 0.0
     y: 0.0
     z: -0.1225
     roll: 0.0
@@ -71,7 +71,7 @@ link3:
 link4:
   origin:
     x: 0.0
-    y: -0.0315
+    y: 0.0
     z: -0.3425
     roll: 0.0
     pitch: 0.0
@@ -98,8 +98,8 @@ link5:
       z: 0.001
 link6:
   origin:
-    x: -0.0375
-    y: 0.0
+    x: 0.0
+    y: -0.0
     z: -0.5585
     roll: 0.0
     pitch: 0.0
