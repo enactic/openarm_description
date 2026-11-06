@@ -45,10 +45,11 @@ limitations under the License.
     <xacro:property name="component_inertials" value="${xacro.load_yaml(component_cfg_root + '/inertials/' + component_cfg['inertials'] + '.yaml')}" lazy_eval="false" />
     <xacro:property name="component_visuals" value="${xacro.load_yaml(component_cfg_root + '/link/visuals.yaml')}" lazy_eval="false" />
     <xacro:property name="component_collisions" value="${xacro.load_yaml(component_cfg_root + '/link/collisions.yaml')}" lazy_eval="false" />
-    <xacro:property name="component_link_name_map" value="${empty_dict}" lazy_eval="false" />
-    <xacro:property name="component_root_link_actual" value="${component_prefix + component_topology['links'][0]}" lazy_eval="false" />
-    <xacro:property name="component_default_mount_parent" value="${component_prefix + (component_topology['links'][0] if component_type == 'body' else component_topology['links'][-1])}" lazy_eval="false" />
-    <xacro:property name="component_collapse_empty_end" value="${component_topology.get('collapse_empty_end', False) and len([j for j in component_topology['joints'] if component_topology['joints'][j]['parent'] == component_topology['links'][-1]]) == 0}" lazy_eval="false" />
+    <xacro:property name="component_link_name_map" value="${dict([(key, component_prefix + cfg.get('name', key)) for key, cfg in component_topology['links'].items()])}" lazy_eval="false" />
+    <xacro:property name="component_joint_name_map" value="${dict([(key, component_prefix + cfg.get('name', key)) for key, cfg in component_topology['joints'].items()])}" lazy_eval="false" />
+    <xacro:property name="component_root_link_actual" value="${component_link_name_map[list(component_topology['links'])[0]]}" lazy_eval="false" />
+    <xacro:property name="component_default_mount_parent" value="${component_link_name_map[list(component_topology['links'])[0] if component_type == 'body' else list(component_topology['links'])[-1]]}" lazy_eval="false" />
+    <xacro:property name="component_collapse_empty_end" value="${component_topology.get('collapse_empty_end', False) and len([j for j in component_topology['joints'] if component_topology['joints'][j]['parent'] == list(component_topology['links'])[-1]]) == 0}" lazy_eval="false" />
 
     <xacro:property
       name="${out_name}"
@@ -71,6 +72,7 @@ limitations under the License.
                    visuals=component_visuals,
                    collisions=component_collisions,
                    link_name_map=component_link_name_map,
+                   joint_name_map=component_joint_name_map,
                    default_mount_parent=component_default_mount_parent,
                    collapse_empty_end=component_collapse_empty_end,
                    supports_frame_shift=True)}"
@@ -99,6 +101,8 @@ limitations under the License.
     <xacro:if value="${component_desc['topology']['joints']}">
       <xacro:openarm_emit_kinematic_component
         prefix="${component_desc['prefix']}"
+        link_name_map="${component_desc['link_name_map']}"
+        joint_name_map="${component_desc['joint_name_map']}"
         connected_to="${component_runtime['resolved_connected_to']}"
         mount_origin="${component_runtime['resolved_mount_origin']}"
         topology="${component_desc['topology']}"
@@ -126,7 +130,7 @@ limitations under the License.
       reference_points="${component_desc['reference_points']}"
       prefix="${component_desc['prefix']}"
       link_name_map="${component_desc['link_name_map']}"
-      base_link_name="${component_desc['topology']['links'][0]}"
+      base_link_name="${list(component_desc['topology']['links'])[0]}"
       reflect_x="${component_runtime['reflect_x']}"
       reflect_y="${component_runtime['reflect_y']}"
       reflect_z="${component_runtime['reflect_z']}"

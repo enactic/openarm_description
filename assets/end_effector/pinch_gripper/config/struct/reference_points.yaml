@@ -13,7 +13,7 @@
 # limitations under the License.
 
 grasp_frame:
-  parent: ee_base_link
+  parent: link1
   origin:
     x: -0.0219300000000009
     y: 0
@@ -29,13 +29,13 @@ grasp_frame:
       type: fixed
     parent_link:
       original_name: ee_base_link
-      canonical_name: ee_base_link
+      canonical_name: link1
     child_link:
       original_name: grasp_frame
       canonical_name: null
 
 camera_view_frame:
-  parent: ee_base_link
+  parent: link1
   emit: true
   origin:
     x: 0.0013353
