@@ -13,7 +13,7 @@
 # limitations under the License.
 
 ee_mount_point:
-  parent: link7
+  parent: link8
   origin:
     x: 0.0205
     y: 0
@@ -29,7 +29,7 @@ ee_mount_point:
       type: fixed
     parent_link:
       original_name: empty_link_for_J7
-      canonical_name: link7
+      canonical_name: link8
     child_link:
       original_name: empty_link_for_ee_mounting
       canonical_name: null

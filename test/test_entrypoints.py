@@ -16,7 +16,7 @@ import pytest
 import xacro
 import yaml
 
-from support import expand, multiply, near, pinch, pose, transform
+from support import expand, model, multiply, near, pinch, pose, transform
 
 
 def write_configuration(directory, data):
@@ -26,9 +26,23 @@ def write_configuration(directory, data):
         path.write_text(yaml.safe_dump(value, sort_keys=False))
 
 
+def test_parallel_entry_forwards_tcp_arguments(tmp_path):
+    data = model(('link7',))
+    data['struct/reference_points.yaml'] = {
+        'hand_tcp': dict(parent='link7', emit=True, origin=pose(z=.4))}
+    write_configuration(tmp_path, data)
+    robot = expand(entry='assets/end_effector/parallel_link/urdf/parallel_link_standalone.urdf.xacro',
+                   ee_config_dir=tmp_path, reflect_y=-1, tcp_xyz='.01 .02 .10', tcp_rpy='.2 .3 .4')
+    joint = robot.find("joint[@name='hand_tcp_joint']")
+    assert joint.find('parent').get(
+        'link') == data['struct/reference_points.yaml']['hand_tcp']['parent']
+    near(transform(joint.find('origin')),
+         transform(pose(.01, .02, .1, .2, .3, .4)))
+
+
 def test_pinch_entry_forwards_reference_options(tmp_path):
     data = pinch()
-    reference = dict(parent='ee_base_link', emit=True,
+    reference = dict(parent='link1', emit=True,
                      origin=pose(.01, .02, .03, .2, -.1, .3))
     data['struct/reference_points.yaml']['probe'] = reference
     write_configuration(tmp_path, data)
@@ -44,10 +58,10 @@ def test_pinch_entry_forwards_reference_options(tmp_path):
         data = pinch()
         joints = data['struct/topology.yaml']['joints']
         if invalid == 'unknown link':
-            joints['finger_joint1']['parent'] = 'missing'
+            joints['joint1']['parent'] = 'missing'
         else:
-            joints['finger_joint1']['parent'] = joints['finger_joint2']['child']
-            joints['finger_joint2']['parent'] = joints['finger_joint1']['child']
+            joints['joint1']['parent'] = joints['joint2']['child']
+            joints['joint2']['parent'] = joints['joint1']['child']
         write_configuration(tmp_path, data)
         with pytest.raises(xacro.XacroException, match=invalid):
             expand(entry='assets/end_effector/pinch_gripper/urdf/pinch_gripper_standalone.urdf.xacro',
