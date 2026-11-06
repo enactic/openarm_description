@@ -17,7 +17,7 @@ limitations under the License.
   <xacro:include filename="$(find openarm_description)/assets/common/validation.xacro" />
 
   <xacro:macro name="openarm_emit_chain"
-    params="index joint_names topology prefix joint_origins joint_axes joint_limits joint_mimics inertials visuals collisions reflect_x reflect_y reflect_z reflect_include_links reflect_include_joints origin_override_joints limit_override_joints tip_collapse_source_link tip_collapse_child_link base_frame_shift">
+    params="index joint_names topology prefix link_name_map joint_name_map joint_origins joint_axes joint_limits joint_mimics inertials visuals collisions reflect_x reflect_y reflect_z reflect_include_links reflect_include_joints origin_override_joints limit_override_joints tip_collapse_source_link tip_collapse_child_link base_frame_shift">
     <xacro:if value="${index &lt; len(joint_names)}">
       <xacro:property name="name" value="${joint_names[index]}" />
       <xacro:property name="joint" value="${topology['joints'][name]}" />
@@ -26,20 +26,21 @@ limitations under the License.
       <xacro:property name="joint_reflects" value="${name in reflect_include_joints}" />
       <xacro:property name="collapse_child" value="${child == tip_collapse_source_link}" />
       <xacro:unless value="${collapse_child}">
-        <xacro:openarm_emit_link link_name="${prefix + child}" source_name="${child}"
+        <xacro:openarm_emit_link link_name="${link_name_map[child]}" source_name="${child}"
           inertials="${inertials}" visuals="${visuals}" collisions="${collisions}"
           reflect_x="${reflect_x if link_reflects else 1}" reflect_y="${reflect_y if link_reflects else 1}" reflect_z="${reflect_z if link_reflects else 1}" />
       </xacro:unless>
       <xacro:property name="mimic" value="${joint_mimics[name] if name in joint_mimics else 'none'}" />
-      <xacro:openarm_emit_joint joint_name="${prefix + name}" joint_type="${joint['type']}"
-        parent_link="${prefix + joint['parent']}" child_link="${tip_collapse_child_link if collapse_child else prefix + child}"
+      <xacro:openarm_emit_joint joint_name="${joint_name_map[name]}" joint_type="${joint['type']}"
+        parent_link="${link_name_map[joint['parent']]}" child_link="${tip_collapse_child_link if collapse_child else link_name_map[child]}"
         joint_origins="${joint_origins}" joint_axes="${joint_axes}" joint_limits="${joint_limits}" source_name="${name}"
         origin_override="${origin_override_joints.get(name, 'none')}" limit_override="${limit_override_joints.get(name, 'none')}"
-        mimic_override="${dict(joint=prefix + mimic['joint'], multiplier=mimic['multiplier'], offset=mimic['offset']) if mimic != 'none' else 'none'}"
+        mimic_override="${dict(joint=joint_name_map[mimic['joint']], multiplier=mimic['multiplier'], offset=mimic['offset']) if mimic != 'none' else 'none'}"
         reflect_x="${reflect_x if joint_reflects else 1}" reflect_y="${reflect_y if joint_reflects else 1}" reflect_z="${reflect_z if joint_reflects else 1}"
         reflect_rotation="${True}" mirror_limit_sign="${joint_reflects and (reflect_x == -1 or reflect_y == -1 or reflect_z == -1)}"
-        frame_shift="${base_frame_shift if joint['parent'] == topology['links'][0] else 'none'}" />
+        frame_shift="${base_frame_shift if joint['parent'] == list(topology['links'])[0] else 'none'}" />
       <xacro:openarm_emit_chain index="${index + 1}" joint_names="${joint_names}" topology="${topology}" prefix="${prefix}"
+        link_name_map="${link_name_map}" joint_name_map="${joint_name_map}"
         joint_origins="${joint_origins}" joint_axes="${joint_axes}" joint_limits="${joint_limits}" joint_mimics="${joint_mimics}"
         inertials="${inertials}" visuals="${visuals}" collisions="${collisions}"
         reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}"
@@ -50,21 +51,22 @@ limitations under the License.
   </xacro:macro>
 
   <xacro:macro name="openarm_emit_kinematic_component"
-    params="connected_to mount_origin topology prefix joint_origins joint_axes joint_limits joint_mimics:=${dict()} inertials visuals collisions reflect_x:=1 reflect_y:=1 reflect_z:=1 reflect_include_links:=${[]} reflect_include_joints:=${[]} origin_override_joints:=${dict()} limit_override_joints:=${dict()} tip_collapse_source_link:=none tip_collapse_child_link:=none skip_mount_joint:=${False} base_frame_shift:=none">
+    params="connected_to mount_origin topology prefix link_name_map joint_name_map joint_origins joint_axes joint_limits joint_mimics:=${dict()} inertials visuals collisions reflect_x:=1 reflect_y:=1 reflect_z:=1 reflect_include_links:=${[]} reflect_include_joints:=${[]} origin_override_joints:=${dict()} limit_override_joints:=${dict()} tip_collapse_source_link:=none tip_collapse_child_link:=none skip_mount_joint:=${False} base_frame_shift:=none">
     <xacro:openarm_validate_topology topology="${topology}" component="${prefix}" />
-    <xacro:property name="base" value="${topology['links'][0]}" />
+    <xacro:property name="base" value="${list(topology['links'])[0]}" />
     <xacro:property name="base_reflects" value="${base in reflect_include_links}" />
-    <xacro:openarm_emit_link link_name="${prefix + base}" source_name="${base}"
+    <xacro:openarm_emit_link link_name="${link_name_map[base]}" source_name="${base}"
       inertials="${inertials}" visuals="${visuals}" collisions="${collisions}"
       reflect_x="${reflect_x if base_reflects else 1}" reflect_y="${reflect_y if base_reflects else 1}" reflect_z="${reflect_z if base_reflects else 1}"
       frame_shift="${base_frame_shift}" />
     <xacro:unless value="${skip_mount_joint}">
-      <joint name="${prefix + base}_mount_joint" type="fixed">
+      <joint name="${link_name_map[base]}_mount_joint" type="fixed">
         <xacro:openarm_emit_origin origin="${mount_origin}" />
-        <parent link="${connected_to}" /><child link="${prefix + base}" />
+        <parent link="${connected_to}" /><child link="${link_name_map[base]}" />
       </joint>
     </xacro:unless>
     <xacro:openarm_emit_chain index="0" joint_names="${list(topology['joints'].keys())}" topology="${topology}" prefix="${prefix}"
+      link_name_map="${link_name_map}" joint_name_map="${joint_name_map}"
       joint_origins="${joint_origins}" joint_axes="${joint_axes}" joint_limits="${joint_limits}" joint_mimics="${joint_mimics}"
       inertials="${inertials}" visuals="${visuals}" collisions="${collisions}"
       reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}"
