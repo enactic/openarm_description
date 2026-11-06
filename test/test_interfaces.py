@@ -149,6 +149,18 @@ def test_hardware_parameters_follow_input():
             for key, value in gains.items():
                 assert float(params[key+name.removeprefix('joint')]) == value
 
+    for side in ('left', 'right'):
+        control.update(
+            system_name=f'openarm_{side}_hardware_interface', can_fd=True)
+        overrides = dict(left_can_interface='runtime_left',
+                         right_can_interface='runtime_right', can_fd=False)
+        robot = support.assemble(spec, data, ros2_control=True,
+                                 use_fake_hardware=False, **overrides)
+        hardware = robot.find('ros2_control/hardware')
+        params = {p.get('name'): p.text for p in hardware.findall('param')}
+        assert params['can_interface'] == overrides[side + '_can_interface']
+        assert params['can_fd'].lower() == 'false'
+
     robot = support.assemble(spec, data, ros2_control=True,
                              use_fake_hardware=True, fake_sensor_commands=True)
     hardware = robot.find('ros2_control/hardware')

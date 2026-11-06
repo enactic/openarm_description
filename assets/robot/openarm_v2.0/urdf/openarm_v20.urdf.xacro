@@ -24,6 +24,9 @@ limitations under the License.
   <xacro:arg name="ros2_control" default="true" />
   <xacro:arg name="fake_sensor_commands" default="false" />
   <xacro:arg name="use_fake_hardware" default="true" />
+  <xacro:arg name="left_can_interface" default="" />
+  <xacro:arg name="right_can_interface" default="" />
+  <xacro:arg name="can_fd" default="" />
 
   <xacro:property name="robot_root" value="$(find openarm_description)/assets/robot/openarm_v2.0" />
   <xacro:property name="config_root" value="${robot_root + '/config'}" />
@@ -35,8 +38,17 @@ limitations under the License.
     emit_grasp_frame="$(arg emit_grasp_frame)" />
 
   <xacro:if value="$(arg ros2_control)">
+    <xacro:openarm_require condition="${xacro.arg('can_fd').lower() in ['', 'true', 'false', '1', '0']}"
+      message="can_fd must be true, false, 1, 0, or empty." />
+    <xacro:property name="fd_override" value="${dict(can_fd=xacro.arg('can_fd').lower() in ['true', '1']) if xacro.arg('can_fd') else dict()}" />
+    <xacro:property name="left_override" value="${dict(can_interface=xacro.arg('left_can_interface')) if xacro.arg('left_can_interface') else dict()}" />
+    <xacro:property name="right_override" value="${dict(can_interface=xacro.arg('right_can_interface')) if xacro.arg('right_can_interface') else dict()}" />
+    <xacro:property name="hardware_overrides" value="${dict(
+      openarm_left_hardware_interface=dict(fd_override, **left_override),
+      openarm_right_hardware_interface=dict(fd_override, **right_override))}" />
     <xacro:openarm_ros2_control robot_preset="${robot_preset_cfg}" component_descriptions="${component_descriptions}"
-      use_fake_hardware="$(arg use_fake_hardware)" fake_sensor_commands="$(arg fake_sensor_commands)" />
+      use_fake_hardware="$(arg use_fake_hardware)" fake_sensor_commands="$(arg fake_sensor_commands)"
+      hardware_overrides="${hardware_overrides}" />
   </xacro:if>
 
 </robot>

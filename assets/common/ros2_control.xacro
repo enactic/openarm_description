@@ -62,7 +62,7 @@ limitations under the License.
   </xacro:macro>
 
   <xacro:macro name="openarm_ros2_control"
-    params="robot_preset component_descriptions arm_type:=v20 use_fake_hardware:=true fake_sensor_commands:=false index:=0">
+    params="robot_preset component_descriptions arm_type:=v20 use_fake_hardware:=true fake_sensor_commands:=false hardware_overrides:=${dict()} index:=0">
     <xacro:property name="components" value="${list(component_descriptions)}" lazy_eval="false" />
     <xacro:if value="${index &lt; len(components)}">
       <xacro:property name="name" value="${components[index]}" lazy_eval="false" />
@@ -73,6 +73,7 @@ limitations under the License.
         <xacro:openarm_require condition="${'side' not in control and 'parameters' not in control}"
           message="${'Component `%s` requires flat control settings, including can_interface for OpenArm hardware.' % name}" />
         <xacro:property name="system_name" value="${control.get('system_name', name + '_hardware_interface')}" lazy_eval="false" />
+        <xacro:property name="control" value="${dict(control, **hardware_overrides.get(system_name, dict()))}" lazy_eval="false" />
         <xacro:property name="controlled_components" value="${[key for key in components if 'control' in robot_preset[key]]}" lazy_eval="false" />
         <xacro:openarm_require condition="${len([key for key in controlled_components if robot_preset[key]['control'].get('system_name', key + '_hardware_interface') == system_name]) == 1}"
           message="${'Duplicate control system name `%s`.' % system_name}" />
@@ -113,7 +114,7 @@ limitations under the License.
         </ros2_control>
       </xacro:if>
       <xacro:openarm_ros2_control robot_preset="${robot_preset}" component_descriptions="${component_descriptions}"
-        arm_type="${arm_type}" use_fake_hardware="${use_fake_hardware}" fake_sensor_commands="${fake_sensor_commands}" index="${index + 1}" />
+        arm_type="${arm_type}" use_fake_hardware="${use_fake_hardware}" fake_sensor_commands="${fake_sensor_commands}" hardware_overrides="${hardware_overrides}" index="${index + 1}" />
     </xacro:if>
   </xacro:macro>
 </robot>
