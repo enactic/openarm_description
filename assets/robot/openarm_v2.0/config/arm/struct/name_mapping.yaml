@@ -14,23 +14,23 @@
 
 links:
   canonical_to_original:
-    base_link: base_link
-    link1: link1
-    link2: link2
-    link3: link3
-    link4: link4
-    link5: link5
-    link6: link6
-    link7: empty_link_for_J7
+    link1: base_link
+    link2: link1
+    link3: link2
+    link4: link3
+    link5: link4
+    link6: link5
+    link7: link6
+    link8: empty_link_for_J7
   original_to_canonical:
-    base_link: base_link
-    link1: link1
-    link2: link2
-    link3: link3
-    link4: link4
-    link5: link5
-    link6: link6
-    empty_link_for_J7: link7
+    base_link: link1
+    link1: link2
+    link2: link3
+    link3: link4
+    link4: link5
+    link5: link6
+    link6: link7
+    empty_link_for_J7: link8
 joints:
   canonical_to_original:
     joint1: joint1
