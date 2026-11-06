@@ -1,0 +1,112 @@
+# Copyright 2026 Enactic, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+link0:
+  origin:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    mesh: package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link0.dae
+    scale:
+      x: 0.001
+      y: 0.001
+      z: 0.001
+link1:
+  origin:
+    x: -0.0
+    y: 0.0
+    z: -0.0625
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    mesh: package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link1.dae
+    scale:
+      x: 0.001
+      y: 0.001
+      z: 0.001
+link2:
+  origin:
+    x: 0.0301
+    y: 0.0
+    z: -0.1225
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    mesh: package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link2.dae
+    scale:
+      x: 0.001
+      y: 0.001
+      z: 0.001
+link3:
+  origin:
+    x: -0.0
+    y: -0.0
+    z: -0.18875
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    mesh: package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link3.dae
+    scale:
+      x: 0.001
+      y: 0.001
+      z: 0.001
+link4:
+  origin:
+    x: 0.0
+    y: -0.0315
+    z: -0.3425
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    mesh: package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link4.dae
+    scale:
+      x: 0.001
+      y: 0.001
+      z: 0.001
+link5:
+  origin:
+    x: -0.0
+    y: -0.0
+    z: -0.438
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    mesh: package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link5.dae
+    scale:
+      x: 0.001
+      y: 0.001
+      z: 0.001
+link6:
+  origin:
+    x: -0.0375
+    y: 0.0
+    z: -0.5585
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    mesh: package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link6.dae
+    scale:
+      x: 0.001
+      y: 0.001
+      z: 0.001
