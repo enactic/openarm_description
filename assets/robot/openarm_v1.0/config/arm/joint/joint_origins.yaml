@@ -22,7 +22,7 @@ joint1:
     yaw: 0
 joint2:
   origin:
-    x: -0.0301
+    x: 0.0
     y: 0.0
     z: 0.06
     roll: 0
@@ -30,7 +30,7 @@ joint2:
     yaw: 0
 joint3:
   origin:
-    x: 0.0301
+    x: 0.0
     y: 0.0
     z: 0.06625
     roll: 0
@@ -39,7 +39,7 @@ joint3:
 joint4:
   origin:
     x: 0.0
-    y: 0.0315
+    y: 0.0
     z: 0.15375
     roll: 0
     pitch: 0
@@ -47,14 +47,14 @@ joint4:
 joint5:
   origin:
     x: 0.0
-    y: -0.0315
+    y: 0.0
     z: 0.0955
     roll: 0
     pitch: 0
     yaw: 0
 joint6:
   origin:
-    x: 0.0375
+    x: 0.0
     y: 0.0
     z: 0.1205
     roll: 0
@@ -62,7 +62,7 @@ joint6:
     yaw: 0
 joint7:
   origin:
-    x: -0.0375
+    x: 0.0
     y: 0.0
     z: 0.0
     roll: 0

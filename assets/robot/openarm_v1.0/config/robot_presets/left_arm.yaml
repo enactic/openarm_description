@@ -48,6 +48,7 @@ arm:
       - joint1
       - joint2
       - joint3
+      - joint5
       - joint6
       - joint7
       reference_points:

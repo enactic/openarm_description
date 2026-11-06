@@ -96,26 +96,26 @@ limitations under the License.
   </joint>
   <link name="openarm_left_link2">
     <visual name="openarm_left_link2_visual">
-      <origin rpy="-0.0 0.0 -0.0" xyz="0.0301 -0.0 -0.1225"/>
+      <origin rpy="-0.0 0.0 -0.0" xyz="0.0 -0.0 -0.1225"/>
       <!-- Preserve the mesh's embedded materials. -->
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link2.dae" scale="0.001 -0.001 0.001"/>
       </geometry>
     </visual>
     <collision name="openarm_left_link2_collision">
-      <origin rpy="-0.0 0.0 -0.0" xyz="0.0301 -0.0 -0.1225"/>
+      <origin rpy="-0.0 0.0 -0.0" xyz="0.0 -0.0 -0.1225"/>
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/collision/link2_symp.stl" scale="0.001 -0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
-      <origin rpy="-0.0 0.0 -0.0" xyz="0.00839629182351943 2.0145102027597523e-08 0.03256649300522363"/>
+      <origin rpy="-0.0 0.0 -0.0" xyz="-0.02170370817648057 2.0145102027597523e-08 0.03256649300522363"/>
       <mass value="0.2775092746011571"/>
       <inertia ixx="0.000359" ixy="-1e-06" ixz="-0.000109" iyy="0.000376" iyz="-1e-06" izz="0.000232"/>
     </inertial>
   </link>
   <joint name="openarm_left_joint2" type="revolute">
-    <origin rpy="-1.57079632679 0 0" xyz="-0.0301 -0.0 0.06"/>
+    <origin rpy="-1.57079632679 0 0" xyz="0.0 -0.0 0.06"/>
     <parent link="openarm_left_link1"/>
     <child link="openarm_left_link2"/>
     <axis xyz="-1 0 0"/>
@@ -142,7 +142,7 @@ limitations under the License.
     </inertial>
   </link>
   <joint name="openarm_left_joint3" type="revolute">
-    <origin rpy="0 0 0" xyz="0.0301 -0.0 0.06625"/>
+    <origin rpy="0 0 0" xyz="0.0 -0.0 0.06625"/>
     <parent link="openarm_left_link2"/>
     <child link="openarm_left_link3"/>
     <axis xyz="0 0 1"/>
@@ -150,26 +150,26 @@ limitations under the License.
   </joint>
   <link name="openarm_left_link4">
     <visual name="openarm_left_link4_visual">
-      <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.0315 -0.3425"/>
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 -0.3425"/>
       <!-- Preserve the mesh's embedded materials. -->
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link4.dae" scale="0.001 0.001 0.001"/>
       </geometry>
     </visual>
     <collision name="openarm_left_link4_collision">
-      <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.0315 -0.3425"/>
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 -0.3425"/>
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/collision/link4_symp.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
-      <origin rpy="0.0 0.0 0.0" xyz="-0.0029006831074562967 -0.03030575826634669 0.06339637422196209"/>
+      <origin rpy="0.0 0.0 0.0" xyz="-0.0029006831074562967 0.0011942417336533104 0.06339637422196209"/>
       <mass value="0.6348534566833373"/>
       <inertia ixx="0.000623" ixy="-1e-06" ixz="-1.9e-05" iyy="0.000511" iyz="3.8e-05" izz="0.000334"/>
     </inertial>
   </link>
   <joint name="openarm_left_joint4" type="revolute">
-    <origin rpy="0 0 0" xyz="0.0 0.0315 0.15375"/>
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.15375"/>
     <parent link="openarm_left_link3"/>
     <child link="openarm_left_link4"/>
     <axis xyz="0 1 0"/>
@@ -196,7 +196,7 @@ limitations under the License.
     </inertial>
   </link>
   <joint name="openarm_left_joint5" type="revolute">
-    <origin rpy="0 0 0" xyz="0.0 -0.0315 0.0955"/>
+    <origin rpy="0 0 0" xyz="0.0 -0.0 0.0955"/>
     <parent link="openarm_left_link4"/>
     <child link="openarm_left_link5"/>
     <axis xyz="0 0 1"/>
@@ -204,33 +204,33 @@ limitations under the License.
   </joint>
   <link name="openarm_left_link6">
     <visual name="openarm_left_link6_visual">
-      <origin rpy="-0.0 0.0 -0.0" xyz="-0.0375 -0.0 -0.5585"/>
+      <origin rpy="-0.0 0.0 -0.0" xyz="0.0 0.0 -0.5585"/>
       <!-- Preserve the mesh's embedded materials. -->
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link6.dae" scale="0.001 -0.001 0.001"/>
       </geometry>
     </visual>
     <collision name="openarm_left_link6_collision">
-      <origin rpy="-0.0 0.0 -0.0" xyz="-0.0375 -0.0 -0.5585"/>
+      <origin rpy="-0.0 0.0 -0.0" xyz="0.0 0.0 -0.5585"/>
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/collision/link6_symp.stl" scale="0.001 -0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
-      <origin rpy="-0.0 0.0 -0.0" xyz="-0.037136587005447405 -0.00033230528343419053 -9.498374522309838e-05"/>
+      <origin rpy="-0.0 0.0 -0.0" xyz="0.0003634129945525935 -0.00033230528343419053 -9.498374522309838e-05"/>
       <mass value="0.475202773187987"/>
       <inertia ixx="0.000143" ixy="-1e-06" ixz="1e-06" iyy="0.000157" iyz="-1e-06" izz="0.000159"/>
     </inertial>
   </link>
   <joint name="openarm_left_joint6" type="revolute">
-    <origin rpy="0 0 0" xyz="0.0375 -0.0 0.1205"/>
+    <origin rpy="0 0 0" xyz="0.0 -0.0 0.1205"/>
     <parent link="openarm_left_link5"/>
     <child link="openarm_left_link6"/>
     <axis xyz="1 0 0"/>
     <limit effort="7" lower="-0.785398" upper="0.785398" velocity="20.943946"/>
   </joint>
   <joint name="openarm_left_joint7" type="revolute">
-    <origin rpy="0 0 0" xyz="-0.0375 -0.0 0.0"/>
+    <origin rpy="0 0 0" xyz="0.0 -0.0 0.0"/>
     <parent link="openarm_left_link6"/>
     <child link="openarm_left_link7"/>
     <axis xyz="0 -1 0"/>
@@ -396,26 +396,26 @@ limitations under the License.
   </joint>
   <link name="openarm_right_link2">
     <visual name="openarm_right_link2_visual">
-      <origin rpy="0.0 0.0 0.0" xyz="0.0301 0.0 -0.1225"/>
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 -0.1225"/>
       <!-- Preserve the mesh's embedded materials. -->
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link2.dae" scale="0.001 0.001 0.001"/>
       </geometry>
     </visual>
     <collision name="openarm_right_link2_collision">
-      <origin rpy="0.0 0.0 0.0" xyz="0.0301 0.0 -0.1225"/>
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 -0.1225"/>
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/collision/link2_symp.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
-      <origin rpy="0.0 0.0 0.0" xyz="0.00839629182351943 -2.0145102027597523e-08 0.03256649300522363"/>
+      <origin rpy="0.0 0.0 0.0" xyz="-0.02170370817648057 -2.0145102027597523e-08 0.03256649300522363"/>
       <mass value="0.2775092746011571"/>
       <inertia ixx="0.000359" ixy="1e-06" ixz="-0.000109" iyy="0.000376" iyz="1e-06" izz="0.000232"/>
     </inertial>
   </link>
   <joint name="openarm_right_joint2" type="revolute">
-    <origin rpy="1.57079632679 0 0" xyz="-0.0301 0.0 0.06"/>
+    <origin rpy="1.57079632679 0 0" xyz="0.0 0.0 0.06"/>
     <parent link="openarm_right_link1"/>
     <child link="openarm_right_link2"/>
     <axis xyz="-1 0 0"/>
@@ -442,7 +442,7 @@ limitations under the License.
     </inertial>
   </link>
   <joint name="openarm_right_joint3" type="revolute">
-    <origin rpy="0 0 0" xyz="0.0301 0.0 0.06625"/>
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.06625"/>
     <parent link="openarm_right_link2"/>
     <child link="openarm_right_link3"/>
     <axis xyz="0 0 1"/>
@@ -450,26 +450,26 @@ limitations under the License.
   </joint>
   <link name="openarm_right_link4">
     <visual name="openarm_right_link4_visual">
-      <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.0315 -0.3425"/>
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 -0.3425"/>
       <!-- Preserve the mesh's embedded materials. -->
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link4.dae" scale="0.001 0.001 0.001"/>
       </geometry>
     </visual>
     <collision name="openarm_right_link4_collision">
-      <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.0315 -0.3425"/>
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 -0.3425"/>
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/collision/link4_symp.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
-      <origin rpy="0.0 0.0 0.0" xyz="-0.0029006831074562967 -0.03030575826634669 0.06339637422196209"/>
+      <origin rpy="0.0 0.0 0.0" xyz="-0.0029006831074562967 0.0011942417336533104 0.06339637422196209"/>
       <mass value="0.6348534566833373"/>
       <inertia ixx="0.000623" ixy="-1e-06" ixz="-1.9e-05" iyy="0.000511" iyz="3.8e-05" izz="0.000334"/>
     </inertial>
   </link>
   <joint name="openarm_right_joint4" type="revolute">
-    <origin rpy="0 0 0" xyz="0.0 0.0315 0.15375"/>
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.15375"/>
     <parent link="openarm_right_link3"/>
     <child link="openarm_right_link4"/>
     <axis xyz="0 1 0"/>
@@ -496,7 +496,7 @@ limitations under the License.
     </inertial>
   </link>
   <joint name="openarm_right_joint5" type="revolute">
-    <origin rpy="0 0 0" xyz="0.0 -0.0315 0.0955"/>
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.0955"/>
     <parent link="openarm_right_link4"/>
     <child link="openarm_right_link5"/>
     <axis xyz="0 0 1"/>
@@ -504,33 +504,33 @@ limitations under the License.
   </joint>
   <link name="openarm_right_link6">
     <visual name="openarm_right_link6_visual">
-      <origin rpy="0.0 0.0 0.0" xyz="-0.0375 0.0 -0.5585"/>
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.0 -0.5585"/>
       <!-- Preserve the mesh's embedded materials. -->
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link6.dae" scale="0.001 0.001 0.001"/>
       </geometry>
     </visual>
     <collision name="openarm_right_link6_collision">
-      <origin rpy="0.0 0.0 0.0" xyz="-0.0375 0.0 -0.5585"/>
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.0 -0.5585"/>
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/collision/link6_symp.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
-      <origin rpy="0.0 0.0 0.0" xyz="-0.037136587005447405 0.00033230528343419053 -9.498374522309838e-05"/>
+      <origin rpy="0.0 0.0 0.0" xyz="0.0003634129945525935 0.00033230528343419053 -9.498374522309838e-05"/>
       <mass value="0.475202773187987"/>
       <inertia ixx="0.000143" ixy="1e-06" ixz="1e-06" iyy="0.000157" iyz="1e-06" izz="0.000159"/>
     </inertial>
   </link>
   <joint name="openarm_right_joint6" type="revolute">
-    <origin rpy="0 0 0" xyz="0.0375 0.0 0.1205"/>
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.1205"/>
     <parent link="openarm_right_link5"/>
     <child link="openarm_right_link6"/>
     <axis xyz="1 0 0"/>
     <limit effort="7" lower="-0.785398" upper="0.785398" velocity="20.943946"/>
   </joint>
   <joint name="openarm_right_joint7" type="revolute">
-    <origin rpy="0 0 0" xyz="-0.0375 0.0 0.0"/>
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
     <parent link="openarm_right_link6"/>
     <child link="openarm_right_link7"/>
     <axis xyz="0 1 0"/>
