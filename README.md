@@ -33,8 +33,6 @@ The default implementations are `openarm_describe_config_component` and `openarm
 
 Interface files declare macros; implementation and third-party model includes belong inside those macros. Each interface is loaded in a local scope, so its definitions do not affect other components. Presets need no implementation selector or product registry.
 
-Component topology uses stable `link1`, `link2`, ... and `joint1`, `joint2`, ... keys. An optional `name` on each topology entry defines its local URDF name; otherwise the key is used. The instance prefix is added once. Geometry, inertia, joint parameters, parent/child links, mimic targets, references, reflection selections and overrides use the stable keys. Changing `name` preserves these config references. Component descriptors expose resolved `link_name_map` and `joint_name_map` entries for emitters and control generation.
-
 ## Related links
 
 - 📚 Read the [documentation](https://docs.openarm.dev/software/description)
