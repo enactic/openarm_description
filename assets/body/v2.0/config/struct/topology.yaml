@@ -14,5 +14,5 @@
 
 links:
   base_link:
-    name: body_link0
+    name: link0
 joints: {}
