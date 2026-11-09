@@ -57,9 +57,9 @@ def test_names_and_mimics_follow_configuration(product):
     topology = data['struct/topology.yaml']
     topology['joints']['joint1']['name'] = 'drive'
     topology['joints']['joint2']['name'] = 'follower'
-    topology['links']['link1']['name'] = 'tool_base'
-    topology['links']['link2']['name'] = 'moving_finger'
-    topology['links']['link3'].pop('name')
+    topology['links']['base_link']['name'] = 'tool_base'
+    topology['links']['link1']['name'] = 'moving_finger'
+    topology['links']['link2'].pop('name')
     for item in data['struct/topology.yaml']['joints'].values():
         item['type'] = 'prismatic'
     for joint in data['joint/joint_axes.yaml'].values():
@@ -165,10 +165,10 @@ def test_reflection_selection_preserves_unselected_joints(product):
     for joint in data['joint/joint_axes.yaml'].values():
         joint['axis'].update(x=.6, y=.8, z=0.)
     spec = preset(tool=component('end_effector', product, 'tool_',
-                                 reflect=dict(x=1, y=-1, z=1, include=dict(links=['link1'], joints=[], reference_points=[]))))
+                                 reflect=dict(x=1, y=-1, z=1, include=dict(links=['base_link'], joints=[], reference_points=[]))))
     robot = assemble(spec, {'tool': data})
     base = robot.find("link[@name='tool_ee_base_link']/inertial")
-    source = data['inertials/nominal.yaml']['link1']
+    source = data['inertials/nominal.yaml']['base_link']
     assert float(base.find('mass').get('value')) == source['mass']
     expected = deepcopy(source['origin'])
     expected['y'] *= -1
@@ -197,15 +197,15 @@ def test_folding_preserves_physical_properties_and_frames():
     assert robot.find("link[@name='arm_tip']") is not None
 
     spec, data = installed_tool(False)
-    data['tool']['struct/topology.yaml']['joints']['joint2']['parent'] = 'link2'
+    data['tool']['struct/topology.yaml']['joints']['joint2']['parent'] = 'link1'
     data['arm']['struct/reference_points.yaml']['port']['emit'] = True
     geometry = dict(mesh='package://fixture_meshes/shape.stl',
                     scale=dict(x=1, y=1, z=1))
     shape = dict(origin=pose(.02, -.04, .01, .2, .1, -.3), geometry=geometry)
-    data['tool']['link/visuals.yaml']['link1'] = deepcopy(shape)
-    data['tool']['link/collisions.yaml']['link1'] = deepcopy(shape)
+    data['tool']['link/visuals.yaml']['base_link'] = deepcopy(shape)
+    data['tool']['link/collisions.yaml']['base_link'] = deepcopy(shape)
     spec['tool']['reflect'] = dict(x=1, y=-1, z=1, include=dict(
-        links=['link1'], joints=[], reference_points=[]))
+        links=['base_link'], joints=[], reference_points=[]))
     spec['tool']['origin_override_joints'] = {
         'joint1': pose(.04, .03, .02, .3, .2, .1)}
     first = assemble(spec, data, emit_grasp_frame=True)
@@ -214,7 +214,7 @@ def test_folding_preserves_physical_properties_and_frames():
     physical_equal(first, second)
     for frame in ('arm_port', 'tool_grasp_frame'):
         near(poses(first)[frame], poses(second)[frame])
-    mass = data['tool']['inertials/nominal.yaml']['link1']['mass']
+    mass = data['tool']['inertials/nominal.yaml']['base_link']['mass']
     assert float(second.find(
         "link[@name='tool_ee_base_link']/inertial/mass").get('value')) == mass
 

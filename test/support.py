@@ -161,16 +161,16 @@ def chain():
 
 
 def pinch():
-    data = model(('link1', 'link2', 'link3'), {
-        'joint1': dict(name='finger_joint1', type='revolute', parent='link1', child='link2'),
-        'joint2': dict(name='finger_joint2', type='revolute', parent='link1', child='link3')})
+    data = model(('base_link', 'link1', 'link2'), {
+        'joint1': dict(name='finger_joint1', type='revolute', parent='base_link', child='link1'),
+        'joint2': dict(name='finger_joint2', type='revolute', parent='base_link', child='link2')})
     data['struct/topology.yaml']['links'] = {
-        'link1': dict(name='ee_base_link'),
-        'link2': dict(name='ee_link1'), 'link3': dict(name='ee_link2')}
+        'base_link': dict(name='ee_base_link'),
+        'link1': dict(name='ee_link1'), 'link2': dict(name='ee_link2')}
     data['joint/joint_mimics.yaml'] = {'joint2': dict(
         joint='joint1', multiplier=-1, offset=.1)}
     data['struct/reference_points.yaml'] = {'grasp_frame': dict(
-        parent='link1', emit=False, origin=pose(z=.12))}
+        parent='base_link', emit=False, origin=pose(z=.12))}
     return data
 
 

@@ -28,7 +28,7 @@ def write_configuration(directory, data):
 
 def test_pinch_entry_forwards_reference_options(tmp_path):
     data = pinch()
-    reference = dict(parent='link1', emit=True,
+    reference = dict(parent='base_link', emit=True,
                      origin=pose(.01, .02, .03, .2, -.1, .3))
     data['struct/reference_points.yaml']['probe'] = reference
     write_configuration(tmp_path, data)

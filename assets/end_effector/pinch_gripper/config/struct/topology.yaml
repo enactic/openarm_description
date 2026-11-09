@@ -13,20 +13,20 @@
 # limitations under the License.
 
 links:
-  link1:
+  base_link:
     name: ee_base_link
-  link2:
+  link1:
     name: ee_link1
-  link3:
+  link2:
     name: ee_link2
 joints:
   joint1:
     name: finger_joint1
     type: revolute
-    parent: link1
-    child: link2
+    parent: base_link
+    child: link1
   joint2:
     name: finger_joint2
     type: revolute
-    parent: link1
-    child: link3
+    parent: base_link
+    child: link2
