@@ -106,17 +106,6 @@ def package_share_at(path):
 
 
 def expand(files=None, version='v2.0', entry=None, **arguments):
-    if entry is None:
-        files = dict(files or {})
-        files['fixture.urdf.xacro'] = '''<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="fixture">
-  <xacro:include filename="$(find openarm_description)/assets/component_loader.xacro"/>
-  <xacro:arg name="emit_grasp_frame" default="false"/>
-  <xacro:property name="root" value="$(find openarm_description)/assets/robot/openarm_v2.0/config"/>
-  <xacro:property name="preset" value="${xacro.load_yaml(root + '/robot_presets/fixture.yaml')}"/>
-  <xacro:openarm_assemble_robot component_api="${dict(describe='openarm_describe_auto_component', emit='openarm_emit_auto_component')}"
-    config_root="${root}" robot_preset="${preset}" emit_grasp_frame="$(arg emit_grasp_frame)"/>
-</robot>'''
-        entry = 'assets/fixture.urdf.xacro'
     entry = entry or f'assets/robot/openarm_{version}/urdf/openarm_{"v10" if version == "v1.0" else "v20"}.urdf.xacro'
     arguments = {k: str(v).lower() if isinstance(v, bool) else str(v)
                  for k, v in arguments.items()}
