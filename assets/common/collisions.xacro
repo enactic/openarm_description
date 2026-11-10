@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!--
+Copyright 2026 Enactic, Inc.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:include filename="$(find openarm_description)/assets/common/transforms.xacro" />
+
+  <xacro:macro name="openarm_emit_collisions" params="link_name entries reflect_x reflect_y reflect_z frame_shift index:=0">
+    <xacro:if value="${index &lt; len(entries)}">
+      <xacro:property name="cfg" value="${entries[index]}" />
+      <collision name="${link_name + '_collision' if len(entries) == 1 else link_name + '_' + cfg.get('name', str(index)) + '_collision'}">
+        <xacro:if value="${frame_shift != 'none'}">
+          <xacro:openarm_emit_shifted_origin frame_shift="${frame_shift}" origin="${cfg['origin']}" reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}" reflect_rotation="${True}" />
+        </xacro:if>
+        <xacro:unless value="${frame_shift != 'none'}">
+          <xacro:openarm_emit_origin origin="${cfg['origin']}" reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}" reflect_rotation="${True}" />
+        </xacro:unless>
+        <geometry>
+          <xacro:if value="${'box' in cfg['geometry']}">
+            <box size="${cfg['geometry']['box']['x']} ${cfg['geometry']['box']['y']} ${cfg['geometry']['box']['z']}" />
+          </xacro:if>
+          <xacro:unless value="${'box' in cfg['geometry']}">
+            <mesh filename="${cfg['geometry']['mesh']}" scale="${reflect_x * cfg['geometry']['scale']['x']} ${reflect_y * cfg['geometry']['scale']['y']} ${reflect_z * cfg['geometry']['scale']['z']}" />
+          </xacro:unless>
+        </geometry>
+      </collision>
+      <xacro:openarm_emit_collisions link_name="${link_name}" entries="${entries}" reflect_x="${reflect_x}" reflect_y="${reflect_y}" reflect_z="${reflect_z}" frame_shift="${frame_shift}" index="${index + 1}" />
+    </xacro:if>
+  </xacro:macro>
+</robot>
