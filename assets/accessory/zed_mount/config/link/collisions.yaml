@@ -1,0 +1,29 @@
+base_link:
+- name: support
+  origin:
+    x: 0
+    y: 0
+    z: 0
+    roll: 0
+    pitch: 0
+    yaw: 0
+  geometry:
+    mesh: package://openarm_description/assets/accessory/zed_mount/meshes/collision/normal_mesh_2parts/zed_mount_support.stl
+    scale:
+      x: 1
+      y: 1
+      z: 1
+- name: shell
+  origin:
+    x: 0
+    y: 0
+    z: 0
+    roll: 0
+    pitch: 0
+    yaw: 0
+  geometry:
+    mesh: package://openarm_description/assets/accessory/zed_mount/meshes/collision/normal_mesh_2parts/zed_mount_shell.stl
+    scale:
+      x: 1
+      y: 1
+      z: 1
