@@ -13,5 +13,6 @@
 # limitations under the License.
 
 links:
-  - body_link0
+  base_link:
+    name: link0
 joints: {}

@@ -28,6 +28,8 @@ limitations under the License.
     <xacro:include filename="${component_desc['component_dir'] + '/urdf/pinch_gripper_macro.xacro'}" />
     <xacro:openarm_pinch_gripper
       prefix="${component_desc['prefix']}"
+      link_name_map="${component_desc['link_name_map']}"
+      joint_name_map="${component_desc['joint_name_map']}"
       connected_to="${component_runtime['resolved_connected_to']}"
       mount_origin="${component_runtime['resolved_mount_origin']}"
       topology="${component_desc['topology']}"

@@ -19,7 +19,7 @@ robot:
 
 body:
   type: body
-  prefix: openarm_
+  prefix: openarm_body_
   enabled: false
   product: v2.0
   config: null
@@ -82,7 +82,7 @@ secondary_arm:
     y: -1
     z: 1
     include:
-      links: [base_link, link1, link2, link5, link6, link7]
+      links: [base_link, base_link, link1, link4, link5, link6]
       joints: [joint1, joint2, joint3, joint5, joint6, joint7]
       reference_points: [ee_mount_point]
   limit_override_joints: {}

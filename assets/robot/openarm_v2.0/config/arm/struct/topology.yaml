@@ -13,16 +13,15 @@
 # limitations under the License.
 
 collapse_empty_end: true
-
 links:
-  - base_link
-  - link1
-  - link2
-  - link3
-  - link4
-  - link5
-  - link6
-  - link7
+  base_link: {}
+  link1: {}
+  link2: {}
+  link3: {}
+  link4: {}
+  link5: {}
+  link6: {}
+  link7: {}
 joints:
   joint1:
     type: revolute
