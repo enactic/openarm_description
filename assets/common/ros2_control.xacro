@@ -62,7 +62,7 @@ limitations under the License.
   </xacro:macro>
 
   <xacro:macro name="openarm_ros2_control"
-    params="robot_preset component_descriptions arm_type:=v20 use_fake_hardware:=true fake_sensor_commands:=false hardware_defaults:=${dict()} hardware_overrides:=${dict()} index:=0 claimed_joints:=${[]}">
+    params="robot_preset component_descriptions use_fake_hardware:=true fake_sensor_commands:=false hardware_defaults:=${dict()} hardware_overrides:=${dict()} index:=0 claimed_joints:=${[]}">
     <xacro:property name="systems" value="${robot_preset.get('systems', dict())}" lazy_eval="false" />
     <xacro:property name="system_names" value="${list(systems)}" lazy_eval="false" />
     <xacro:if value="${index &lt; len(system_names)}">
@@ -108,7 +108,11 @@ limitations under the License.
               message="${'OpenArmHW system `%s` requires seven arm joints and at most one active gripper joint.' % system_name}" />
             <xacro:openarm_require condition="${'can_interface' in control}" message="${'Configure can_interface for system `%s`.' % system_name}" />
             <xacro:property name="ee_type" value="${component_descriptions[grippers[0]]['product'] if grippers else ''}" lazy_eval="false" />
-            <xacro:openarm_arm_control_parameters description="${component_descriptions[arms[0]]}" ee_type="${ee_type}" arm_type="${arm_type}" out_name="parameters" />
+            <xacro:property name="arm_product" value="${component_descriptions[arms[0]]['product']}" lazy_eval="false" />
+            <xacro:property name="driver_versions" value="${dict([('openarm_v1.0', 'v10'), ('openarm_v2.0', 'v20')])}" lazy_eval="false" />
+            <xacro:openarm_require condition="${arm_product in driver_versions}"
+              message="${'OpenArmHW does not support arm product `%s`.' % arm_product}" />
+            <xacro:openarm_arm_control_parameters description="${component_descriptions[arms[0]]}" ee_type="${ee_type}" arm_type="${driver_versions[arm_product]}" out_name="parameters" />
           </xacro:if>
         </xacro:unless>
         <xacro:property name="configured_parameters" value="${dict([(key, value) for key, value in control.items() if key not in ['hardware_plugin', 'joints', 'command_interfaces', 'state_interfaces']])}" lazy_eval="false" />
@@ -122,7 +126,7 @@ limitations under the License.
         </ros2_control>
       </xacro:if>
       <xacro:openarm_ros2_control robot_preset="${robot_preset}" component_descriptions="${component_descriptions}"
-        arm_type="${arm_type}" use_fake_hardware="${use_fake_hardware}" fake_sensor_commands="${fake_sensor_commands}"
+        use_fake_hardware="${use_fake_hardware}" fake_sensor_commands="${fake_sensor_commands}"
         hardware_defaults="${hardware_defaults}" hardware_overrides="${hardware_overrides}" index="${index + 1}" claimed_joints="${claimed_joints + joint_names}" />
     </xacro:if>
   </xacro:macro>

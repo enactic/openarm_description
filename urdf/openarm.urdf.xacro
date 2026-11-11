@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright 2026 Enactic, Inc.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="openarm">
+
+  <xacro:include filename="$(find openarm_description)/assets/common/robot.xacro" />
+
+  <xacro:arg name="robot_preset" default="v2/default_bimanual" />
+  <xacro:arg name="emit_grasp_frame" default="false" />
+
+  <xacro:arg name="ros2_control" default="true" />
+  <xacro:arg name="fake_sensor_commands" default="false" />
+  <xacro:arg name="use_fake_hardware" default="true" />
+  <xacro:arg name="can_interface" default="" />
+  <xacro:arg name="left_can_interface" default="" />
+  <xacro:arg name="right_can_interface" default="" />
+  <xacro:arg name="can_fd" default="" />
+
+  <xacro:openarm_robot robot_preset="$(arg robot_preset)"
+    emit_grasp_frame="$(arg emit_grasp_frame)"
+    ros2_control="$(arg ros2_control)"
+    use_fake_hardware="$(arg use_fake_hardware)"
+    fake_sensor_commands="$(arg fake_sensor_commands)"
+    can_interface="$(arg can_interface)"
+    left_can_interface="$(arg left_can_interface)"
+    right_can_interface="$(arg right_can_interface)"
+    can_fd="$(arg can_fd)" />
+
+</robot>

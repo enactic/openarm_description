@@ -109,13 +109,13 @@ def test_broken_component_hook_does_not_use_fallback(interface):
         support.expand(files, robot_preset='fixture', ros2_control=False)
 
 
-def control_input():
+def control_input(product='openarm_v2.0'):
     names = ['root'] + [f'link{i}' for i in range(1, 8)]
     data = support.model(names, {f'joint{i}': dict(
         type='revolute', parent=names[i-1], child=names[i]) for i in range(1, 8)})
     data['control/control_gains.yaml'] = {
         f'joint{i}': dict(kp=10+i, kd=i/10) for i in range(1, 8)}
-    spec = support.preset(arm=support.component('robot', 'fixture_control', 'openarm_right_'),
+    spec = support.preset(arm=support.component('robot', product, 'openarm_right_'),
                           tool=support.component('end_effector', 'pinch_gripper', 'openarm_right_', connection=dict(attach_to='arm')))
     spec['systems'] = {'fixture_system': dict(
         hardware_plugin='openarm_hardware/OpenArmHW', can_interface='can_test', can_fd=True,
@@ -250,6 +250,7 @@ def test_hardware_parameters_follow_input():
         assert params['can_interface'] == overrides[side + '_can_interface']
         assert params['can_fd'].lower() == 'false'
 
+    spec['arm']['product'] = 'openarm_v1.0'
     spec['systems'] = {'openarm_hardware_interface': control}
     for name in ('arm', 'tool'):
         spec[name]['prefix'] = 'openarm_'

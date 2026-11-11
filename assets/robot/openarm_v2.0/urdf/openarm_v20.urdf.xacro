@@ -14,9 +14,7 @@ limitations under the License.
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="openarm_v20">
 
-  <xacro:include filename="$(find openarm_description)/assets/component_loader.xacro" />
-
-  <xacro:include filename="$(find openarm_description)/assets/common/ros2_control.xacro" />
+  <xacro:include filename="$(find openarm_description)/assets/common/robot.xacro" />
 
   <xacro:arg name="robot_preset" default="default_bimanual" />
   <xacro:arg name="emit_grasp_frame" default="false" />
@@ -28,30 +26,17 @@ limitations under the License.
   <xacro:arg name="right_can_interface" default="" />
   <xacro:arg name="can_fd" default="" />
 
-  <xacro:property name="preset_root" value="$(find openarm_description)/presets/v2" />
-  <xacro:property name="config_root" value="$(find openarm_description)/assets/robot/openarm_v2.0/config" />
-  <xacro:property name="robot_preset_cfg" value="${xacro.load_yaml(preset_root + '/' + '$(arg robot_preset)' + '.yaml')}" />
+  <!-- V2 entry: short preset names resolve inside presets/v2. -->
+  <xacro:property name="preset_name" value="$(arg robot_preset)" />
+  <xacro:property name="preset_id" value="${preset_name if '/' in preset_name else 'v2/' + preset_name}" />
 
-  <xacro:openarm_assemble_robot out_name="component_descriptions" component_api="${dict(describe='openarm_describe_auto_component', emit='openarm_emit_auto_component')}"
-    config_root="${config_root}"
-    robot_preset="${robot_preset_cfg}"
-    emit_grasp_frame="$(arg emit_grasp_frame)" />
-
-  <xacro:if value="$(arg ros2_control)">
-    <xacro:property name="hardware_defaults" value="${dict(
-      openarm_left_hardware_interface=dict(hardware_plugin='openarm_hardware/OpenArmHW', can_interface='can1', can_fd=True),
-      openarm_right_hardware_interface=dict(hardware_plugin='openarm_hardware/OpenArmHW', can_interface='can0', can_fd=True))}" />
-    <xacro:openarm_require condition="${xacro.arg('can_fd').lower() in ['', 'true', 'false', '1', '0']}"
-      message="can_fd must be true, false, 1, 0, or empty." />
-    <xacro:property name="fd_override" value="${dict(can_fd=xacro.arg('can_fd').lower() in ['true', '1']) if xacro.arg('can_fd') else dict()}" />
-    <xacro:property name="left_override" value="${dict(can_interface=xacro.arg('left_can_interface')) if xacro.arg('left_can_interface') else dict()}" />
-    <xacro:property name="right_override" value="${dict(can_interface=xacro.arg('right_can_interface')) if xacro.arg('right_can_interface') else dict()}" />
-    <xacro:property name="hardware_overrides" value="${dict(
-      openarm_left_hardware_interface=dict(fd_override, **left_override),
-      openarm_right_hardware_interface=dict(fd_override, **right_override))}" />
-    <xacro:openarm_ros2_control robot_preset="${robot_preset_cfg}" component_descriptions="${component_descriptions}"
-      use_fake_hardware="$(arg use_fake_hardware)" fake_sensor_commands="$(arg fake_sensor_commands)"
-      hardware_defaults="${hardware_defaults}" hardware_overrides="${hardware_overrides}" />
-  </xacro:if>
+  <xacro:openarm_robot robot_preset="${preset_id}"
+    emit_grasp_frame="$(arg emit_grasp_frame)"
+    ros2_control="$(arg ros2_control)"
+    use_fake_hardware="$(arg use_fake_hardware)"
+    fake_sensor_commands="$(arg fake_sensor_commands)"
+    left_can_interface="$(arg left_can_interface)"
+    right_can_interface="$(arg right_can_interface)"
+    can_fd="$(arg can_fd)" />
 
 </robot>
