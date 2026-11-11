@@ -13,6 +13,7 @@
 # limitations under the License.
 
 robot:
+  name: openarm_v20
   root_frame: world
   components:
     - primary_arm

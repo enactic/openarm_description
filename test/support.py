@@ -172,7 +172,7 @@ def component(kind='body', product='fixture', prefix='unit_', **extra):
 
 
 def preset(**components):
-    return dict(robot=dict(root_frame='world', components=list(components)), **components)
+    return dict(robot=dict(name='fixture', root_frame='world', components=list(components)), **components)
 
 
 def files_for(spec, models, version='v2.0'):

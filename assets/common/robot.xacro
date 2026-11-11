@@ -28,6 +28,11 @@ limitations under the License.
     <xacro:property name="preset_root" value="$(find openarm_description)/presets" lazy_eval="false" />
     <xacro:property name="robot_preset_cfg" value="${xacro.load_yaml(preset_root + '/' + robot_preset + '.yaml')}" lazy_eval="false" />
 
+    <xacro:openarm_require
+      condition="${python.isinstance(robot_preset_cfg['robot']['name'], str) and bool(robot_preset_cfg['robot']['name'].strip())}"
+      message="robot.name must be a non-empty string." />
+    <xacro:property name="robot_name" value="${robot_preset_cfg['robot']['name']}" scope="parent" lazy_eval="false" />
+
     <xacro:openarm_assemble_robot out_name="component_descriptions"
       component_api="${dict(describe='openarm_describe_auto_component', emit='openarm_emit_auto_component')}"
       robot_preset="${robot_preset_cfg}"

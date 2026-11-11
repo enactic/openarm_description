@@ -12,7 +12,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="openarm">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <xacro:include filename="$(find openarm_description)/assets/common/robot.xacro" />
 
@@ -36,5 +36,7 @@ limitations under the License.
     left_can_interface="$(arg left_can_interface)"
     right_can_interface="$(arg right_can_interface)"
     can_fd="$(arg can_fd)" />
+
+  <xacro:attribute name="name" value="${robot_name}" />
 
 </robot>
