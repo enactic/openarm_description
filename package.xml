@@ -31,6 +31,7 @@
   <depend>joint_state_publisher_gui</depend>
   <depend>ros_gz</depend>
   <depend>xacro</depend>
+  <exec_depend>python3-yaml</exec_depend>
   <depend>rviz2</depend>
   <depend>robot_state_publisher</depend>
   <depend>joint_state_publisher</depend>
