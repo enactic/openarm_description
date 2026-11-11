@@ -250,6 +250,17 @@ def test_hardware_parameters_follow_input():
         assert params['can_interface'] == overrides[side + '_can_interface']
         assert params['can_fd'].lower() == 'false'
 
+    spec['systems'] = {'openarm_hardware_interface': control}
+    for name in ('arm', 'tool'):
+        spec[name]['prefix'] = 'openarm_'
+    for interface in (None, '', 'can3'):
+        overrides = {} if interface is None else dict(can_interface=interface)
+        robot = support.assemble(spec, data, version='v1.0', ros2_control=True,
+                                 use_fake_hardware=False, **overrides)
+        hardware = robot.find('ros2_control/hardware')
+        assert hardware.find("param[@name='can_interface']").text == (
+            interface or control['can_interface'])
+
     robot = support.assemble(spec, data, ros2_control=True,
                              use_fake_hardware=True, fake_sensor_commands=True)
     hardware = robot.find('ros2_control/hardware')

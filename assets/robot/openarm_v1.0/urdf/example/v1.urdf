@@ -4,7 +4,7 @@
 <!-- |    EDITING THIS FILE BY HAND IS NOT RECOMMENDED                                 | -->
 <!-- =================================================================================== -->
 <!--
-Copyright 2025 Enactic, Inc.
+Copyright 2026 Enactic, Inc.
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,105 +17,105 @@ limitations under the License.
 -->
 <robot name="openarm">
   <link name="world"/>
-  <joint name="openarm_body_world_joint" type="fixed">
-    <parent link="world"/>
-    <child link="openarm_body_link0"/>
-    <origin rpy="0 0 0" xyz="0 0 0"/>
-  </joint>
   <link name="openarm_body_link0">
     <visual name="openarm_body_link0_visual">
-      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <!-- Preserve the mesh's embedded materials. -->
       <geometry>
-        <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/body/visual/body_link0.dae" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://openarm_description/assets/body/v1.0/meshes/visual/body_link0.dae" scale="0.001 0.001 0.001"/>
       </geometry>
     </visual>
     <collision name="openarm_body_link0_collision">
-      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/body/collision/body_link0_symp.stl" scale="0.001 0.001 0.001"/>
-        <!-- <mesh filename="package://openarm_description/meshes/arm/${arm_type}/collision/${name}.stl" scale="0.001 0.001 0.001" /> -->
+        <mesh filename="package://openarm_description/assets/body/v1.0/meshes/collision/body_link0_symp.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
-      <origin rpy="0.0 0.0 0.0" xyz="-0.016206894902 0 0.244091987626"/>
+      <origin rpy="0.0 0.0 0.0" xyz="-0.016206894902 0.0 0.244091987626"/>
       <mass value="3.74"/>
       <inertia ixx="0.248946829107" ixy="0.0" ixz="0.0" iyy="0.253033907704" iyz="0.0" izz="0.0140271775534"/>
     </inertial>
   </link>
-  <joint name="openarm_left_openarm_body_link0_joint" type="fixed">
-    <parent link="openarm_body_link0"/>
-    <child link="openarm_left_link0"/>
-    <origin rpy="-1.5708 0 0" xyz="0.0 0.030 0.697"/>
+  <joint name="openarm_body_link0_mount_joint" type="fixed">
+    <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+    <parent link="world"/>
+    <child link="openarm_body_link0"/>
   </joint>
   <link name="openarm_left_link0">
     <visual name="openarm_left_link0_visual">
-      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+      <origin rpy="-0.0 0.0 -0.0" xyz="0.0 -0.0 0.0"/>
+      <!-- Preserve the mesh's embedded materials. -->
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link0.dae" scale="0.001 -0.001 0.001"/>
       </geometry>
     </visual>
     <collision name="openarm_left_link0_collision">
-      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+      <origin rpy="-0.0 0.0 -0.0" xyz="0.0 -0.0 0.0"/>
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/collision/link0_symp.stl" scale="0.001 -0.001 0.001"/>
-        <!-- <mesh filename="package://openarm_description/meshes/arm/${arm_type}/collision/${name}.stl" scale="0.001 0.001 0.001" /> -->
       </geometry>
     </collision>
     <inertial>
-      <origin rpy="0.0 0.0 0.0" xyz="-0.0009483362816297526 -0.0001580207020448382 0.03076860287587199"/>
+      <origin rpy="-0.0 0.0 -0.0" xyz="-0.0009483362816297526 -0.0001580207020448382 0.03076860287587199"/>
       <mass value="1.1432284943239561"/>
       <inertia ixx="0.001128" ixy="4e-06" ixz="-3.3e-05" iyy="0.000962" iyz="7e-06" izz="0.00147"/>
     </inertial>
   </link>
+  <joint name="openarm_left_link0_mount_joint" type="fixed">
+    <origin rpy="-1.5708 -0.0 0.0" xyz="0.0 0.03 0.697"/>
+    <parent link="openarm_body_link0"/>
+    <child link="openarm_left_link0"/>
+  </joint>
   <link name="openarm_left_link1">
     <visual name="openarm_left_link1_visual">
-      <origin rpy="0.0 0.0 0.0" xyz="-0.0 0.0 -0.0625"/>
+      <origin rpy="-0.0 0.0 -0.0" xyz="-0.0 -0.0 -0.0625"/>
+      <!-- Preserve the mesh's embedded materials. -->
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link1.dae" scale="0.001 -0.001 0.001"/>
       </geometry>
     </visual>
     <collision name="openarm_left_link1_collision">
-      <origin rpy="0.0 0.0 0.0" xyz="-0.0 0.0 -0.0625"/>
+      <origin rpy="-0.0 0.0 -0.0" xyz="-0.0 -0.0 -0.0625"/>
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/collision/link1_symp.stl" scale="0.001 -0.001 0.001"/>
-        <!-- <mesh filename="package://openarm_description/meshes/arm/${arm_type}/collision/${name}.stl" scale="0.001 0.001 0.001" /> -->
       </geometry>
     </collision>
     <inertial>
-      <origin rpy="0.0 0.0 0.0" xyz="0.0011467657911800769 -3.319987657026362e-05 0.05395284380736254"/>
+      <origin rpy="-0.0 0.0 -0.0" xyz="0.0011467657911800769 -3.319987657026362e-05 0.05395284380736254"/>
       <mass value="1.1416684646202298"/>
       <inertia ixx="0.001567" ixy="1e-06" ixz="-2.9e-05" iyy="0.001273" iyz="-1e-06" izz="0.001016"/>
     </inertial>
   </link>
   <joint name="openarm_left_joint1" type="revolute">
-    <origin rpy="0 0 0" xyz="0.0 0.0 0.0625"/>
+    <origin rpy="0 0 0" xyz="0.0 -0.0 0.0625"/>
     <parent link="openarm_left_link0"/>
     <child link="openarm_left_link1"/>
     <axis xyz="0 0 1"/>
-    <limit effort="40" lower="-3.490659" upper="1.3962629999999998" velocity="16.754666"/>
+    <limit effort="40" lower="-3.490659" upper="1.396263" velocity="16.754666"/>
   </joint>
   <link name="openarm_left_link2">
     <visual name="openarm_left_link2_visual">
-      <origin rpy="0.0 0.0 0.0" xyz="0.0301 0.0 -0.1225"/>
+      <origin rpy="-0.0 0.0 -0.0" xyz="0.0301 -0.0 -0.1225"/>
+      <!-- Preserve the mesh's embedded materials. -->
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link2.dae" scale="0.001 -0.001 0.001"/>
       </geometry>
     </visual>
     <collision name="openarm_left_link2_collision">
-      <origin rpy="0.0 0.0 0.0" xyz="0.0301 0.0 -0.1225"/>
+      <origin rpy="-0.0 0.0 -0.0" xyz="0.0301 -0.0 -0.1225"/>
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/collision/link2_symp.stl" scale="0.001 -0.001 0.001"/>
-        <!-- <mesh filename="package://openarm_description/meshes/arm/${arm_type}/collision/${name}.stl" scale="0.001 0.001 0.001" /> -->
       </geometry>
     </collision>
     <inertial>
-      <origin rpy="0.0 0.0 0.0" xyz="0.00839629182351943 2.0145102027597523e-08 0.03256649300522363"/>
+      <origin rpy="-0.0 0.0 -0.0" xyz="0.00839629182351943 2.0145102027597523e-08 0.03256649300522363"/>
       <mass value="0.2775092746011571"/>
       <inertia ixx="0.000359" ixy="-1e-06" ixz="-0.000109" iyy="0.000376" iyz="-1e-06" izz="0.000232"/>
     </inertial>
   </link>
   <joint name="openarm_left_joint2" type="revolute">
-    <origin rpy="-1.57079632679 0 0" xyz="-0.0301 0.0 0.06"/>
+    <origin rpy="-1.57079632679 0 0" xyz="-0.0301 -0.0 0.06"/>
     <parent link="openarm_left_link1"/>
     <child link="openarm_left_link2"/>
     <axis xyz="-1 0 0"/>
@@ -124,6 +124,7 @@ limitations under the License.
   <link name="openarm_left_link3">
     <visual name="openarm_left_link3_visual">
       <origin rpy="0.0 0.0 0.0" xyz="-0.0 -0.0 -0.18875"/>
+      <!-- Preserve the mesh's embedded materials. -->
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link3.dae" scale="0.001 0.001 0.001"/>
       </geometry>
@@ -132,7 +133,6 @@ limitations under the License.
       <origin rpy="0.0 0.0 0.0" xyz="-0.0 -0.0 -0.18875"/>
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/collision/link3_symp.stl" scale="0.001 0.001 0.001"/>
-        <!-- <mesh filename="package://openarm_description/meshes/arm/${arm_type}/collision/${name}.stl" scale="0.001 0.001 0.001" /> -->
       </geometry>
     </collision>
     <inertial>
@@ -142,7 +142,7 @@ limitations under the License.
     </inertial>
   </link>
   <joint name="openarm_left_joint3" type="revolute">
-    <origin rpy="0 0 0" xyz="0.0301 0.0 0.06625"/>
+    <origin rpy="0 0 0" xyz="0.0301 -0.0 0.06625"/>
     <parent link="openarm_left_link2"/>
     <child link="openarm_left_link3"/>
     <axis xyz="0 0 1"/>
@@ -151,6 +151,7 @@ limitations under the License.
   <link name="openarm_left_link4">
     <visual name="openarm_left_link4_visual">
       <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.0315 -0.3425"/>
+      <!-- Preserve the mesh's embedded materials. -->
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link4.dae" scale="0.001 0.001 0.001"/>
       </geometry>
@@ -159,7 +160,6 @@ limitations under the License.
       <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.0315 -0.3425"/>
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/collision/link4_symp.stl" scale="0.001 0.001 0.001"/>
-        <!-- <mesh filename="package://openarm_description/meshes/arm/${arm_type}/collision/${name}.stl" scale="0.001 0.001 0.001" /> -->
       </geometry>
     </collision>
     <inertial>
@@ -169,7 +169,7 @@ limitations under the License.
     </inertial>
   </link>
   <joint name="openarm_left_joint4" type="revolute">
-    <origin rpy="0 0 0" xyz="-0.0 0.0315 0.15375"/>
+    <origin rpy="0 0 0" xyz="0.0 0.0315 0.15375"/>
     <parent link="openarm_left_link3"/>
     <child link="openarm_left_link4"/>
     <axis xyz="0 1 0"/>
@@ -177,20 +177,20 @@ limitations under the License.
   </joint>
   <link name="openarm_left_link5">
     <visual name="openarm_left_link5_visual">
-      <origin rpy="0.0 0.0 0.0" xyz="-0.0 -0.0 -0.438"/>
+      <origin rpy="-0.0 0.0 -0.0" xyz="-0.0 0.0 -0.438"/>
+      <!-- Preserve the mesh's embedded materials. -->
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link5.dae" scale="0.001 -0.001 0.001"/>
       </geometry>
     </visual>
     <collision name="openarm_left_link5_collision">
-      <origin rpy="0.0 0.0 0.0" xyz="-0.0 -0.0 -0.438"/>
+      <origin rpy="-0.0 0.0 -0.0" xyz="-0.0 0.0 -0.438"/>
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/collision/link5_symp.stl" scale="0.001 -0.001 0.001"/>
-        <!-- <mesh filename="package://openarm_description/meshes/arm/${arm_type}/collision/${name}.stl" scale="0.001 0.001 0.001" /> -->
       </geometry>
     </collision>
     <inertial>
-      <origin rpy="0.0 0.0 0.0" xyz="-0.003049665024221911 -0.0008866902457326625 0.043079803024980934"/>
+      <origin rpy="-0.0 0.0 -0.0" xyz="-0.003049665024221911 -0.0008866902457326625 0.043079803024980934"/>
       <mass value="0.6156588026168502"/>
       <inertia ixx="0.000423" ixy="8e-06" ixz="6e-06" iyy="0.000445" iyz="6e-06" izz="0.000324"/>
     </inertial>
@@ -204,66 +204,148 @@ limitations under the License.
   </joint>
   <link name="openarm_left_link6">
     <visual name="openarm_left_link6_visual">
-      <origin rpy="0.0 0.0 0.0" xyz="-0.0375 -0.0 -0.5585"/>
+      <origin rpy="-0.0 0.0 -0.0" xyz="-0.0375 -0.0 -0.5585"/>
+      <!-- Preserve the mesh's embedded materials. -->
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link6.dae" scale="0.001 -0.001 0.001"/>
       </geometry>
     </visual>
     <collision name="openarm_left_link6_collision">
-      <origin rpy="0.0 0.0 0.0" xyz="-0.0375 -0.0 -0.5585"/>
+      <origin rpy="-0.0 0.0 -0.0" xyz="-0.0375 -0.0 -0.5585"/>
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/collision/link6_symp.stl" scale="0.001 -0.001 0.001"/>
-        <!-- <mesh filename="package://openarm_description/meshes/arm/${arm_type}/collision/${name}.stl" scale="0.001 0.001 0.001" /> -->
       </geometry>
     </collision>
     <inertial>
-      <origin rpy="0.0 0.0 0.0" xyz="-0.037136587005447405 -0.00033230528343419053 -9.498374522309838e-05"/>
+      <origin rpy="-0.0 0.0 -0.0" xyz="-0.037136587005447405 -0.00033230528343419053 -9.498374522309838e-05"/>
       <mass value="0.475202773187987"/>
       <inertia ixx="0.000143" ixy="-1e-06" ixz="1e-06" iyy="0.000157" iyz="-1e-06" izz="0.000159"/>
     </inertial>
   </link>
   <joint name="openarm_left_joint6" type="revolute">
-    <origin rpy="0 0 0" xyz="0.0375 0.0 0.1205"/>
+    <origin rpy="0 0 0" xyz="0.0375 -0.0 0.1205"/>
     <parent link="openarm_left_link5"/>
     <child link="openarm_left_link6"/>
     <axis xyz="1 0 0"/>
     <limit effort="7" lower="-0.785398" upper="0.785398" velocity="20.943946"/>
   </joint>
-  <link name="openarm_left_link7">
-    <visual name="openarm_left_link7_visual">
-      <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.0 -0.5585"/>
-      <geometry>
-        <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link7.dae" scale="0.001 -0.001 0.001"/>
-      </geometry>
-    </visual>
-    <collision name="openarm_left_link7_collision">
-      <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.0 -0.5585"/>
-      <geometry>
-        <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/collision/link7_symp.stl" scale="0.001 -0.001 0.001"/>
-        <!-- <mesh filename="package://openarm_description/meshes/arm/${arm_type}/collision/${name}.stl" scale="0.001 0.001 0.001" /> -->
-      </geometry>
-    </collision>
-    <inertial>
-      <origin rpy="0 0 0" xyz="-9.897454675528511e-05 -0.003372444724450437 0.06138919729233123"/>
-      <mass value="0.4054971268153967"/>
-      <inertia ixx="0.0003637830920674498" ixy="-0.0" ixz="0" iyy="0.0003351190950225729" iyz="-7.094884219324384e-05" izz="0.0001865112723189818"/>
-    </inertial>
-  </link>
   <joint name="openarm_left_joint7" type="revolute">
-    <origin rpy="0 0 0" xyz="-0.0375 0.0 0.0"/>
+    <origin rpy="0 0 0" xyz="-0.0375 -0.0 0.0"/>
     <parent link="openarm_left_link6"/>
     <child link="openarm_left_link7"/>
     <axis xyz="0 -1 0"/>
     <limit effort="7" lower="-1.570796" upper="1.570796" velocity="20.943946"/>
   </joint>
-  <joint name="openarm_right_openarm_body_link0_joint" type="fixed">
-    <parent link="openarm_body_link0"/>
-    <child link="openarm_right_link0"/>
-    <origin rpy="1.5708 0 0" xyz="0.0 -0.030 0.697"/>
+  <link name="openarm_left_link7">
+    <visual name="openarm_left_link7_visual">
+      <origin rpy="0.0 -0.0 0.0" xyz="0.0 0.0 -0.5585"/>
+      <!-- Preserve the mesh's embedded materials. -->
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/parallel_link/meshes/visual/link7.dae" scale="0.001 -0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision name="openarm_left_link7_collision">
+      <origin rpy="0.0 -0.0 0.0" xyz="0.0 0.0 -0.5585"/>
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/parallel_link/meshes/collision/link7.stl" scale="0.001 -0.001 0.001"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin rpy="0.0 -0.0 0.0" xyz="-9.897454675528511e-05 -0.003372444724450437 0.06138919729233123"/>
+      <mass value="0.4054971268153967"/>
+      <inertia ixx="0.0003637830920674498" ixy="-0.0" ixz="0.0" iyy="0.0003351190950225729" iyz="-7.094884219324384e-05" izz="0.0001865112723189818"/>
+    </inertial>
+  </link>
+  <link name="openarm_left_hand">
+    <visual name="openarm_left_hand_visual">
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 -0.6586"/>
+      <!-- Preserve the mesh's embedded materials. -->
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/parallel_link/meshes/visual/hand.dae" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision name="openarm_left_hand_collision">
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 -0.6586"/>
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/parallel_link/meshes/collision/hand.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0.005122940871819574"/>
+      <mass value="0.1723111736408497"/>
+      <inertia ixx="0.000250930641371331" ixy="1.18380219510342e-05" ixz="0.0" iyy="5.560627616753029e-05" iyz="0.0" izz="0.0002906093338421478"/>
+    </inertial>
+  </link>
+  <joint name="openarm_left_hand_joint" type="fixed">
+    <origin rpy="0.0 -0.0 0.0" xyz="0.0 0.0 0.1001"/>
+    <parent link="openarm_left_link7"/>
+    <child link="openarm_left_hand"/>
+  </joint>
+  <link name="openarm_left_right_finger">
+    <visual name="openarm_left_right_finger_visual">
+      <origin rpy="0.0 0.0 3.141592653589793" xyz="0.0 0.05 -0.673001"/>
+      <!-- Preserve the mesh's embedded materials. -->
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/parallel_link/meshes/visual/finger.dae" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision name="openarm_left_right_finger_collision">
+      <origin rpy="0.0 0.0 3.141592653589793" xyz="0.0 0.05 -0.673001"/>
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/parallel_link/meshes/collision/finger.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.004646697332048465 -0.01217890651468325 0.01335289447269551"/>
+      <mass value="0.07444998664008126"/>
+      <inertia ixx="3.284268617249738e-05" ixy="-4.813534779503441e-07" ixz="4.110240982958172e-06" iyy="4.17523619254798e-05" iyz="-3.504307786795564e-06" izz="1.882116318207188e-05"/>
+    </inertial>
+  </link>
+  <joint name="openarm_left_finger_joint1" type="prismatic">
+    <origin rpy="0 0 0" xyz="0 -0.005 0.015"/>
+    <parent link="openarm_left_hand"/>
+    <child link="openarm_left_right_finger"/>
+    <axis xyz="0 -1 0"/>
+    <limit effort="150.75" lower="0.0" upper="0.044" velocity="0.661"/>
+  </joint>
+  <link name="openarm_left_left_finger">
+    <visual name="openarm_left_left_finger_visual">
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.05 -0.673001"/>
+      <!-- Preserve the mesh's embedded materials. -->
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/parallel_link/meshes/visual/finger.dae" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision name="openarm_left_left_finger_collision">
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.05 -0.673001"/>
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/parallel_link/meshes/collision/finger.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.004646697332048465 0.01217890651468325 0.01335289447269551"/>
+      <mass value="0.07444998664008126"/>
+      <inertia ixx="3.284268617249738e-05" ixy="-4.813534779503441e-07" ixz="-4.110240982958172e-06" iyy="4.17523619254798e-05" iyz="3.504307786795564e-06" izz="1.882116318207188e-05"/>
+    </inertial>
+  </link>
+  <joint name="openarm_left_finger_joint2" type="prismatic">
+    <origin rpy="0 0 0" xyz="0 0.005 0.015"/>
+    <parent link="openarm_left_hand"/>
+    <child link="openarm_left_left_finger"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="150.75" lower="0.0" upper="0.044" velocity="0.661"/>
+    <mimic joint="openarm_left_finger_joint1" multiplier="1" offset="0"/>
+  </joint>
+  <link name="openarm_left_hand_tcp"/>
+  <joint name="openarm_left_hand_tcp_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0.09"/>
+    <parent link="openarm_left_hand"/>
+    <child link="openarm_left_hand_tcp"/>
   </joint>
   <link name="openarm_right_link0">
     <visual name="openarm_right_link0_visual">
       <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+      <!-- Preserve the mesh's embedded materials. -->
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link0.dae" scale="0.001 0.001 0.001"/>
       </geometry>
@@ -272,7 +354,6 @@ limitations under the License.
       <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/collision/link0_symp.stl" scale="0.001 0.001 0.001"/>
-        <!-- <mesh filename="package://openarm_description/meshes/arm/${arm_type}/collision/${name}.stl" scale="0.001 0.001 0.001" /> -->
       </geometry>
     </collision>
     <inertial>
@@ -281,9 +362,15 @@ limitations under the License.
       <inertia ixx="0.001128" ixy="-4e-06" ixz="-3.3e-05" iyy="0.000962" iyz="-7e-06" izz="0.00147"/>
     </inertial>
   </link>
+  <joint name="openarm_right_link0_mount_joint" type="fixed">
+    <origin rpy="1.5708 -0.0 0.0" xyz="0.0 -0.03 0.697"/>
+    <parent link="openarm_body_link0"/>
+    <child link="openarm_right_link0"/>
+  </joint>
   <link name="openarm_right_link1">
     <visual name="openarm_right_link1_visual">
       <origin rpy="0.0 0.0 0.0" xyz="-0.0 0.0 -0.0625"/>
+      <!-- Preserve the mesh's embedded materials. -->
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link1.dae" scale="0.001 0.001 0.001"/>
       </geometry>
@@ -292,7 +379,6 @@ limitations under the License.
       <origin rpy="0.0 0.0 0.0" xyz="-0.0 0.0 -0.0625"/>
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/collision/link1_symp.stl" scale="0.001 0.001 0.001"/>
-        <!-- <mesh filename="package://openarm_description/meshes/arm/${arm_type}/collision/${name}.stl" scale="0.001 0.001 0.001" /> -->
       </geometry>
     </collision>
     <inertial>
@@ -311,6 +397,7 @@ limitations under the License.
   <link name="openarm_right_link2">
     <visual name="openarm_right_link2_visual">
       <origin rpy="0.0 0.0 0.0" xyz="0.0301 0.0 -0.1225"/>
+      <!-- Preserve the mesh's embedded materials. -->
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link2.dae" scale="0.001 0.001 0.001"/>
       </geometry>
@@ -319,7 +406,6 @@ limitations under the License.
       <origin rpy="0.0 0.0 0.0" xyz="0.0301 0.0 -0.1225"/>
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/collision/link2_symp.stl" scale="0.001 0.001 0.001"/>
-        <!-- <mesh filename="package://openarm_description/meshes/arm/${arm_type}/collision/${name}.stl" scale="0.001 0.001 0.001" /> -->
       </geometry>
     </collision>
     <inertial>
@@ -338,6 +424,7 @@ limitations under the License.
   <link name="openarm_right_link3">
     <visual name="openarm_right_link3_visual">
       <origin rpy="0.0 0.0 0.0" xyz="-0.0 -0.0 -0.18875"/>
+      <!-- Preserve the mesh's embedded materials. -->
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link3.dae" scale="0.001 0.001 0.001"/>
       </geometry>
@@ -346,7 +433,6 @@ limitations under the License.
       <origin rpy="0.0 0.0 0.0" xyz="-0.0 -0.0 -0.18875"/>
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/collision/link3_symp.stl" scale="0.001 0.001 0.001"/>
-        <!-- <mesh filename="package://openarm_description/meshes/arm/${arm_type}/collision/${name}.stl" scale="0.001 0.001 0.001" /> -->
       </geometry>
     </collision>
     <inertial>
@@ -365,6 +451,7 @@ limitations under the License.
   <link name="openarm_right_link4">
     <visual name="openarm_right_link4_visual">
       <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.0315 -0.3425"/>
+      <!-- Preserve the mesh's embedded materials. -->
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link4.dae" scale="0.001 0.001 0.001"/>
       </geometry>
@@ -373,7 +460,6 @@ limitations under the License.
       <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.0315 -0.3425"/>
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/collision/link4_symp.stl" scale="0.001 0.001 0.001"/>
-        <!-- <mesh filename="package://openarm_description/meshes/arm/${arm_type}/collision/${name}.stl" scale="0.001 0.001 0.001" /> -->
       </geometry>
     </collision>
     <inertial>
@@ -383,7 +469,7 @@ limitations under the License.
     </inertial>
   </link>
   <joint name="openarm_right_joint4" type="revolute">
-    <origin rpy="0 0 0" xyz="-0.0 0.0315 0.15375"/>
+    <origin rpy="0 0 0" xyz="0.0 0.0315 0.15375"/>
     <parent link="openarm_right_link3"/>
     <child link="openarm_right_link4"/>
     <axis xyz="0 1 0"/>
@@ -392,6 +478,7 @@ limitations under the License.
   <link name="openarm_right_link5">
     <visual name="openarm_right_link5_visual">
       <origin rpy="0.0 0.0 0.0" xyz="-0.0 -0.0 -0.438"/>
+      <!-- Preserve the mesh's embedded materials. -->
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link5.dae" scale="0.001 0.001 0.001"/>
       </geometry>
@@ -400,7 +487,6 @@ limitations under the License.
       <origin rpy="0.0 0.0 0.0" xyz="-0.0 -0.0 -0.438"/>
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/collision/link5_symp.stl" scale="0.001 0.001 0.001"/>
-        <!-- <mesh filename="package://openarm_description/meshes/arm/${arm_type}/collision/${name}.stl" scale="0.001 0.001 0.001" /> -->
       </geometry>
     </collision>
     <inertial>
@@ -418,16 +504,16 @@ limitations under the License.
   </joint>
   <link name="openarm_right_link6">
     <visual name="openarm_right_link6_visual">
-      <origin rpy="0.0 0.0 0.0" xyz="-0.0375 -0.0 -0.5585"/>
+      <origin rpy="0.0 0.0 0.0" xyz="-0.0375 0.0 -0.5585"/>
+      <!-- Preserve the mesh's embedded materials. -->
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link6.dae" scale="0.001 0.001 0.001"/>
       </geometry>
     </visual>
     <collision name="openarm_right_link6_collision">
-      <origin rpy="0.0 0.0 0.0" xyz="-0.0375 -0.0 -0.5585"/>
+      <origin rpy="0.0 0.0 0.0" xyz="-0.0375 0.0 -0.5585"/>
       <geometry>
         <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/collision/link6_symp.stl" scale="0.001 0.001 0.001"/>
-        <!-- <mesh filename="package://openarm_description/meshes/arm/${arm_type}/collision/${name}.stl" scale="0.001 0.001 0.001" /> -->
       </geometry>
     </collision>
     <inertial>
@@ -443,26 +529,6 @@ limitations under the License.
     <axis xyz="1 0 0"/>
     <limit effort="7" lower="-0.785398" upper="0.785398" velocity="20.943946"/>
   </joint>
-  <link name="openarm_right_link7">
-    <visual name="openarm_right_link7_visual">
-      <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.0 -0.5585"/>
-      <geometry>
-        <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/visual/link7.dae" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </visual>
-    <collision name="openarm_right_link7_collision">
-      <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.0 -0.5585"/>
-      <geometry>
-        <mesh filename="package://openarm_description/assets/robot/openarm_v1.0/mesh/arm/collision/link7_symp.stl" scale="0.001 0.001 0.001"/>
-        <!-- <mesh filename="package://openarm_description/meshes/arm/${arm_type}/collision/${name}.stl" scale="0.001 0.001 0.001" /> -->
-      </geometry>
-    </collision>
-    <inertial>
-      <origin rpy="0 0 0" xyz="-9.897454675528511e-05 0.003372444724450437 0.06138919729233123"/>
-      <mass value="0.4054971268153967"/>
-      <inertia ixx="0.0003637830920674498" ixy="0.0" ixz="0" iyy="0.0003351190950225729" iyz="7.094884219324384e-05" izz="0.0001865112723189818"/>
-    </inertial>
-  </link>
   <joint name="openarm_right_joint7" type="revolute">
     <origin rpy="0 0 0" xyz="-0.0375 0.0 0.0"/>
     <parent link="openarm_right_link6"/>
@@ -470,92 +536,30 @@ limitations under the License.
     <axis xyz="0 1 0"/>
     <limit effort="7" lower="-1.570796" upper="1.570796" velocity="20.943946"/>
   </joint>
-  <link name="openarm_left_hand">
-    <visual name="openarm_left_hand_visual">
-      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 -0.6586"/>
+  <link name="openarm_right_link7">
+    <visual name="openarm_right_link7_visual">
+      <origin rpy="0.0 -0.0 0.0" xyz="0.0 0.0 -0.5585"/>
+      <!-- Preserve the mesh's embedded materials. -->
       <geometry>
-        <mesh filename="package://openarm_description/assets/end_effector/parallel_link/meshes/visual/hand.dae" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://openarm_description/assets/end_effector/parallel_link/meshes/visual/link7.dae" scale="0.001 0.001 0.001"/>
       </geometry>
     </visual>
-    <collision name="openarm_left_hand_collision">
-      <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 -0.6586"/>
+    <collision name="openarm_right_link7_collision">
+      <origin rpy="0.0 -0.0 0.0" xyz="0.0 0.0 -0.5585"/>
       <geometry>
-        <mesh filename="package://openarm_description/assets/end_effector/parallel_link/meshes/collision/hand.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://openarm_description/assets/end_effector/parallel_link/meshes/collision/link7.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
     <inertial>
-      <origin rpy="0 0 0" xyz="0 0 0.005122940871819574"/>
-      <mass value="0.1723111736408497"/>
-      <inertia ixx="0.000250930641371331" ixy="1.18380219510342e-05" ixz="0" iyy="5.560627616753029e-05" iyz="0" izz="0.0002906093338421478"/>
+      <origin rpy="0.0 -0.0 0.0" xyz="-9.897454675528511e-05 0.003372444724450437 0.06138919729233123"/>
+      <mass value="0.4054971268153967"/>
+      <inertia ixx="0.0003637830920674498" ixy="0.0" ixz="0.0" iyy="0.0003351190950225729" iyz="7.094884219324384e-05" izz="0.0001865112723189818"/>
     </inertial>
   </link>
-  <joint name="openarm_left_hand_joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0.0 0.0 0.1001"/>
-    <parent link="openarm_left_link7"/>
-    <child link="openarm_left_hand"/>
-  </joint>
-  <link name="openarm_left_hand_tcp"/>
-  <joint name="openarm_left_hand_tcp_joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0.09"/>
-    <parent link="openarm_left_hand"/>
-    <child link="openarm_left_hand_tcp"/>
-  </joint>
-  <link name="openarm_left_left_finger">
-    <visual name="openarm_left_left_finger_visual">
-      <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.05 -0.673001"/>
-      <geometry>
-        <mesh filename="package://openarm_description/assets/end_effector/parallel_link/meshes/visual/finger.dae" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </visual>
-    <collision name="openarm_left_left_finger_collision">
-      <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.05 -0.673001"/>
-      <geometry>
-        <mesh filename="package://openarm_description/assets/end_effector/parallel_link/meshes/collision/finger.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-    <inertial>
-      <origin rpy="0 0 0" xyz="-0.004646697332048465 0.01217890651468325 0.01335289447269551"/>
-      <mass value="0.07444998664008126"/>
-      <inertia ixx="3.284268617249738e-05" ixy="-4.813534779503441e-07" ixz="-4.110240982958172e-06" iyy="4.17523619254798e-05" iyz="3.504307786795564e-06" izz="1.882116318207188e-05"/>
-    </inertial>
-  </link>
-  <link name="openarm_left_right_finger">
-    <visual name="openarm_left_right_finger_visual">
-      <origin rpy="0.0 0.0 3.141592653589793" xyz="0.0 0.05 -0.673001"/>
-      <geometry>
-        <mesh filename="package://openarm_description/assets/end_effector/parallel_link/meshes/visual/finger.dae" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </visual>
-    <collision name="openarm_left_right_finger_collision">
-      <origin rpy="0.0 0.0 3.141592653589793" xyz="0.0 0.05 -0.673001"/>
-      <geometry>
-        <mesh filename="package://openarm_description/assets/end_effector/parallel_link/meshes/collision/finger.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-    <inertial>
-      <origin rpy="0 0 0" xyz="0.004646697332048465 -0.01217890651468325 0.01335289447269551"/>
-      <mass value="0.07444998664008126"/>
-      <inertia ixx="3.284268617249738e-05" ixy="-4.813534779503441e-07" ixz="4.110240982958172e-06" iyy="4.17523619254798e-05" iyz="-3.504307786795564e-06" izz="1.882116318207188e-05"/>
-    </inertial>
-  </link>
-  <joint name="openarm_left_finger_joint1" type="prismatic">
-    <parent link="openarm_left_hand"/>
-    <child link="openarm_left_right_finger"/>
-    <origin rpy="0 0 0" xyz="0.0 -0.005 0.015"/>
-    <axis xyz="0 -1 0"/>
-    <limit effort="150.75" lower="0.0" upper="0.044" velocity="0.661"/>
-  </joint>
-  <joint name="openarm_left_finger_joint2" type="prismatic">
-    <parent link="openarm_left_hand"/>
-    <child link="openarm_left_left_finger"/>
-    <origin rpy="0 0 0" xyz="0.0 0.005 0.015"/>
-    <axis xyz="0 1 0"/>
-    <limit effort="150.75" lower="0.0" upper="0.044" velocity="0.661"/>
-    <mimic joint="openarm_left_finger_joint1" multiplier="1" offset="0"/>
-  </joint>
   <link name="openarm_right_hand">
     <visual name="openarm_right_hand_visual">
       <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 -0.6586"/>
+      <!-- Preserve the mesh's embedded materials. -->
       <geometry>
         <mesh filename="package://openarm_description/assets/end_effector/parallel_link/meshes/visual/hand.dae" scale="0.001 0.001 0.001"/>
       </geometry>
@@ -569,42 +573,18 @@ limitations under the License.
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0.005122940871819574"/>
       <mass value="0.1723111736408497"/>
-      <inertia ixx="0.000250930641371331" ixy="1.18380219510342e-05" ixz="0" iyy="5.560627616753029e-05" iyz="0" izz="0.0002906093338421478"/>
+      <inertia ixx="0.000250930641371331" ixy="1.18380219510342e-05" ixz="0.0" iyy="5.560627616753029e-05" iyz="0.0" izz="0.0002906093338421478"/>
     </inertial>
   </link>
   <joint name="openarm_right_hand_joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0.0 0.0 0.1001"/>
+    <origin rpy="0.0 -0.0 0.0" xyz="0.0 0.0 0.1001"/>
     <parent link="openarm_right_link7"/>
     <child link="openarm_right_hand"/>
   </joint>
-  <link name="openarm_right_hand_tcp"/>
-  <joint name="openarm_right_hand_tcp_joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0.09"/>
-    <parent link="openarm_right_hand"/>
-    <child link="openarm_right_hand_tcp"/>
-  </joint>
-  <link name="openarm_right_left_finger">
-    <visual name="openarm_right_left_finger_visual">
-      <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.05 -0.673001"/>
-      <geometry>
-        <mesh filename="package://openarm_description/assets/end_effector/parallel_link/meshes/visual/finger.dae" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </visual>
-    <collision name="openarm_right_left_finger_collision">
-      <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.05 -0.673001"/>
-      <geometry>
-        <mesh filename="package://openarm_description/assets/end_effector/parallel_link/meshes/collision/finger.stl" scale="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-    <inertial>
-      <origin rpy="0 0 0" xyz="-0.004646697332048465 0.01217890651468325 0.01335289447269551"/>
-      <mass value="0.07444998664008126"/>
-      <inertia ixx="3.284268617249738e-05" ixy="-4.813534779503441e-07" ixz="-4.110240982958172e-06" iyy="4.17523619254798e-05" iyz="3.504307786795564e-06" izz="1.882116318207188e-05"/>
-    </inertial>
-  </link>
   <link name="openarm_right_right_finger">
     <visual name="openarm_right_right_finger_visual">
       <origin rpy="0.0 0.0 3.141592653589793" xyz="0.0 0.05 -0.673001"/>
+      <!-- Preserve the mesh's embedded materials. -->
       <geometry>
         <mesh filename="package://openarm_description/assets/end_effector/parallel_link/meshes/visual/finger.dae" scale="0.001 0.001 0.001"/>
       </geometry>
@@ -622,18 +602,44 @@ limitations under the License.
     </inertial>
   </link>
   <joint name="openarm_right_finger_joint1" type="prismatic">
+    <origin rpy="0 0 0" xyz="0 -0.005 0.015"/>
     <parent link="openarm_right_hand"/>
     <child link="openarm_right_right_finger"/>
-    <origin rpy="0 0 0" xyz="0.0 -0.005 0.015"/>
     <axis xyz="0 -1 0"/>
     <limit effort="150.75" lower="0.0" upper="0.044" velocity="0.661"/>
   </joint>
+  <link name="openarm_right_left_finger">
+    <visual name="openarm_right_left_finger_visual">
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.05 -0.673001"/>
+      <!-- Preserve the mesh's embedded materials. -->
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/parallel_link/meshes/visual/finger.dae" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision name="openarm_right_left_finger_collision">
+      <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.05 -0.673001"/>
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/parallel_link/meshes/collision/finger.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.004646697332048465 0.01217890651468325 0.01335289447269551"/>
+      <mass value="0.07444998664008126"/>
+      <inertia ixx="3.284268617249738e-05" ixy="-4.813534779503441e-07" ixz="-4.110240982958172e-06" iyy="4.17523619254798e-05" iyz="3.504307786795564e-06" izz="1.882116318207188e-05"/>
+    </inertial>
+  </link>
   <joint name="openarm_right_finger_joint2" type="prismatic">
+    <origin rpy="0 0 0" xyz="0 0.005 0.015"/>
     <parent link="openarm_right_hand"/>
     <child link="openarm_right_left_finger"/>
-    <origin rpy="0 0 0" xyz="0.0 0.005 0.015"/>
     <axis xyz="0 1 0"/>
     <limit effort="150.75" lower="0.0" upper="0.044" velocity="0.661"/>
     <mimic joint="openarm_right_finger_joint1" multiplier="1" offset="0"/>
+  </joint>
+  <link name="openarm_right_hand_tcp"/>
+  <joint name="openarm_right_hand_tcp_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0.09"/>
+    <parent link="openarm_right_hand"/>
+    <child link="openarm_right_hand_tcp"/>
   </joint>
 </robot>
