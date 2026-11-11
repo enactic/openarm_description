@@ -89,7 +89,7 @@ limitations under the License.
     <collision name="openarm_left_base_link_collision">
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/base_link.stl" scale="1 -1 1"/>
+        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/base_link/base_link.stl" scale="1 -1 1"/>
       </geometry>
     </collision>
     <inertial>
@@ -114,7 +114,7 @@ limitations under the License.
     <collision name="openarm_left_link1_collision">
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link1.stl" scale="1 -1 1"/>
+        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link1/link1.stl" scale="1 -1 1"/>
       </geometry>
     </collision>
     <inertial>
@@ -141,7 +141,7 @@ limitations under the License.
     <collision name="openarm_left_link2_collision">
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link2.stl" scale="1 -1 1"/>
+        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link2/link2.stl" scale="1 -1 1"/>
       </geometry>
     </collision>
     <inertial>
@@ -168,7 +168,7 @@ limitations under the License.
     <collision name="openarm_left_link3_collision">
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link3.stl" scale="1 1 1"/>
+        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link3/link3.stl" scale="1 1 1"/>
       </geometry>
     </collision>
     <inertial>
@@ -195,7 +195,7 @@ limitations under the License.
     <collision name="openarm_left_link4_collision">
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link4.stl" scale="1 1 1"/>
+        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link4/link4.stl" scale="1 1 1"/>
       </geometry>
     </collision>
     <inertial>
@@ -222,7 +222,7 @@ limitations under the License.
     <collision name="openarm_left_link5_collision">
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link5.stl" scale="1 -1 1"/>
+        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link5/link5.stl" scale="1 -1 1"/>
       </geometry>
     </collision>
     <inertial>
@@ -249,7 +249,7 @@ limitations under the License.
     <collision name="openarm_left_link6_collision">
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link6.stl" scale="1 -1 1"/>
+        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link6/link6.stl" scale="1 -1 1"/>
       </geometry>
     </collision>
     <inertial>
@@ -283,7 +283,7 @@ limitations under the License.
     <collision name="openarm_left_ee_base_link_collision">
       <origin rpy="0.0 -0.0 0.0" xyz="0.0205 0.0 0.0"/>
       <geometry>
-        <mesh filename="package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/ee_base_link.stl" scale="1 -1 1"/>
+        <mesh filename="package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/ee_base_link/ee_base_link.stl" scale="1 -1 1"/>
       </geometry>
     </collision>
     <inertial>
@@ -303,7 +303,7 @@ limitations under the License.
     <collision name="openarm_left_ee_link1_collision">
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/finger_inner.stl" scale="1 -1 1"/>
+        <mesh filename="package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/finger_inner/finger_inner.stl" scale="1 -1 1"/>
       </geometry>
     </collision>
     <inertial>
@@ -323,7 +323,7 @@ limitations under the License.
     <collision name="openarm_left_ee_link2_collision">
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/finger_outer.stl" scale="1 -1 1"/>
+        <mesh filename="package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/finger_outer/finger_outer.stl" scale="1 -1 1"/>
       </geometry>
     </collision>
     <inertial>
@@ -364,7 +364,7 @@ limitations under the License.
     <collision name="openarm_right_base_link_collision">
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/base_link.stl" scale="1 1 1"/>
+        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/base_link/base_link.stl" scale="1 1 1"/>
       </geometry>
     </collision>
     <inertial>
@@ -389,7 +389,7 @@ limitations under the License.
     <collision name="openarm_right_link1_collision">
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link1.stl" scale="1 1 1"/>
+        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link1/link1.stl" scale="1 1 1"/>
       </geometry>
     </collision>
     <inertial>
@@ -416,7 +416,7 @@ limitations under the License.
     <collision name="openarm_right_link2_collision">
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link2.stl" scale="1 1 1"/>
+        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link2/link2.stl" scale="1 1 1"/>
       </geometry>
     </collision>
     <inertial>
@@ -443,7 +443,7 @@ limitations under the License.
     <collision name="openarm_right_link3_collision">
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link3.stl" scale="1 1 1"/>
+        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link3/link3.stl" scale="1 1 1"/>
       </geometry>
     </collision>
     <inertial>
@@ -470,7 +470,7 @@ limitations under the License.
     <collision name="openarm_right_link4_collision">
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link4.stl" scale="1 1 1"/>
+        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link4/link4.stl" scale="1 1 1"/>
       </geometry>
     </collision>
     <inertial>
@@ -497,7 +497,7 @@ limitations under the License.
     <collision name="openarm_right_link5_collision">
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link5.stl" scale="1 1 1"/>
+        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link5/link5.stl" scale="1 1 1"/>
       </geometry>
     </collision>
     <inertial>
@@ -524,7 +524,7 @@ limitations under the License.
     <collision name="openarm_right_link6_collision">
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link6.stl" scale="1 1 1"/>
+        <mesh filename="package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link6/link6.stl" scale="1 1 1"/>
       </geometry>
     </collision>
     <inertial>
@@ -558,7 +558,7 @@ limitations under the License.
     <collision name="openarm_right_ee_base_link_collision">
       <origin rpy="0.0 -0.0 0.0" xyz="0.0205 0.0 0.0"/>
       <geometry>
-        <mesh filename="package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/ee_base_link.stl" scale="1 1 1"/>
+        <mesh filename="package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/ee_base_link/ee_base_link.stl" scale="1 1 1"/>
       </geometry>
     </collision>
     <inertial>
@@ -578,7 +578,7 @@ limitations under the License.
     <collision name="openarm_right_ee_link1_collision">
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/finger_inner.stl" scale="1 1 1"/>
+        <mesh filename="package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/finger_inner/finger_inner.stl" scale="1 1 1"/>
       </geometry>
     </collision>
     <inertial>
@@ -598,7 +598,7 @@ limitations under the License.
     <collision name="openarm_right_ee_link2_collision">
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/finger_outer.stl" scale="1 1 1"/>
+        <mesh filename="package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/finger_outer/finger_outer.stl" scale="1 1 1"/>
       </geometry>
     </collision>
     <inertial>
