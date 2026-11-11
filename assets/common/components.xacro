@@ -32,7 +32,7 @@ limitations under the License.
 
     <xacro:openarm_validate_topology topology="${component_topology}" component="${component_name}" />
     <xacro:property name="component_reference_points" value="${xacro.load_yaml(component_cfg_root + '/struct/reference_points.yaml')}" lazy_eval="false" />
-    <xacro:if value="${component_type in ['body', 'accessory']}">
+    <xacro:if value="${component_type == 'accessory'}">
       <xacro:openarm_require
         condition="${len(component_topology['links']) == 1 and len(component_topology['joints']) == 0}"
         message="${'Component `%s` must define one rigid link and no internal joints.' % component_name}" />

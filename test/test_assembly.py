@@ -20,7 +20,7 @@ import xacro
 from support import assemble, chain, component, installed_tool, model, multiply, near, physical_equal, pinch, pose, poses, preset, transform
 
 
-@pytest.mark.parametrize('kind', ['robot'])
+@pytest.mark.parametrize('kind', ['robot', 'body'])
 def test_topology_and_values_come_from_configuration(kind):
     data = chain()
     data['struct/topology.yaml']['joints']['pivot']['type'] = 'prismatic'
