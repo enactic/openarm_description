@@ -134,3 +134,8 @@ systems:
         joint5: {idx: 5}
         joint6: {idx: 6}
         joint7: {idx: 7}
+
+preview:
+  view:
+    eye: {x: 1.62528513, y: -1.61810795, z: 0.78555713}
+    lookat: {x: 0.0, y: 0.0, z: 0.0}

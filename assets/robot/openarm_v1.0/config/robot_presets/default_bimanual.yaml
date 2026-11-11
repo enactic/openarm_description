@@ -173,3 +173,8 @@ systems:
         joint7: {idx: 7}
       secondary_arm_end_effector:
         joint2: {idx: 8}
+
+preview:
+  view:
+    eye: {x: 3.35215806, y: -3.3373551, z: 1.6202152}
+    lookat: {x: 0.0, y: 0.0, z: 0.0}
