@@ -95,8 +95,8 @@ def robot_state_publisher_spawner(
 
     preset_name = mappings['robot_preset'] or (
         'default_bimanual' if mappings['bimanual'].lower() in ('true', '1') else 'default_single')
-    preset_path = os.path.join(pkg_share, 'assets', 'robot', folder_name,
-                               'config', 'robot_presets', preset_name + '.yaml')
+    preset_group = 'v1' if folder_name == 'openarm_v1.0' else 'v2'
+    preset_path = os.path.join(pkg_share, 'presets', preset_group, preset_name + '.yaml')
     with open(preset_path) as stream:
         preset = yaml.safe_load(stream)
     spec = importlib.util.spec_from_file_location(

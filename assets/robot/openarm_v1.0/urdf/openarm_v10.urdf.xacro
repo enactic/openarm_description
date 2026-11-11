@@ -32,7 +32,8 @@ limitations under the License.
   <xacro:openarm_require condition="${'$(arg body_type)' == 'v10'}" message="V1 entry requires body_type:=v10." />
   <xacro:property name="config_root" value="$(find openarm_description)/assets/robot/openarm_v1.0/config" />
   <xacro:property name="preset_name" value="${'$(arg robot_preset)' or ('default_bimanual' if '$(arg bimanual)'.lower() in ['true', '1'] else 'default_single')}" />
-  <xacro:property name="preset" value="${xacro.load_yaml(config_root + '/robot_presets/' + preset_name + '.yaml')}" lazy_eval="false" />
+  <xacro:property name="preset_root" value="$(find openarm_description)/presets/v1" />
+  <xacro:property name="preset" value="${xacro.load_yaml(preset_root + '/' + preset_name + '.yaml')}" lazy_eval="false" />
 
   <xacro:openarm_assemble_robot out_name="component_descriptions" component_api="${dict(describe='openarm_describe_auto_component', emit='openarm_emit_auto_component')}" config_root="${config_root}" robot_preset="${preset}" />
   <xacro:if value="$(arg ros2_control)">

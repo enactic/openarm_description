@@ -19,15 +19,15 @@ from support import ROOT, expand, packages
 
 
 def test_shipped_presets_expand_and_resolve_resources():
-    robots = []
-    for version in ('v1.0', 'v2.0'):
-        folder = ROOT/f'assets/robot/openarm_{version}/config/robot_presets'
-        robots.append((version, '<default>', expand(version=version, ros2_control=True,
-                       use_fake_hardware=True, emit_grasp_frame=True)))
-        for path in sorted(folder.glob('*.yaml')):
-            robot = expand(version=version, robot_preset=path.stem, ros2_control=True,
+    robots = [('<shared>', '<default>', expand(
+        entry='urdf/openarm.urdf.xacro', ros2_control=True,
+        use_fake_hardware=True, emit_grasp_frame=True))]
+    for group in ('v1', 'v2'):
+        for path in sorted((ROOT/'presets'/group).glob('*.yaml')):
+            robot = expand(entry='urdf/openarm.urdf.xacro',
+                           robot_preset=f'{group}/{path.stem}', ros2_control=True,
                            use_fake_hardware=True, emit_grasp_frame=True)
-            robots.append((version, path.stem, robot))
+            robots.append((group, path.stem, robot))
     for path in sorted((ROOT/'assets/end_effector').glob('*/urdf/*_standalone.urdf.xacro')):
         robots.append(('standalone', path.name, expand(
             entry=str(path.relative_to(ROOT)))))

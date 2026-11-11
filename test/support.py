@@ -112,10 +112,13 @@ def expand(files=None, version='v2.0', entry=None, **arguments):
     with tempfile.TemporaryDirectory() as directory:
         share = Path(directory)
         if files:
-            shutil.copytree(ROOT/'assets', share/'assets',
-                            copy_function=os.symlink)
+            for tree in ('assets', 'presets', 'urdf'):
+                if (ROOT/tree).is_dir():
+                    shutil.copytree(ROOT/tree, share/tree,
+                                    copy_function=os.symlink)
             for name, value in files.items():
-                path = share/'assets'/name
+                path = share/name if name.startswith(('presets/', 'urdf/')) \
+                    else share/'assets'/name
                 path.parent.mkdir(parents=True, exist_ok=True)
                 if path.exists() or path.is_symlink():
                     path.unlink()
@@ -173,7 +176,8 @@ def preset(**components):
 
 
 def files_for(spec, models, version='v2.0'):
-    files = {f'robot/openarm_{version}/config/robot_presets/fixture.yaml': spec}
+    group = 'v1' if version == 'v1.0' else 'v2'
+    files = {f'presets/{group}/fixture.yaml': spec}
     for name, data in models.items():
         cfg = spec[name]
         path = f"{cfg['type']}/{cfg['product']}/config" + \

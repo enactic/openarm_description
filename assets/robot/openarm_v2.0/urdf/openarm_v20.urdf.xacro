@@ -28,9 +28,9 @@ limitations under the License.
   <xacro:arg name="right_can_interface" default="" />
   <xacro:arg name="can_fd" default="" />
 
-  <xacro:property name="robot_root" value="$(find openarm_description)/assets/robot/openarm_v2.0" />
-  <xacro:property name="config_root" value="${robot_root + '/config'}" />
-  <xacro:property name="robot_preset_cfg" value="${xacro.load_yaml(config_root + '/robot_presets/' + '$(arg robot_preset)' + '.yaml')}" />
+  <xacro:property name="preset_root" value="$(find openarm_description)/presets/v2" />
+  <xacro:property name="config_root" value="$(find openarm_description)/assets/robot/openarm_v2.0/config" />
+  <xacro:property name="robot_preset_cfg" value="${xacro.load_yaml(preset_root + '/' + '$(arg robot_preset)' + '.yaml')}" />
 
   <xacro:openarm_assemble_robot out_name="component_descriptions" component_api="${dict(describe='openarm_describe_auto_component', emit='openarm_emit_auto_component')}"
     config_root="${config_root}"
