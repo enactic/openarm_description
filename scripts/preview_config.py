@@ -23,14 +23,16 @@ def expand_preview_model(path, mappings, preset):
     xacro.init_stacks(path)
     doc = xacro.parse(None, path)
     bindings = []
-    enabled = {name for name in preset['robot']['components'] if preset[name]['enabled']}
+    enabled = {name for name in preset['robot']
+               ['components'] if preset[name]['enabled']}
     for system in preset.get('systems', {}).values():
         for component, joints in system['joints'].items():
             if component not in enabled:
                 continue
             for key in joints:
                 node = doc.createElement('preview_binding')
-                node.setAttribute('name', '${component_descriptions[%r]["joint_name_map"][%r]}' % (component, key))
+                node.setAttribute(
+                    'name', '${component_descriptions[%r]["joint_name_map"][%r]}' % (component, key))
                 doc.documentElement.appendChild(node)
                 bindings.append((component, key, node))
     xacro.process_doc(doc, mappings=mappings)
@@ -50,7 +52,8 @@ def resolve_initial_positions(preset, joint_name_maps, robot_description, overri
     systems = preset.get('systems', {})
     if set(overrides) - set(systems):
         raise ValueError('Unknown system in initial-position overrides')
-    joints = {j.get('name'): j for j in ET.fromstring(robot_description).findall('joint')}
+    joints = {j.get('name'): j for j in ET.fromstring(
+        robot_description).findall('joint')}
     positions = {}
     for system_name, system in systems.items():
         entries = overrides.get(system_name, {})
@@ -65,17 +68,20 @@ def resolve_initial_positions(preset, joint_name_maps, robot_description, overri
                 seen.add(idx)
                 if idx not in entries and 'init_pos' not in config:
                     continue
-                value = float(entries[idx] if idx in entries else config['init_pos'])
+                value = float(
+                    entries[idx] if idx in entries else config['init_pos'])
                 name = joint_name_maps[component][key]
                 joint = joints[name]
                 if joint.get('type') not in ('revolute', 'continuous', 'prismatic') or joint.find('mimic') is not None:
-                    raise ValueError(f'Cannot initialize dependent or fixed joint {name}')
+                    raise ValueError(
+                        f'Cannot initialize dependent or fixed joint {name}')
                 if not math.isfinite(value):
                     raise ValueError(f'Non-finite init_pos for {name}')
                 limit = joint.find('limit')
                 if joint.get('type') != 'continuous' and limit is not None:
                     if not float(limit.get('lower')) <= value <= float(limit.get('upper')):
-                        raise ValueError(f'init_pos outside limits for {name}: {value}')
+                        raise ValueError(
+                            f'init_pos outside limits for {name}: {value}')
                 if name in positions:
                     raise ValueError(f'Duplicate init_pos for {name}')
                 positions[name] = value
@@ -93,7 +99,8 @@ def apply_preview_view(config, view, root_frame):
     dx, dy, dz = [a-b for a, b in zip(eye, target)]
     distance = math.sqrt(dx*dx + dy*dy + dz*dz)
     if distance == 0 or math.hypot(dx, dy) == 0:
-        raise ValueError('Preview Orbit camera needs distinct eye/lookat and a horizontal direction')
+        raise ValueError(
+            'Preview Orbit camera needs distinct eye/lookat and a horizontal direction')
     manager = config['Visualization Manager']
     manager['Global Options']['Fixed Frame'] = root_frame
     camera = manager['Views']['Current']
