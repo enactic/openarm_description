@@ -21,7 +21,7 @@ base_link:
     pitch: -0
     yaw: 0
   geometry:
-    mesh: "package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/ee_base_link.stl"
+    mesh: "package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/ee_base_link/ee_base_link.stl"
     scale:
       x: 1
       y: 1
@@ -35,7 +35,7 @@ link1:
     pitch: -0
     yaw: 0
   geometry:
-    mesh: "package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/finger_inner.stl"
+    mesh: "package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/finger_inner/finger_inner.stl"
     scale:
       x: 1
       y: 1
@@ -49,7 +49,7 @@ link2:
     pitch: -0
     yaw: 0
   geometry:
-    mesh: "package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/finger_outer.stl"
+    mesh: "package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/finger_outer/finger_outer.stl"
     scale:
       x: 1
       y: 1
