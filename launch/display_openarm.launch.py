@@ -103,9 +103,12 @@ def robot_state_publisher_spawner(
         'openarm_preview_config', os.path.join(pkg_share, 'scripts', 'preview_config.py'))
     preview = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(preview)
-    robot_description, joint_names = preview.expand_preview_model(xacro_path, mappings, preset)
-    positions = preview.resolve_initial_positions(preset, joint_names, robot_description)
-    rviz_path = os.path.join(pkg_share, 'rviz', context.perform_substitution(rviz_config))
+    robot_description, joint_names = preview.expand_preview_model(
+        xacro_path, mappings, preset)
+    positions = preview.resolve_initial_positions(
+        preset, joint_names, robot_description)
+    rviz_path = os.path.join(
+        pkg_share, 'rviz', context.perform_substitution(rviz_config))
     cleanup = []
     view = preset.get('preview', {}).get('view')
     if view:
@@ -131,7 +134,8 @@ def robot_state_publisher_spawner(
             package="joint_state_publisher_gui",
             executable="joint_state_publisher_gui",
             name="joint_state_publisher_gui",
-            parameters=[{'zeros.' + name: value for name, value in positions.items()}],
+            parameters=[{'zeros.' + name: value for name,
+                         value in positions.items()}],
         ),
         Node(
             package="rviz2",
