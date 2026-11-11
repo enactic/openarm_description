@@ -24,26 +24,36 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 # All accepted arm_type values
+V1_ARM_TYPES = {"v1.0", "v10", "v1_0",
+                "openarm_v1.0", "openarm_v10", "openarm_v1_0"}
 VALID_ARM_TYPES = {
     "v1.0", "v10", "v1_0", "openarm_v1.0", "openarm_v10", "openarm_v1_0",
     "v2.0", "v20", "v2_0", "openarm_v2.0", "openarm_v20", "openarm_v2_0",
 }
 
 
-def resolve_arm_config(arm_type_str: str) -> tuple[str, str]:
+def resolve_preset_id(arm_type, robot_preset, bimanual):
+    """Return the full preset identifier used by the public xacro entry.
+
+    A full identifier such as ``v2/cell_bimanual`` is used as given. A short
+    name is completed from the selected arm type. No name keeps the historical
+    default selection for that arm type.
     """
-    Resolve folder name and xacro file name from arm_type.
-    Accepts: v1.0, v10, v1_0, openarm_v1.0, openarm_v10, openarm_v1_0 (and v2.0 variants)
-    Raises ValueError if arm_type is not recognized.
-    """
-    if arm_type_str not in VALID_ARM_TYPES:
+    if arm_type not in VALID_ARM_TYPES:
         raise ValueError(
-            f"Invalid arm_type: '{arm_type_str}'. "
-            f"Accepted values: {sorted(VALID_ARM_TYPES)}."
-        )
-    if any(x in arm_type_str for x in ("1.0", "10", "1_0")):
-        return "openarm_v1.0", "openarm_v10.urdf.xacro"
-    return "openarm_v2.0", "openarm_v20.urdf.xacro"
+            f"Invalid arm_type: '{arm_type}'. "
+            f"Accepted values: {sorted(VALID_ARM_TYPES)}.")
+    preset = robot_preset.strip()
+    is_v1 = arm_type in V1_ARM_TYPES
+    group = "v1" if is_v1 else "v2"
+    if "/" in preset:
+        return preset
+    if preset:
+        return group + "/" + preset
+    if is_v1:
+        return "v1/" + ("default_bimanual" if bimanual.lower() in ("true", "1")
+                        else "default_single")
+    return "v2/default_bimanual"
 
 
 def robot_state_publisher_spawner(
@@ -58,45 +68,23 @@ def robot_state_publisher_spawner(
     rviz_config,
 ):
     arm_type_str = context.perform_substitution(arm_type)
-    folder_name, file_name = resolve_arm_config(arm_type_str)
+    preset_id = resolve_preset_id(arm_type_str,
+                                  context.perform_substitution(robot_preset),
+                                  context.perform_substitution(bimanual))
 
     pkg_share = get_package_share_directory("openarm_description")
 
-    xacro_path = os.path.join(
-        pkg_share,
-        "assets",
-        "robot",
-        folder_name,
-        "urdf",
-        file_name,
-    )
+    xacro_path = os.path.join(pkg_share, "urdf", "openarm.urdf.xacro")
 
-    is_v1 = any(x in arm_type_str for x in ("1.0", "10", "1_0"))
+    mappings = {
+        "robot_preset": preset_id,
+        "emit_grasp_frame": context.perform_substitution(emit_grasp_frame),
+        "ros2_control": context.perform_substitution(ros2_control),
+        "use_fake_hardware": context.perform_substitution(use_fake_hardware),
+        "fake_sensor_commands": context.perform_substitution(fake_sensor_commands),
+    }
 
-    if is_v1:
-        mappings = {
-            "arm_type": arm_type_str,
-            "body_type": "v10",
-            "bimanual": context.perform_substitution(bimanual),
-            "robot_preset": context.perform_substitution(robot_preset),
-            "ros2_control": context.perform_substitution(ros2_control),
-            "use_fake_hardware": context.perform_substitution(use_fake_hardware),
-            "fake_sensor_commands": context.perform_substitution(fake_sensor_commands),
-        }
-    else:
-        mappings = {
-            "arm_type": arm_type_str,
-            "robot_preset": context.perform_substitution(robot_preset) or "default_bimanual",
-            "emit_grasp_frame": context.perform_substitution(emit_grasp_frame),
-            "ros2_control": context.perform_substitution(ros2_control),
-            "use_fake_hardware": context.perform_substitution(use_fake_hardware),
-            "fake_sensor_commands": context.perform_substitution(fake_sensor_commands),
-        }
-
-    preset_name = mappings['robot_preset'] or (
-        'default_bimanual' if mappings['bimanual'].lower() in ('true', '1') else 'default_single')
-    preset_group = 'v1' if folder_name == 'openarm_v1.0' else 'v2'
-    preset_path = os.path.join(pkg_share, 'presets', preset_group, preset_name + '.yaml')
+    preset_path = os.path.join(pkg_share, "presets", preset_id + ".yaml")
     with open(preset_path) as stream:
         preset = yaml.safe_load(stream)
     spec = importlib.util.spec_from_file_location(
@@ -150,12 +138,14 @@ def generate_launch_description():
     arm_type_arg = DeclareLaunchArgument(
         "arm_type",
         default_value="v20",
-        description="Arm type. Accepts: v1.0, v10, openarm_v1.0, v2.0, v20, openarm_v2.0, etc.",
+        description="Arm type used to complete a short preset name. "
+                    "Accepts: v1.0, v10, openarm_v1.0, v2.0, v20, openarm_v2.0, etc.",
     )
     robot_preset_arg = DeclareLaunchArgument(
         "robot_preset",
         default_value="",
-        description="Robot preset; empty selects the default assembly for the selected version.",
+        description="Robot preset, either a full identifier such as v2/cell_bimanual "
+                    "or a short name completed from arm_type; empty selects the default.",
     )
     rviz_config_arg = DeclareLaunchArgument(
         "rviz_config",

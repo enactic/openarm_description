@@ -48,13 +48,13 @@ jobs:
               mkdir -p urdf_output
 
               # v1.0 bimanual
-              xacro assets/robot/openarm_v1.0/urdf/openarm_v10.urdf.xacro \
-                arm_type:=v10 bimanual:=true \
+              xacro urdf/openarm.urdf.xacro \
+                robot_preset:=v1/default_bimanual ros2_control:=false \
                 > urdf_output/openarm_v10_bimanual_${{ matrix.id }}.urdf
 
               # v2.0 bimanual
-              xacro assets/robot/openarm_v2.0/urdf/openarm_v20.urdf.xacro \
-                robot_preset:=default_bimanual \
+              xacro urdf/openarm.urdf.xacro \
+                robot_preset:=v2/default_bimanual \
                 > urdf_output/openarm_v20_bimanual_${{ matrix.id }}.urdf'
       - uses: actions/upload-artifact@v7
         with:
@@ -94,8 +94,8 @@ jobs:
             --prefix "${name}/" \
             --output "${name}.tar"
 
-          mkdir "${name}"
-          mv artifacts "${name}/urdf"
+          mkdir -p "${name}/urdf"
+          mv artifacts/*.urdf "${name}/urdf/"
           find "${name}/urdf" -type f | tar -rf "${name}.tar" -T -
           gzip "${name}.tar"
 
