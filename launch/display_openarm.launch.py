@@ -12,11 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
+import importlib.util
+import tempfile
 
-import xacro
+import yaml
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription, LaunchContext
-from launch.actions import DeclareLaunchArgument, OpaqueFunction
+from launch.actions import DeclareLaunchArgument, OpaqueFunction, RegisterEventHandler
+from launch.event_handlers import OnShutdown
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
@@ -52,6 +55,7 @@ def robot_state_publisher_spawner(
     ros2_control,
     use_fake_hardware,
     fake_sensor_commands,
+    rviz_config,
 ):
     arm_type_str = context.perform_substitution(arm_type)
     folder_name, file_name = resolve_arm_config(arm_type_str)
@@ -89,19 +93,56 @@ def robot_state_publisher_spawner(
             "fake_sensor_commands": context.perform_substitution(fake_sensor_commands),
         }
 
-    robot_description = xacro.process_file(
-        xacro_path,
-        mappings=mappings,
-    ).toprettyxml(indent="  ")
+    preset_name = mappings['robot_preset'] or (
+        'default_bimanual' if mappings['bimanual'].lower() in ('true', '1') else 'default_single')
+    preset_path = os.path.join(pkg_share, 'assets', 'robot', folder_name,
+                               'config', 'robot_presets', preset_name + '.yaml')
+    with open(preset_path) as stream:
+        preset = yaml.safe_load(stream)
+    spec = importlib.util.spec_from_file_location(
+        'openarm_preview_config', os.path.join(pkg_share, 'scripts', 'preview_config.py'))
+    preview = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(preview)
+    robot_description, joint_names = preview.expand_preview_model(
+        xacro_path, mappings, preset)
+    positions = preview.resolve_initial_positions(
+        preset, joint_names, robot_description)
+    rviz_path = os.path.join(
+        pkg_share, 'rviz', context.perform_substitution(rviz_config))
+    cleanup = []
+    view = preset.get('preview', {}).get('view')
+    if view:
+        with open(rviz_path) as stream:
+            config = preview.apply_preview_view(
+                yaml.safe_load(stream), view, preset['robot']['root_frame'])
+        temporary = tempfile.TemporaryDirectory(prefix='openarm-preview-')
+        rviz_path = os.path.join(temporary.name, 'preview.rviz')
+        with open(rviz_path, 'w') as stream:
+            yaml.safe_dump(config, stream)
+        cleanup.append(RegisterEventHandler(OnShutdown(
+            on_shutdown=lambda event, context: temporary.cleanup())))
 
-    return [
+    return cleanup + [
         Node(
             package="robot_state_publisher",
             executable="robot_state_publisher",
             name="robot_state_publisher",
             output="screen",
             parameters=[{"robot_description": robot_description}],
-        )
+        ),
+        Node(
+            package="joint_state_publisher_gui",
+            executable="joint_state_publisher_gui",
+            name="joint_state_publisher_gui",
+            parameters=[{'zeros.' + name: value for name,
+                         value in positions.items()}],
+        ),
+        Node(
+            package="rviz2",
+            executable="rviz2",
+            name="rviz2",
+            arguments=["--display-config", rviz_path],
+        ),
     ]
 
 
@@ -151,8 +192,6 @@ def generate_launch_description():
     use_fake_hardware = LaunchConfiguration("use_fake_hardware")
     fake_sensor_commands = LaunchConfiguration("fake_sensor_commands")
 
-    pkg_share = get_package_share_directory("openarm_description")
-
     return LaunchDescription([
         arm_type_arg,
         robot_preset_arg,
@@ -172,18 +211,7 @@ def generate_launch_description():
                 ros2_control,
                 use_fake_hardware,
                 fake_sensor_commands,
+                rviz_config,
             ],
-        ),
-        Node(
-            package="joint_state_publisher_gui",
-            executable="joint_state_publisher_gui",
-            name="joint_state_publisher_gui",
-        ),
-        Node(
-            package="rviz2",
-            executable="rviz2",
-            name="rviz2",
-            arguments=["--display-config",
-                       [os.path.join(pkg_share, "rviz/"), rviz_config]],
         ),
     ])
