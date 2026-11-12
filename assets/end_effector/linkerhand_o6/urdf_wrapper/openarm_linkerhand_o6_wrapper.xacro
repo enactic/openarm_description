@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<!--
+Copyright 2026 Enactic, Inc.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Imported official URDFs retain their link/joint names.
+       Select the hand through config: left or config: right. -->
+  <xacro:macro name="openarm_describe_linkerhand_o6" params="component_name component_cfg side out_name">
+    <xacro:property name="empty_dict" value="${dict()}" />
+    <xacro:openarm_require condition="${not component_cfg.get('prefix')}"
+      message="${'Component `%s` uses the official LinkerHand O6 names and requires an empty prefix.' % component_name}" />
+    <xacro:openarm_require condition="${python.all(component_cfg.get('reflect', dict()).get(axis, 1) == 1 for axis in ['x', 'y', 'z'])}"
+      message="${'Component `%s` cannot be reflected. Use config: left or config: right.' % component_name}" />
+    <xacro:openarm_require condition="${not component_cfg.get('limit_override_joints') and not component_cfg.get('origin_override_joints')}"
+      message="${'Component `%s` does not support joint overrides.' % component_name}" />
+    <xacro:property name="root_link" value="${dict(left='lh', right='rh')[side] + '_hand_base_link'}" lazy_eval="false" />
+    <xacro:property
+      name="${out_name}"
+      value="${dict(name=component_name,
+                   source_type=component_cfg['type'],
+                   component_type='end_effector',
+                   product=component_cfg['product'],
+                   config=component_cfg['config'],
+                   prefix='',
+
+                   root_link_actual=root_link,
+                   topology=dict(links=dict(base_link=dict(name=root_link)), joints=dict()),
+                   reference_points=empty_dict,
+                   joint_origins=empty_dict,
+                   joint_axes=empty_dict,
+                   joint_limits=empty_dict,
+                   joint_mimics=empty_dict,
+                   inertials=empty_dict,
+                   visuals=empty_dict,
+                   collisions=empty_dict,
+                   link_name_map=dict(base_link=root_link),
+                   joint_name_map=empty_dict,
+                   default_mount_parent=root_link,
+                   collapse_empty_end=False,
+                   supports_frame_shift=False)}"
+      scope="parent"
+      lazy_eval="false" />
+  </xacro:macro>
+
+  <xacro:macro name="openarm_linkerhand_o6_wrapper" params="side root_link connected_to mount_origin">
+    <xacro:include filename="$(find openarm_description)/assets/end_effector/linkerhand_o6/${side}/urdf/linkerhand_o6_${side}.urdf" />
+
+    <joint name="${root_link}_mount_joint" type="fixed">
+      <origin
+        xyz="${mount_origin['x']} ${mount_origin['y']} ${mount_origin['z']}"
+        rpy="${mount_origin['roll']} ${mount_origin['pitch']} ${mount_origin['yaw']}" />
+      <parent link="${connected_to}" />
+      <child link="${root_link}" />
+    </joint>
+  </xacro:macro>
+
+</robot>

@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+Copyright 2026 Enactic, Inc.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- The left hand of the official LinkerHand O6 description. -->
+  <xacro:macro name="describe_component" params="component_name component_cfg config_root options out_name">
+    <xacro:include filename="$(find openarm_description)/assets/end_effector/linkerhand_o6/urdf_wrapper/openarm_linkerhand_o6_wrapper.xacro" />
+    <xacro:openarm_describe_linkerhand_o6 component_name="${component_name}" component_cfg="${component_cfg}" side="left" out_name="description" />
+    <xacro:property name="${out_name}" value="${description}" scope="parent" lazy_eval="false" />
+  </xacro:macro>
+
+  <xacro:macro name="emit_component" params="component_desc component_runtime options">
+    <xacro:include filename="$(find openarm_description)/assets/end_effector/linkerhand_o6/urdf_wrapper/openarm_linkerhand_o6_wrapper.xacro" />
+    <xacro:openarm_linkerhand_o6_wrapper
+      side="left"
+      root_link="${component_desc['root_link_actual']}"
+      connected_to="${component_runtime['resolved_connected_to']}"
+      mount_origin="${component_runtime['resolved_mount_origin']}" />
+  </xacro:macro>
+</robot>
