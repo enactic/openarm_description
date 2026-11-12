@@ -1,0 +1,242 @@
+# Copyright 2026 Enactic, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+base_link:
+- name: cell_left_wall_col
+  origin:
+    x: 0.425
+    y: 0.52
+    z: 0.435
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    box:
+      x: 0.85
+      y: 0.06
+      z: 0.88
+- name: cell_right_wall_col
+  origin:
+    x: 0.425
+    y: -0.52
+    z: 0.435
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    box:
+      x: 0.85
+      y: 0.06
+      z: 0.88
+- name: cell_front_wall_col
+  origin:
+    x: 0.82
+    y: 0.0
+    z: 0.435
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    box:
+      x: 0.06
+      y: 0.98
+      z: 0.88
+- name: cell_roof_col
+  origin:
+    x: 0.425
+    y: 0.0
+    z: 0.845
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    box:
+      x: 0.85
+      y: 1.1
+      z: 0.06
+- name: cell_table_col
+  origin:
+    x: 0.425
+    y: 0.0
+    z: -0.0325
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    box:
+      x: 0.85
+      y: 1.1
+      z: 0.065
+- name: cell_white_sheet_col
+  origin:
+    x: 0.4225
+    y: 0.0
+    z: 0.001
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    box:
+      x: 0.65
+      y: 0.9
+      z: 0.002
+- name: table_left_ramp
+  origin:
+    x: 0.424995
+    y: 0.500442281
+    z: 0.044554719
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    mesh: package://openarm_description/assets/body/cell/meshes/collision/table_left_ramp.stl
+    scale:
+      x: 1
+      y: 1
+      z: 1
+- name: table_right_ramp
+  origin:
+    x: 0.424995
+    y: -0.500442473
+    z: 0.044554527
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    mesh: package://openarm_description/assets/body/cell/meshes/collision/table_right_ramp.stl
+    scale:
+      x: 1
+      y: 1
+      z: 1
+- name: table_front_ramp
+  origin:
+    x: 0.800295544
+    y: 0.0
+    z: 0.044554422
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    mesh: package://openarm_description/assets/body/cell/meshes/collision/table_front_ramp.stl
+    scale:
+      x: 1
+      y: 1
+      z: 1
+- name: ceiling_camera_bracket
+  origin:
+    x: 0.529165
+    y: 0.0
+    z: 0.787735
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    box:
+      x: 0.12367
+      y: 0.06
+      z: 0.06549
+- name: ceiling_camera_body
+  origin:
+    x: 0.52392
+    y: 5.0e-06
+    z: 0.737925
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    box:
+      x: 0.0385
+      y: 0.03399
+      z: 0.04115
+- name: fixed_column
+  origin:
+    x: 0.03
+    y: 0.0
+    z: 0.515
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    box:
+      x: 0.06
+      y: 0.06
+      z: 0.6
+- name: lift_guide_motor
+  origin:
+    x: 0.0975
+    y: 0.0
+    z: 0.515
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    box:
+      x: 0.075
+      y: 0.0834
+      z: 0.6
+- name: cable_chain
+  origin:
+    x: 0.065
+    y: -0.053075
+    z: 0.489185
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    box:
+      x: 0.12
+      y: 0.04615
+      z: 0.47535
+- name: column_left_brace
+  origin:
+    x: 0.03
+    y: 0.080515355
+    z: 0.764617721
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    mesh: package://openarm_description/assets/body/cell/meshes/collision/column_left_brace.stl
+    scale:
+      x: 1
+      y: 1
+      z: 1
+- name: column_right_brace
+  origin:
+    x: 0.03
+    y: -0.08051979
+    z: 0.764622155
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    mesh: package://openarm_description/assets/body/cell/meshes/collision/column_right_brace.stl
+    scale:
+      x: 1
+      y: 1
+      z: 1
+link1:
+- name: lifter_body
+  origin:
+    x: -0.00975
+    y: 0.0
+    z: 0.0
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+  geometry:
+    box:
+      x: 0.0795
+      y: 0.06
+      z: 0.122
