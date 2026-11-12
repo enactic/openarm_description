@@ -38,3 +38,6 @@ __pycache__
 
 docs/
 scripts/
+
+# Local CAD import name records
+/assets/**/name_mapping.yaml
