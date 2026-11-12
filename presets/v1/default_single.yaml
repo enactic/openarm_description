@@ -13,16 +13,18 @@
 # limitations under the License.
 
 robot:
+  name: openarm
   root_frame: world
   components:
   - arm
+  - end_effector
 arm:
   type: robot
   enabled: true
   product: openarm_v1.0
   config: arm
   inertials: nominal
-  prefix: openarm_left_
+  prefix: openarm_
   connection:
     parent: world
     origin:
@@ -34,28 +36,30 @@ arm:
       yaw: 0
   reflect:
     x: 1
-    y: -1
+    y: 1
+    z: 1
+end_effector:
+  type: end_effector
+  enabled: true
+  product: parallel_link
+  config: null
+  inertials: nominal
+  prefix: openarm_
+  connection:
+    attach_to: arm
+    parent_reference_point: ee_mount_point
+  reflect:
+    x: 1
+    y: 1
     z: 1
     include:
       links:
       - base_link
-      - link1
-      - link2
-      - link5
-      - link6
-      - link7
-      joints:
-      - joint1
-      - joint2
-      - joint3
-      - joint5
-      - joint6
-      - joint7
-      reference_points:
-      - ee_mount_point
+      joints: []
+      reference_points: []
 
 systems:
-  openarm_left_hardware_interface:
+  openarm_hardware_interface:
     joints:
       arm:
         joint1: {idx: 1}
@@ -65,6 +69,8 @@ systems:
         joint5: {idx: 5}
         joint6: {idx: 6}
         joint7: {idx: 7}
+      end_effector:
+        joint2: {idx: 8}
 
 preview:
   view:

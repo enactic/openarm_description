@@ -12,9 +12,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="openarm">
-  <xacro:include filename="$(find openarm_description)/assets/component_loader.xacro" />
-  <xacro:include filename="$(find openarm_description)/assets/common/ros2_control.xacro" />
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find openarm_description)/assets/common/robot.xacro" />
 
   <xacro:arg name="arm_type" default="v10" />
   <xacro:arg name="body_type" default="v10" />
@@ -30,28 +30,20 @@ limitations under the License.
 
   <xacro:openarm_require condition="${'$(arg arm_type)' in ['v10', 'v1.0', 'v1_0', 'openarm_v10', 'openarm_v1.0', 'openarm_v1_0']}" message="V1 entry requires arm_type:=v10." />
   <xacro:openarm_require condition="${'$(arg body_type)' == 'v10'}" message="V1 entry requires body_type:=v10." />
-  <xacro:property name="config_root" value="$(find openarm_description)/assets/robot/openarm_v1.0/config" />
-  <xacro:property name="preset_name" value="${'$(arg robot_preset)' or ('default_bimanual' if '$(arg bimanual)'.lower() in ['true', '1'] else 'default_single')}" />
-  <xacro:property name="preset" value="${xacro.load_yaml(config_root + '/robot_presets/' + preset_name + '.yaml')}" lazy_eval="false" />
 
-  <xacro:openarm_assemble_robot out_name="component_descriptions" component_api="${dict(describe='openarm_describe_auto_component', emit='openarm_emit_auto_component')}" config_root="${config_root}" robot_preset="${preset}" />
-  <xacro:if value="$(arg ros2_control)">
-    <xacro:property name="hardware_defaults" value="${dict(
-      openarm_left_hardware_interface=dict(hardware_plugin='openarm_hardware/OpenArmHW', can_interface='can1', can_fd=True),
-      openarm_right_hardware_interface=dict(hardware_plugin='openarm_hardware/OpenArmHW', can_interface='can0', can_fd=True),
-      openarm_hardware_interface=dict(hardware_plugin='openarm_hardware/OpenArmHW', can_interface='can0', can_fd=True))}" />
-    <xacro:openarm_require condition="${xacro.arg('can_fd').lower() in ['', 'true', 'false', '1', '0']}"
-      message="can_fd must be true, false, 1, 0, or empty." />
-    <xacro:property name="fd_override" value="${dict(can_fd=xacro.arg('can_fd').lower() in ['true', '1']) if xacro.arg('can_fd') else dict()}" />
-    <xacro:property name="single_override" value="${dict(can_interface=xacro.arg('can_interface')) if xacro.arg('can_interface') else dict()}" />
-    <xacro:property name="left_override" value="${dict(can_interface=xacro.arg('left_can_interface')) if xacro.arg('left_can_interface') else dict()}" />
-    <xacro:property name="right_override" value="${dict(can_interface=xacro.arg('right_can_interface')) if xacro.arg('right_can_interface') else dict()}" />
-    <xacro:property name="hardware_overrides" value="${dict(
-      openarm_left_hardware_interface=dict(fd_override, **left_override),
-      openarm_right_hardware_interface=dict(fd_override, **right_override),
-      openarm_hardware_interface=dict(fd_override, **single_override))}" />
-    <xacro:openarm_ros2_control robot_preset="${preset}" component_descriptions="${component_descriptions}" arm_type="v10"
-      use_fake_hardware="$(arg use_fake_hardware)" fake_sensor_commands="$(arg fake_sensor_commands)"
-      hardware_defaults="${hardware_defaults}" hardware_overrides="${hardware_overrides}" />
-  </xacro:if>
+  <!-- V1 entry: short preset names resolve inside presets/v1. -->
+  <xacro:property name="preset_name" value="${'$(arg robot_preset)' or ('default_bimanual' if '$(arg bimanual)'.lower() in ['true', '1'] else 'default_single')}" />
+  <xacro:property name="preset_id" value="${preset_name if '/' in preset_name else 'v1/' + preset_name}" />
+
+  <xacro:openarm_robot robot_preset="${preset_id}"
+    ros2_control="$(arg ros2_control)"
+    use_fake_hardware="$(arg use_fake_hardware)"
+    fake_sensor_commands="$(arg fake_sensor_commands)"
+    can_interface="$(arg can_interface)"
+    left_can_interface="$(arg left_can_interface)"
+    right_can_interface="$(arg right_can_interface)"
+    can_fd="$(arg can_fd)" />
+
+  <xacro:attribute name="name" value="${robot_name}" />
+
 </robot>

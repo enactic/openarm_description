@@ -13,10 +13,10 @@
 # limitations under the License.
 
 robot:
+  name: openarm_v20
   root_frame: world
   components:
     - primary_arm
-    - primary_arm_end_effector
 
 body:
   type: body
@@ -82,11 +82,15 @@ secondary_arm:
     x: 1
     y: -1
     z: 1
+    include:
+      links: [base_link, base_link, link1, link4, link5, link6]
+      joints: [joint1, joint2, joint3, joint5, joint6, joint7]
+      reference_points: [ee_mount_point]
   limit_override_joints: {}
 
 primary_arm_end_effector:
   type: end_effector
-  enabled: true
+  enabled: false
   product: pinch_gripper
   config: null
   inertials: nominal
@@ -131,8 +135,6 @@ systems:
         joint5: {idx: 5}
         joint6: {idx: 6}
         joint7: {idx: 7}
-      primary_arm_end_effector:
-        joint1: {idx: 8}
 
 preview:
   view:

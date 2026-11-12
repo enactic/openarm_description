@@ -13,6 +13,7 @@
 # limitations under the License.
 
 robot:
+  name: openarm
   root_frame: world
   components:
   - arm
@@ -23,7 +24,7 @@ arm:
   product: openarm_v1.0
   config: arm
   inertials: nominal
-  prefix: openarm_
+  prefix: openarm_right_
   connection:
     parent: world
     origin:
@@ -43,7 +44,7 @@ end_effector:
   product: parallel_link
   config: null
   inertials: nominal
-  prefix: openarm_
+  prefix: openarm_right_
   connection:
     attach_to: arm
     parent_reference_point: ee_mount_point
@@ -58,7 +59,7 @@ end_effector:
       reference_points: []
 
 systems:
-  openarm_hardware_interface:
+  openarm_right_hardware_interface:
     joints:
       arm:
         joint1: {idx: 1}

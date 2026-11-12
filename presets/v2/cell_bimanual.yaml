@@ -13,24 +13,29 @@
 # limitations under the License.
 
 robot:
+  name: openarm_v20
   root_frame: world
   components:
-    - primary_arm
-    - primary_arm_end_effector
-
+  - body
+  - primary_arm
+  - secondary_arm
+  - primary_arm_end_effector
+  - secondary_arm_end_effector
+  - body_camera_mount
+  - body_camera
 body:
   type: body
-  prefix: openarm_body_
-  enabled: false
-  product: v2.0
+  enabled: true
+  product: cell
   config: null
   inertials: nominal
+  prefix: openarm_cell_
   connection:
     parent: world
     origin:
       x: 0.0
       y: 0.0
-      z: 0.0
+      z: 1.0075
       roll: 0.0
       pitch: 0.0
       yaw: 0.0
@@ -38,8 +43,6 @@ body:
     x: 1
     y: 1
     z: 1
-  limit_override_joints: {}
-
 primary_arm:
   type: robot
   enabled: true
@@ -48,46 +51,67 @@ primary_arm:
   inertials: nominal
   prefix: openarm_left_
   connection:
-    parent: world
+    attach_to: body
+    parent_reference_point: left_arm_mount_point
+    parent: null
     origin:
-      x: 0.0
-      y: 0.0
-      z: 0.0
-      roll: 0.0
-      pitch: 0.0
-      yaw: 0.0
+      pitch: 3.141592653589793
   reflect:
     x: 1
     y: -1
     z: 1
     include:
-      links: [base_link, link1, link2, link5, link6, link7]
-      joints: [joint1, joint2, joint3, joint5, joint6, joint7]
-      reference_points: [ee_mount_point]
+      links:
+      - base_link
+      - link1
+      - link2
+      - link5
+      - link6
+      - link7
+      joints:
+      - joint1
+      - joint2
+      - joint3
+      - joint5
+      - joint6
+      - joint7
+      reference_points:
+      - ee_mount_point
+  origin_override_joints:
+    joint1:
+      x: 0.0
+      y: -0.0625
+      z: 0.0
+      roll: 0.0
+      pitch: 3.141592653589793
+      yaw: 0.0
   limit_override_joints: {}
-
 secondary_arm:
   type: robot
-  enabled: false
+  enabled: true
   product: openarm_v2.0
   config: arm
   inertials: nominal
   prefix: openarm_right_
   connection:
-    parent: world
+    attach_to: body
+    parent_reference_point: right_arm_mount_point
+    parent: null
     origin:
-      x: 0.0
-      y: 0.0
-      z: 0.0
-      roll: 0.0
-      pitch: 0.0
-      yaw: 0.0
+      pitch: 3.141592653589793
   reflect:
     x: 1
     y: 1
     z: 1
+  origin_override_joints:
+    joint1:
+      x: 0.0
+      y: -0.0625
+      z: 0.0
+      roll: 0.0
+      pitch: 3.141592653589793
+      yaw: 0.0
   limit_override_joints: {}
-
 primary_arm_end_effector:
   type: end_effector
   enabled: true
@@ -105,10 +129,9 @@ primary_arm_end_effector:
     y: -1
     z: 1
   limit_override_joints: {}
-
 secondary_arm_end_effector:
   type: end_effector
-  enabled: false
+  enabled: true
   product: pinch_gripper
   config: null
   inertials: nominal
@@ -123,22 +146,65 @@ secondary_arm_end_effector:
     y: 1
     z: 1
   limit_override_joints: {}
+body_camera_mount:
+  type: accessory
+  enabled: true
+  product: zed_mount
+  config: null
+  inertials: nominal
+  prefix: openarm_body_zed_support_
+  connection:
+    attach_to: body
+    parent_reference_point: lifter_camera_mount_point
+body_camera:
+  type: sensor
+  enabled: true
+  product: zed
+  config:
+    camera_name: openarm_body_zed
+    camera_model: zedm
+  connection:
+    attach_to: body_camera_mount
+    parent_reference_point: camera_mount_point
+    origin:
+      x: 0.00119247
+      y: -0.007723415
+      z: 8.746e-05
+      roll: 0.0
+      pitch: 0.0
+      yaw: 0.0
 
 systems:
+  openarm_cell_hardware_interface:
+    joints:
+      body:
+        joint1: {idx: 1, init_pos: 0.0}
   openarm_left_hardware_interface:
     joints:
       primary_arm:
         joint1: {idx: 1}
         joint2: {idx: 2}
         joint3: {idx: 3}
-        joint4: {idx: 4}
+        joint4: {idx: 4, init_pos: 1.5707963267948966}
         joint5: {idx: 5}
         joint6: {idx: 6}
         joint7: {idx: 7}
       primary_arm_end_effector:
         joint1: {idx: 8}
+  openarm_right_hardware_interface:
+    joints:
+      secondary_arm:
+        joint1: {idx: 1}
+        joint2: {idx: 2}
+        joint3: {idx: 3}
+        joint4: {idx: 4, init_pos: 1.5707963267948966}
+        joint5: {idx: 5}
+        joint6: {idx: 6}
+        joint7: {idx: 7}
+      secondary_arm_end_effector:
+        joint1: {idx: 8}
 
 preview:
   view:
-    eye: {x: 1.62528513, y: -1.61810795, z: 0.78555713}
-    lookat: {x: 0.0, y: 0.0, z: 0.0}
+    eye: {x: -2.0, y: 0.0, z: 1.45}
+    lookat: {x: 0.40, y: 0.0, z: 1.10}

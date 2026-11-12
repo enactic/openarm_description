@@ -30,7 +30,7 @@ limitations under the License.
   </xacro:macro>
 
   <xacro:macro name="openarm_resolve_component_runtime"
-    params="component_descriptions component_name components robot_preset config_root root_frame component_cfg component_desc parent_desc:=none emit_grasp_frame:=false out_name">
+    params="component_descriptions component_name components robot_preset root_frame component_cfg component_desc parent_desc:=none emit_grasp_frame:=false out_name">
 
     <xacro:property name="none_value" value="${'none'}" lazy_eval="false" />
     <xacro:property name="zero_origin" value="${dict(x=0.0, y=0.0, z=0.0, roll=0.0, pitch=0.0, yaw=0.0)}" lazy_eval="false" />
@@ -168,7 +168,7 @@ limitations under the License.
   </xacro:macro>
 
   <xacro:macro name="openarm_emit_component_tree"
-    params="component_api component_descriptions component_name components robot_preset config_root root_frame parent_desc:=none emit_grasp_frame:=false">
+    params="component_api component_descriptions component_name components robot_preset root_frame parent_desc:=none emit_grasp_frame:=false">
 
     <xacro:property name="component_cfg" value="${robot_preset[component_name]}" lazy_eval="false" />
     <xacro:property name="component_desc" value="${component_descriptions[component_name]}" lazy_eval="false" />
@@ -177,7 +177,6 @@ limitations under the License.
       component_name="${component_name}"
       components="${components}"
       robot_preset="${robot_preset}"
-      config_root="${config_root}"
       root_frame="${root_frame}"
       component_cfg="${component_cfg}"
       component_desc="${component_desc}"
@@ -199,14 +198,13 @@ limitations under the License.
       components="${components}"
       parent_component_name="${component_name}"
       robot_preset="${robot_preset}"
-      config_root="${config_root}"
       root_frame="${root_frame}"
       parent_desc="${component_desc}"
       emit_grasp_frame="${emit_grasp_frame}" />
   </xacro:macro>
 
   <xacro:macro name="openarm_emit_attached_components"
-    params="component_api component_descriptions index components parent_component_name robot_preset config_root root_frame parent_desc:=none emit_grasp_frame:=false">
+    params="component_api component_descriptions index components parent_component_name robot_preset root_frame parent_desc:=none emit_grasp_frame:=false">
 
     <xacro:if value="${index &lt; len(components)}">
       <xacro:property name="none_value" value="${'none'}" lazy_eval="false" />
@@ -223,7 +221,6 @@ limitations under the License.
           component_name="${component_name}"
           components="${components}"
           robot_preset="${robot_preset}"
-          config_root="${config_root}"
           root_frame="${root_frame}"
           parent_desc="${none_value if is_root_component else parent_desc}"
           emit_grasp_frame="${emit_grasp_frame}" />
@@ -234,7 +231,6 @@ limitations under the License.
         components="${components}"
         parent_component_name="${parent_component_name}"
         robot_preset="${robot_preset}"
-        config_root="${config_root}"
         root_frame="${root_frame}"
         parent_desc="${parent_desc}"
         emit_grasp_frame="${emit_grasp_frame}" />
@@ -242,7 +238,7 @@ limitations under the License.
   </xacro:macro>
 
   <xacro:macro name="openarm_assemble_robot"
-    params="component_api config_root robot_preset emit_grasp_frame:=false out_name:=component_descriptions">
+    params="component_api robot_preset emit_grasp_frame:=false out_name:=component_descriptions">
 
     <xacro:property name="robot_cfg" value="${robot_preset['robot']}" lazy_eval="false" />
     <xacro:property name="root_frame" value="${robot_cfg['root_frame']}" lazy_eval="false" />
@@ -264,7 +260,6 @@ limitations under the License.
       components="${components}"
       parent_component_name="__root__"
       robot_preset="${robot_preset}"
-      config_root="${config_root}"
       root_frame="${root_frame}"
       emit_grasp_frame="${emit_grasp_frame}" />
   </xacro:macro>

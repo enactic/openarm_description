@@ -31,10 +31,12 @@ if(BUILD_TESTING)
   ament_add_pytest_test(model_contracts test TIMEOUT 180)
 endif()
 
-foreach(install_dir assets launch rviz scripts)
+foreach(install_dir assets launch presets rviz scripts)
   if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${install_dir}")
     install(DIRECTORY ${install_dir} DESTINATION share/${PROJECT_NAME})
   endif()
 endforeach()
+
+install(FILES urdf/openarm.urdf.xacro DESTINATION share/${PROJECT_NAME}/urdf)
 
 ament_package()

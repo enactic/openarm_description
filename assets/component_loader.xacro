@@ -51,7 +51,7 @@ limitations under the License.
     <xacro:openarm_validate_robot_preset components="${['component']}" robot_preset="${preset}" />
     <link name="${root_frame}" />
     <xacro:openarm_resolve_component_runtime component_name="component" components="${['component']}"
-      robot_preset="${preset}" config_root="${component_desc['config_root']}" root_frame="${root_frame}"
+      robot_preset="${preset}" root_frame="${root_frame}"
       component_cfg="${component_cfg}" component_desc="${component_desc}" component_descriptions="${dict(component=component_desc)}" out_name="component_runtime" />
     <xacro:openarm_emit_auto_component component_desc="${component_desc}" component_runtime="${component_runtime}" options="${options}" />
   </xacro:macro>

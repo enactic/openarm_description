@@ -13,9 +13,11 @@
 # limitations under the License.
 
 robot:
+  name: openarm_v20
   root_frame: world
   components:
     - primary_arm
+    - primary_arm_end_effector
 
 body:
   type: body
@@ -45,32 +47,6 @@ primary_arm:
   product: openarm_v2.0
   config: arm
   inertials: nominal
-  prefix: openarm_left_
-  connection:
-    parent: world
-    origin:
-      x: 0.0
-      y: 0.0
-      z: 0.0
-      roll: 0.0
-      pitch: 0.0
-      yaw: 0.0
-  reflect:
-    x: 1
-    y: -1
-    z: 1
-    include:
-      links: [base_link, link1, link2, link5, link6, link7]
-      joints: [joint1, joint2, joint3, joint5, joint6, joint7]
-      reference_points: [ee_mount_point]
-  limit_override_joints: {}
-
-secondary_arm:
-  type: robot
-  enabled: false
-  product: openarm_v2.0
-  config: arm
-  inertials: nominal
   prefix: openarm_right_
   connection:
     parent: world
@@ -87,13 +63,35 @@ secondary_arm:
     z: 1
   limit_override_joints: {}
 
+secondary_arm:
+  type: robot
+  enabled: false
+  product: openarm_v2.0
+  config: arm
+  inertials: nominal
+  prefix: openarm_left_
+  connection:
+    parent: world
+    origin:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      roll: 0.0
+      pitch: 0.0
+      yaw: 0.0
+  reflect:
+    x: 1
+    y: -1
+    z: 1
+  limit_override_joints: {}
+
 primary_arm_end_effector:
   type: end_effector
-  enabled: false
+  enabled: true
   product: pinch_gripper
   config: null
   inertials: nominal
-  prefix: openarm_left_
+  prefix: openarm_right_
   connection:
     attach_to: primary_arm
     parent_reference_point: ee_mount_point
@@ -101,7 +99,7 @@ primary_arm_end_effector:
     origin: null
   reflect:
     x: 1
-    y: -1
+    y: 1
     z: 1
   limit_override_joints: {}
 
@@ -111,7 +109,7 @@ secondary_arm_end_effector:
   product: pinch_gripper
   config: null
   inertials: nominal
-  prefix: openarm_right_
+  prefix: openarm_left_
   connection:
     attach_to: secondary_arm
     parent_reference_point: ee_mount_point
@@ -119,12 +117,12 @@ secondary_arm_end_effector:
     origin: null
   reflect:
     x: 1
-    y: 1
+    y: -1
     z: 1
   limit_override_joints: {}
 
 systems:
-  openarm_left_hardware_interface:
+  openarm_right_hardware_interface:
     joints:
       primary_arm:
         joint1: {idx: 1}
@@ -134,6 +132,8 @@ systems:
         joint5: {idx: 5}
         joint6: {idx: 6}
         joint7: {idx: 7}
+      primary_arm_end_effector:
+        joint1: {idx: 8}
 
 preview:
   view:

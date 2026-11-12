@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright 2026 Enactic, Inc.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find openarm_description)/assets/component_loader.xacro" />
+  <xacro:include filename="$(find openarm_description)/assets/common/ros2_control.xacro" />
+
+  <!-- Emit one complete robot from a package-level preset.
+
+       robot_preset is the full preset identifier, for example v2/cell_bimanual.
+       The macro leaves component_descriptions in the caller scope so preview tools
+       can resolve final joint names from the same expansion. -->
+  <xacro:macro name="openarm_robot"
+    params="robot_preset emit_grasp_frame:=false ros2_control:=true use_fake_hardware:=true fake_sensor_commands:=false can_interface:='' left_can_interface:='' right_can_interface:='' can_fd:='' out_name:=component_descriptions">
+
+    <xacro:property name="preset_root" value="$(find openarm_description)/presets" lazy_eval="false" />
+    <xacro:property name="robot_preset_cfg" value="${xacro.load_yaml(preset_root + '/' + robot_preset + '.yaml')}" lazy_eval="false" />
+
+    <xacro:openarm_require
+      condition="${python.isinstance(robot_preset_cfg['robot']['name'], str) and bool(robot_preset_cfg['robot']['name'].strip())}"
+      message="robot.name must be a non-empty string." />
+    <xacro:property name="robot_name" value="${robot_preset_cfg['robot']['name']}" scope="parent" lazy_eval="false" />
+
+    <xacro:openarm_assemble_robot out_name="component_descriptions"
+      component_api="${dict(describe='openarm_describe_auto_component', emit='openarm_emit_auto_component')}"
+      robot_preset="${robot_preset_cfg}"
+      emit_grasp_frame="${emit_grasp_frame}" />
+
+    <xacro:if value="${ros2_control}">
+      <xacro:property name="hardware_defaults" value="${dict(
+        openarm_hardware_interface=dict(hardware_plugin='openarm_hardware/OpenArmHW', can_interface='can0', can_fd=True),
+        openarm_left_hardware_interface=dict(hardware_plugin='openarm_hardware/OpenArmHW', can_interface='can1', can_fd=True),
+        openarm_right_hardware_interface=dict(hardware_plugin='openarm_hardware/OpenArmHW', can_interface='can0', can_fd=True))}" />
+      <xacro:openarm_require condition="${str(can_fd).lower() in ['', 'true', 'false', '1', '0']}"
+        message="can_fd must be true, false, 1, 0, or empty." />
+      <xacro:property name="fd_override" value="${dict(can_fd=str(can_fd).lower() in ['true', '1']) if can_fd != '' else dict()}" />
+      <xacro:property name="single_override" value="${dict(can_interface=can_interface) if can_interface else dict()}" />
+      <xacro:property name="left_override" value="${dict(can_interface=left_can_interface) if left_can_interface else dict()}" />
+      <xacro:property name="right_override" value="${dict(can_interface=right_can_interface) if right_can_interface else dict()}" />
+      <xacro:property name="hardware_overrides" value="${dict(
+        openarm_hardware_interface=dict(fd_override, **single_override),
+        openarm_left_hardware_interface=dict(fd_override, **left_override),
+        openarm_right_hardware_interface=dict(fd_override, **right_override))}" />
+      <xacro:openarm_ros2_control robot_preset="${robot_preset_cfg}"
+        component_descriptions="${component_descriptions}"
+        use_fake_hardware="${use_fake_hardware}" fake_sensor_commands="${fake_sensor_commands}"
+        hardware_defaults="${hardware_defaults}" hardware_overrides="${hardware_overrides}" />
+    </xacro:if>
+
+    <xacro:property name="${out_name}" value="${component_descriptions}" scope="parent" lazy_eval="false" />
+  </xacro:macro>
+
+</robot>

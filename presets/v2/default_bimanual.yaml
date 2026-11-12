@@ -13,6 +13,7 @@
 # limitations under the License.
 
 robot:
+  name: openarm_v20
   root_frame: world
   components:
   - body
@@ -24,17 +25,17 @@ robot:
   - body_camera
 body:
   type: body
+  prefix: openarm_body_
   enabled: true
-  product: cell
+  product: v2.0
   config: null
   inertials: nominal
-  prefix: openarm_cell_
   connection:
     parent: world
     origin:
       x: 0.0
       y: 0.0
-      z: 1.0075
+      z: 0.0
       roll: 0.0
       pitch: 0.0
       yaw: 0.0
@@ -42,6 +43,7 @@ body:
     x: 1
     y: 1
     z: 1
+  limit_override_joints: {}
 primary_arm:
   type: robot
   enabled: true
@@ -53,8 +55,7 @@ primary_arm:
     attach_to: body
     parent_reference_point: left_arm_mount_point
     parent: null
-    origin:
-      pitch: 3.141592653589793
+    origin: null
   reflect:
     x: 1
     y: -1
@@ -76,14 +77,6 @@ primary_arm:
       - joint7
       reference_points:
       - ee_mount_point
-  origin_override_joints:
-    joint1:
-      x: 0.0
-      y: -0.0625
-      z: 0.0
-      roll: 0.0
-      pitch: 3.141592653589793
-      yaw: 0.0
   limit_override_joints: {}
 secondary_arm:
   type: robot
@@ -96,20 +89,11 @@ secondary_arm:
     attach_to: body
     parent_reference_point: right_arm_mount_point
     parent: null
-    origin:
-      pitch: 3.141592653589793
+    origin: null
   reflect:
     x: 1
     y: 1
     z: 1
-  origin_override_joints:
-    joint1:
-      x: 0.0
-      y: -0.0625
-      z: 0.0
-      roll: 0.0
-      pitch: 3.141592653589793
-      yaw: 0.0
   limit_override_joints: {}
 primary_arm_end_effector:
   type: end_effector
@@ -154,7 +138,7 @@ body_camera_mount:
   prefix: openarm_body_zed_support_
   connection:
     attach_to: body
-    parent_reference_point: lifter_camera_mount_point
+    parent_reference_point: camera_mount_point
 body_camera:
   type: sensor
   enabled: true
@@ -168,23 +152,19 @@ body_camera:
     origin:
       x: 0.00119247
       y: -0.007723415
-      z: 8.746e-05
+      z: 0.00008746
       roll: 0.0
       pitch: 0.0
       yaw: 0.0
 
 systems:
-  openarm_cell_hardware_interface:
-    joints:
-      body:
-        joint1: {idx: 1, init_pos: 0.0}
   openarm_left_hardware_interface:
     joints:
       primary_arm:
         joint1: {idx: 1}
         joint2: {idx: 2}
         joint3: {idx: 3}
-        joint4: {idx: 4, init_pos: 1.5707963267948966}
+        joint4: {idx: 4}
         joint5: {idx: 5}
         joint6: {idx: 6}
         joint7: {idx: 7}
@@ -196,7 +176,7 @@ systems:
         joint1: {idx: 1}
         joint2: {idx: 2}
         joint3: {idx: 3}
-        joint4: {idx: 4, init_pos: 1.5707963267948966}
+        joint4: {idx: 4}
         joint5: {idx: 5}
         joint6: {idx: 6}
         joint7: {idx: 7}
@@ -205,5 +185,5 @@ systems:
 
 preview:
   view:
-    eye: {x: -2.0, y: 0.0, z: 1.45}
-    lookat: {x: 0.40, y: 0.0, z: 1.10}
+    eye: {x: 3.35215806, y: -3.3373551, z: 1.6202152}
+    lookat: {x: 0.0, y: 0.0, z: 0.0}
