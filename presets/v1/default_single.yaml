@@ -19,10 +19,10 @@ robot:
   - arm
   - end_effector
 arm:
-  type: robot
+  type: arm
   enabled: true
   product: openarm_v1.0
-  config: arm
+  config: null
   inertials: nominal
   prefix: openarm_
   connection:

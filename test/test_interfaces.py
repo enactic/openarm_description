@@ -75,12 +75,13 @@ def test_unknown_product_uses_default_generator():
 
 def test_component_hooks_are_scoped_to_their_component():
     files = loader_input()
+    files['presets/v2/fixture.yaml']['a']['config'] = dict(mass=7.1)
     files['body/fixture_a/urdf/component.xacro'] = '''<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
   <xacro:macro name="describe_component" params="component_name component_cfg config_root options out_name">
     <xacro:openarm_describe_config_component component_name="${component_name}" component_cfg="${component_cfg}"
       config_root="${config_root}" options="${options}" out_name="d"/>
     <xacro:property name="i" value="${d['inertials']}"/>
-    <xacro:property name="i" value="${dict(i, root=dict(i['root'], mass=7.1))}" lazy_eval="false"/>
+    <xacro:property name="i" value="${dict(i, root=dict(i['root'], mass=d['config']['mass']))}" lazy_eval="false"/>
     <xacro:property name="${out_name}" value="${dict(d, inertials=i)}" scope="parent"/>
   </xacro:macro>
   <xacro:macro name="emit_component" params="component_desc component_runtime options">
@@ -115,7 +116,7 @@ def control_input(product='openarm_v2.0'):
         type='revolute', parent=names[i-1], child=names[i]) for i in range(1, 8)})
     data['control/control_gains.yaml'] = {
         f'joint{i}': dict(kp=10+i, kd=i/10) for i in range(1, 8)}
-    spec = support.preset(arm=support.component('robot', product, 'openarm_right_'),
+    spec = support.preset(arm=support.component('arm', product, 'openarm_right_'),
                           tool=support.component('end_effector', 'pinch_gripper', 'openarm_right_', connection=dict(attach_to='arm')))
     spec['systems'] = {'fixture_system': dict(
         hardware_plugin='openarm_hardware/OpenArmHW', can_interface='can_test', can_fd=True,

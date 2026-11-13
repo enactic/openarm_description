@@ -18,10 +18,10 @@ robot:
   components:
   - arm
 arm:
-  type: robot
+  type: arm
   enabled: true
   product: openarm_v1.0
-  config: arm
+  config: null
   inertials: nominal
   prefix: openarm_right_
   connection:

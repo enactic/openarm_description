@@ -42,10 +42,10 @@ body:
   limit_override_joints: {}
 
 primary_arm:
-  type: robot
+  type: arm
   enabled: true
   product: openarm_v2.0
-  config: arm
+  config: null
   inertials: nominal
   prefix: openarm_right_
   connection:
@@ -64,10 +64,10 @@ primary_arm:
   limit_override_joints: {}
 
 secondary_arm:
-  type: robot
+  type: arm
   enabled: false
   product: openarm_v2.0
-  config: arm
+  config: null
   inertials: nominal
   prefix: openarm_left_
   connection:

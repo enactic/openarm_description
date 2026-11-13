@@ -21,7 +21,7 @@ base_link:
     pitch: -0
     yaw: 0
   geometry:
-    mesh: "package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/base_link/base_link.stl"
+    mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/base_link/base_link.stl"
     scale:
       x: 1
       y: 1
@@ -35,7 +35,7 @@ link1:
     pitch: -0
     yaw: 0
   geometry:
-    mesh: "package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link1/link1.stl"
+    mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link1/link1.stl"
     scale:
       x: 1
       y: 1
@@ -49,7 +49,7 @@ link2:
     pitch: -0
     yaw: 0
   geometry:
-    mesh: "package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link2/link2.stl"
+    mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link2/link2.stl"
     scale:
       x: 1
       y: 1
@@ -63,7 +63,7 @@ link3:
     pitch: -0
     yaw: 0
   geometry:
-    mesh: "package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link3/link3.stl"
+    mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link3/link3.stl"
     scale:
       x: 1
       y: 1
@@ -77,7 +77,7 @@ link4:
     pitch: -0
     yaw: 0
   geometry:
-    mesh: "package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link4/link4.stl"
+    mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link4/link4.stl"
     scale:
       x: 1
       y: 1
@@ -91,7 +91,7 @@ link5:
     pitch: -0
     yaw: 0
   geometry:
-    mesh: "package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link5/link5.stl"
+    mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link5/link5.stl"
     scale:
       x: 1
       y: 1
@@ -105,7 +105,7 @@ link6:
     pitch: -0
     yaw: 0
   geometry:
-    mesh: "package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/collision/link6/link6.stl"
+    mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link6/link6.stl"
     scale:
       x: 1
       y: 1

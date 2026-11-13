@@ -43,7 +43,7 @@ limitations under the License.
         condition="${robot_preset[attach_to]['enabled']}"
         message="${'Invalid robot preset: component `%s` attaches to disabled parent `%s`.' % (component_name, attach_to)}" />
       <xacro:openarm_require
-        condition="${robot_preset[attach_to]['type'] in ['robot', 'body', 'end_effector', 'sensor', 'accessory']}"
+        condition="${robot_preset[attach_to]['type'] in ['arm', 'body', 'end_effector', 'sensor', 'accessory']}"
         message="${'Invalid robot preset: component `%s` attaches to unsupported parent type `%s` on `%s`.' % (component_name, robot_preset[attach_to]['type'], attach_to)}" />
 
       <xacro:openarm_validate_component_lineage
@@ -73,23 +73,17 @@ limitations under the License.
       <xacro:property name="reflect_cfg" value="${component_cfg['reflect'] if 'reflect' in component_cfg else dict(x=1, y=1, z=1)}" lazy_eval="false" />
 
       <xacro:openarm_require
-        condition="${component_type in ['robot', 'body', 'end_effector', 'sensor', 'accessory']}"
+        condition="${component_type in ['arm', 'body', 'end_effector', 'sensor', 'accessory']}"
         message="${'Invalid robot preset: component `%s` has unsupported type `%s`.' % (component_name, component_type)}" />
       <xacro:openarm_require
         condition="${'product' in component_cfg}"
         message="${'Invalid robot preset: component `%s` must define product.' % component_name}" />
       <xacro:openarm_require
         condition="${'config' in component_cfg}"
-        message="${'Invalid robot preset: component `%s` must define config. Use null when no extra config index is needed.' % component_name}" />
-      <xacro:if value="${component_type == 'robot'}">
-        <xacro:openarm_require
-          condition="${python.isinstance(component_config, str) and len(component_config) > 0}"
-          message="${'Invalid robot preset: robot component `%s` has unsupported config `%s`.' % (component_name, component_config)}" />
-      </xacro:if>
-      <xacro:if value="${component_type == 'body'}">
-        <xacro:openarm_require condition="${component_config == None}"
-          message="${'Body `%s` requires config: null.' % component_name}" />
-      </xacro:if>
+        message="${'Invalid robot preset: component `%s` must define config. Use null when no component-specific parameters are needed.' % component_name}" />
+      <xacro:openarm_require
+        condition="${component_config == None or python.isinstance(component_config, dict)}"
+        message="${'Component `%s` config must be a parameter mapping or null.' % component_name}" />
       <xacro:openarm_require
         condition="${reflect_cfg['x'] in [-1, 1] and reflect_cfg['y'] in [-1, 1] and reflect_cfg['z'] in [-1, 1]}"
         message="${'Invalid robot preset: component `%s` must use reflect axes of either 1 or -1.' % component_name}" />

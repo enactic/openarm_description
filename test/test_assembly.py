@@ -20,7 +20,7 @@ import xacro
 from support import assemble, chain, component, installed_tool, model, multiply, near, physical_equal, pinch, pose, poses, preset, transform
 
 
-@pytest.mark.parametrize('kind', ['robot', 'body'])
+@pytest.mark.parametrize('kind', ['arm', 'body'])
 def test_topology_and_values_come_from_configuration(kind):
     data = chain()
     data['struct/topology.yaml']['joints']['pivot']['type'] = 'prismatic'
@@ -141,7 +141,7 @@ def test_overrides_are_applied_before_reflection(tool):
     name = 'joint1' if tool else 'pivot'
     origin = pose(.03, .04, .05, .2, -.3, .4)
     limit = dict(lower=-.2, upper=.7, effort=12, velocity=4)
-    spec = preset(unit=component('end_effector' if tool else 'robot',
+    spec = preset(unit=component('end_effector' if tool else 'arm',
                                  'pinch_gripper' if tool else 'fixture',
                                  reflect=dict(x=1, y=-1, z=1),
                                  origin_override_joints={name: origin}, limit_override_joints={name: limit}))

@@ -18,10 +18,9 @@ limitations under the License.
 
   <xacro:macro name="openarm_resolve_component_paths" params="component_cfg out_name">
     <xacro:property name="kind" value="${component_cfg['type']}" />
-    <xacro:property name="config" value="${component_cfg['config']}" />
-    <xacro:property name="component_dir" value="${'$(find openarm_description)/assets/' + kind + '/' + component_cfg['product'] + ('/' + config if kind == 'end_effector' and config != None else '')}" />
+    <xacro:property name="component_dir" value="${'$(find openarm_description)/assets/' + kind + '/' + component_cfg['product']}" />
     <xacro:property name="${out_name}"
-      value="${dict(component_dir=component_dir, config_root=component_dir + '/config' + ('/' + config if kind == 'robot' else ''), interface=component_dir + '/urdf/component.xacro')}"
+      value="${dict(component_dir=component_dir, config_root=component_dir + '/config', interface=component_dir + '/urdf/component.xacro')}"
       scope="parent" lazy_eval="false" />
   </xacro:macro>
 
