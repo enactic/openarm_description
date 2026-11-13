@@ -167,7 +167,7 @@ def pinch():
 
 
 def component(kind='body', product='fixture', prefix='unit_', **extra):
-    return dict(type=kind, product=product, config='arm' if kind == 'robot' else None,
+    return dict(type=kind, product=product, config=None,
                 prefix=prefix, enabled=True, inertials='nominal', **extra)
 
 
@@ -180,8 +180,7 @@ def files_for(spec, models, version='v2.0'):
     files = {f'presets/{group}/fixture.yaml': spec}
     for name, data in models.items():
         cfg = spec[name]
-        path = f"{cfg['type']}/{cfg['product']}/config" + \
-            ('/arm' if cfg['type'] == 'robot' else '')
+        path = f"{cfg['type']}/{cfg['product']}/config"
         files.update({path+'/'+key: value for key, value in data.items()})
     return files
 
@@ -197,7 +196,7 @@ def installed_tool(collapse=False):
     arm['struct/topology.yaml']['collapse_empty_end'] = collapse
     arm['struct/reference_points.yaml']['port']['origin'] = pose(
         .02, -.03, .04, .2, -.3, .1)
-    spec = preset(arm=component('robot', 'fixture_arm', 'arm_'),
+    spec = preset(arm=component('arm', 'fixture_arm', 'arm_'),
                   tool=component('end_effector', 'pinch_gripper', 'tool_',
                                  connection=dict(attach_to='arm', parent_reference_point='port', origin=pose(y=.02, yaw=.4))))
     return spec, {'arm': arm, 'tool': tool}

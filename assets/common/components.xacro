@@ -26,7 +26,7 @@ limitations under the License.
     <xacro:property name="product" value="${component_cfg['product']}" />
     <xacro:property name="component_config" value="${component_cfg['config']}" />
     <xacro:property name="component_prefix" value="${component_cfg.get('prefix', '')}" />
-    <xacro:property name="component_type" value="${component_config if source_type == 'robot' else source_type}" />
+    <xacro:property name="component_type" value="${source_type}" />
     <xacro:property name="component_cfg_root" value="${config_root}" />
     <xacro:property name="component_topology" value="${xacro.load_yaml(component_cfg_root + '/struct/topology.yaml')}" lazy_eval="false" />
 

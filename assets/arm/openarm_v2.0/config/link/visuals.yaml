@@ -21,7 +21,7 @@ base_link:
     pitch: -0
     yaw: 0
   geometry:
-    mesh: "package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/visual/base_link.dae"
+    mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/visual/base_link.dae"
     scale:
       x: 1
       y: 1
@@ -35,7 +35,7 @@ link1:
     pitch: -0
     yaw: 0
   geometry:
-    mesh: "package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/visual/link1.dae"
+    mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/visual/link1.dae"
     scale:
       x: 1
       y: 1
@@ -49,7 +49,7 @@ link2:
     pitch: -0
     yaw: 0
   geometry:
-    mesh: "package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/visual/link2.dae"
+    mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/visual/link2.dae"
     scale:
       x: 1
       y: 1
@@ -63,7 +63,7 @@ link3:
     pitch: -0
     yaw: 0
   geometry:
-    mesh: "package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/visual/link3.dae"
+    mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/visual/link3.dae"
     scale:
       x: 1
       y: 1
@@ -77,7 +77,7 @@ link4:
     pitch: -0
     yaw: 0
   geometry:
-    mesh: "package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/visual/link4.dae"
+    mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/visual/link4.dae"
     scale:
       x: 1
       y: 1
@@ -91,7 +91,7 @@ link5:
     pitch: -0
     yaw: 0
   geometry:
-    mesh: "package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/visual/link5.dae"
+    mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/visual/link5.dae"
     scale:
       x: 1
       y: 1
@@ -105,7 +105,7 @@ link6:
     pitch: -0
     yaw: 0
   geometry:
-    mesh: "package://openarm_description/assets/robot/openarm_v2.0/meshes/arm/visual/link6.dae"
+    mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/visual/link6.dae"
     scale:
       x: 1
       y: 1
