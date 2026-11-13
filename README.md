@@ -66,9 +66,11 @@ The CAN arguments apply when `use_fake_hardware:=false`. Empty values preserve t
 
 ## Compatibility with earlier versions
 
-The presets moved from `assets/robot/openarm_v*/config/robot_presets/` to `presets/v1/` and `presets/v2/`. The previous directories are now symbolic links to the new ones, so the previous paths and commands still work.
+The presets moved from `assets/robot/openarm_v*/config/robot_presets/` to `presets/v1/` and `presets/v2/`. The previous preset directories are symbolic links to the new ones. The V1/V2 Xacro entry points remain at their previous paths.
 
-If the build fails after you update this package, remove its build and install directories and build again:
+Arm assets now live under `assets/arm/openarm_v*/`, with YAML files directly in `config/` and meshes in `meshes/`. In custom presets, replace arm components using `type: robot` and `config: arm` with `type: arm` and `config: null`; update any direct references to the old arm asset paths.
+
+If a symlink build fails because an existing install contains real `robot_presets` directories where symlinks are now expected, remove this package's build and install directories and build again:
 
 ```bash
 cd ~/ros2_ws
@@ -79,7 +81,9 @@ source install/setup.bash
 
 ## Components with their own Xacro
 
-Each component of a preset is a directory `assets/<type>/<product>/`, found from the `type` and `product` fields of the preset.
+Each component of a preset is a directory `assets/<type>/<product>/`, found from the `type` and `product` fields. The component types are `arm`, `body`, `end_effector`, `sensor` and `accessory`. For example, `type: arm` and `product: openarm_v2.0` select `assets/arm/openarm_v2.0/`.
+
+The preset's `config` field is a mapping of component-specific parameters, or `null` when none are needed. It does not select a directory. The loader passes it to the component, which interprets and validates its own fields; for example, ZED reads `config.camera_model` and `config.camera_name`.
 
 By default a component needs no Xacro. Its links, joints, meshes and inertials are generated from the YAML files in its `config/` directory, and it is attached to its parent with a fixed mounting joint.
 
@@ -92,7 +96,7 @@ A component that cannot be described this way, such as a third-party model, keep
 
 The entry point must contain only these macro definitions. The model itself stays in separate files, which the macros include, so that it does not affect other components.
 
-In the ZED camera example, the [wrapper](assets/sensor/zed/urdf_wrapper/openarm_zed_wrapper.xacro) includes the external `zed_description` package, and the entry point only calls that wrapper from the two macros.
+In the ZED camera example, the [wrapper](assets/sensor/zed/urdf_wrapper/openarm_zed_wrapper.xacro) includes the external `zed_description` package, and `emit_component` calls that wrapper. `describe_component` resolves the camera name and describes its root link.
 
 ## Development
 
