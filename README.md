@@ -57,12 +57,12 @@ xacro $(ros2 pkg prefix openarm_description)/share/openarm_description/urdf/open
 | `ros2_control` | `true` | Emit the `ros2_control` section. |
 | `use_fake_hardware` | `true` | Use mock hardware instead of the real hardware interface. |
 | `fake_sensor_commands` | `false` | Enable fake sensor commands on the mock hardware. |
-| `can_interface` | `""` | Override the standalone system CAN interface (fallback: `can0`). |
-| `left_can_interface` | `""` | Override the left-arm CAN interface (fallback: `can1`). |
-| `right_can_interface` | `""` | Override the right-arm CAN interface (fallback: `can0`). |
-| `can_fd` | `""` | Override CAN FD mode (fallback: `true`); `false` selects classic CAN. |
+| `can_interface` | `can0` [*] | Override the standalone system CAN interface. |
+| `left_can_interface` | `can1` [*] | Override the left-arm CAN interface. |
+| `right_can_interface` | `can0` [*] | Override the right-arm CAN interface. |
+| `can_fd` | `true` [*] | Override CAN FD mode; `false` selects classic CAN. |
 
-The CAN arguments apply when `use_fake_hardware:=false`. Empty values preserve the preset system settings; omitted settings use the hardware defaults listed above.
+[*] These are the effective defaults when neither an argument nor the preset specifies a value. The CAN arguments themselves default to an empty string (`""`), which preserves the preset settings. Priority: explicit argument → preset system setting → value shown above. They apply when `use_fake_hardware:=false`.
 
 ## Compatibility with earlier versions
 
