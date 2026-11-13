@@ -4,10 +4,10 @@ This package contains the Xacro, configuration and mesh files that generate Open
 
 ## Installation
 
-Clone this repository into a ROS 2 workspace and build it:
+Clone this repository into a ROS 2 workspace and build it (Jazzy example):
 
 ```bash
-source /opt/ros/${ROS_DISTRO}/setup.bash
+source /opt/ros/jazzy/setup.bash
 cd ~/ros2_ws/src
 git clone https://github.com/enactic/openarm_description.git
 cd ~/ros2_ws
@@ -57,12 +57,12 @@ xacro $(ros2 pkg prefix openarm_description)/share/openarm_description/urdf/open
 | `ros2_control` | `true` | Emit the `ros2_control` section. |
 | `use_fake_hardware` | `true` | Use mock hardware instead of the real hardware interface. |
 | `fake_sensor_commands` | `false` | Enable fake sensor commands on the mock hardware. |
-| `can_interface` | `can0` | CAN interface of `v1/default_single`. |
-| `left_can_interface` | `can1` | CAN interface of the left arm. |
-| `right_can_interface` | `can0` | CAN interface of the right arm. |
-| `can_fd` | `true` | Use CAN FD. Set to `false` for classic CAN. |
+| `can_interface` | `""` | Override the standalone system CAN interface (fallback: `can0`). |
+| `left_can_interface` | `""` | Override the left-arm CAN interface (fallback: `can1`). |
+| `right_can_interface` | `""` | Override the right-arm CAN interface (fallback: `can0`). |
+| `can_fd` | `""` | Override CAN FD mode (fallback: `true`); `false` selects classic CAN. |
 
-The CAN arguments apply when `use_fake_hardware:=false`.
+The CAN arguments apply when `use_fake_hardware:=false`. Empty values preserve the preset system settings; omitted settings use the hardware defaults listed above.
 
 ## Compatibility with earlier versions
 
