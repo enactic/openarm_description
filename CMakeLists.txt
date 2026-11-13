@@ -15,6 +15,11 @@
 cmake_minimum_required(VERSION 3.8)
 project(openarm_description)
 
+# Keep directory symlinks as links when ament scans files for a symlink
+# install. This must precede find_package(ament_cmake), which registers that
+# scan.
+install(CODE "cmake_policy(SET CMP0009 NEW)")
+
 find_package(ament_cmake REQUIRED)
 
 if(BUILD_TESTING)
