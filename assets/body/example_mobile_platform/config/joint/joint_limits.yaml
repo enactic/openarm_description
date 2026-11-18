@@ -1,0 +1,69 @@
+# Copyright 2026 Enactic, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Illustrative limits. Continuous wheel joints ignore lower/upper.
+joint1:
+  limit:
+    lower: -3.141592653589793
+    upper: 3.141592653589793
+    effort: 30.0
+    velocity: 1.5
+joint2:
+  limit:
+    lower: 0.0
+    upper: 0.0
+    effort: 20.0
+    velocity: 12.0
+joint3:
+  limit:
+    lower: -3.141592653589793
+    upper: 3.141592653589793
+    effort: 30.0
+    velocity: 1.5
+joint4:
+  limit:
+    lower: 0.0
+    upper: 0.0
+    effort: 20.0
+    velocity: 12.0
+joint5:
+  limit:
+    lower: -3.141592653589793
+    upper: 3.141592653589793
+    effort: 30.0
+    velocity: 1.5
+joint6:
+  limit:
+    lower: 0.0
+    upper: 0.0
+    effort: 20.0
+    velocity: 12.0
+joint7:
+  limit:
+    lower: -3.141592653589793
+    upper: 3.141592653589793
+    effort: 30.0
+    velocity: 1.5
+joint8:
+  limit:
+    lower: 0.0
+    upper: 0.0
+    effort: 20.0
+    velocity: 12.0
+joint9:
+  limit:
+    lower: 0.0
+    upper: 0.3
+    effort: 1000.0
+    velocity: 0.1

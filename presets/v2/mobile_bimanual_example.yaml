@@ -1,0 +1,211 @@
+# Copyright 2026 Enactic, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Four steerable wheel modules, a 0.30 m lift, and standard V2 arms/grippers.
+# The root is base_footprint; the systems below are for mock/preview use.
+robot:
+  name: openarm_mobile_example
+  root_frame: base_footprint
+  components:
+  - body
+  - primary_arm
+  - secondary_arm
+  - primary_arm_end_effector
+  - secondary_arm_end_effector
+body:
+  type: body
+  product: example_mobile_platform
+  config: null
+  inertials: nominal
+  prefix: openarm_mobile_
+  enabled: true
+  connection:
+    parent: base_footprint
+    origin:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      roll: 0.0
+      pitch: 0.0
+      yaw: 0.0
+primary_arm:
+  type: arm
+  enabled: true
+  product: openarm_v2.0
+  config: null
+  inertials: nominal
+  prefix: openarm_left_
+  connection:
+    attach_to: body
+    parent_reference_point: left_arm_mount_point
+    parent: null
+    origin: null
+  reflect:
+    x: 1
+    y: -1
+    z: 1
+    include:
+      links:
+      - base_link
+      - link1
+      - link2
+      - link5
+      - link6
+      - link7
+      joints:
+      - joint1
+      - joint2
+      - joint3
+      - joint5
+      - joint6
+      - joint7
+      reference_points:
+      - ee_mount_point
+  limit_override_joints: {}
+secondary_arm:
+  type: arm
+  enabled: true
+  product: openarm_v2.0
+  config: null
+  inertials: nominal
+  prefix: openarm_right_
+  connection:
+    attach_to: body
+    parent_reference_point: right_arm_mount_point
+    parent: null
+    origin: null
+  reflect:
+    x: 1
+    y: 1
+    z: 1
+  limit_override_joints: {}
+primary_arm_end_effector:
+  type: end_effector
+  enabled: true
+  product: pinch_gripper
+  config: null
+  inertials: nominal
+  prefix: openarm_left_
+  connection:
+    attach_to: primary_arm
+    parent_reference_point: ee_mount_point
+    parent: null
+    origin: null
+  reflect:
+    x: 1
+    y: -1
+    z: 1
+  limit_override_joints: {}
+secondary_arm_end_effector:
+  type: end_effector
+  enabled: true
+  product: pinch_gripper
+  config: null
+  inertials: nominal
+  prefix: openarm_right_
+  connection:
+    attach_to: secondary_arm
+    parent_reference_point: ee_mount_point
+    parent: null
+    origin: null
+  reflect:
+    x: 1
+    y: 1
+    z: 1
+  limit_override_joints: {}
+systems:
+  example_mobile_robot:
+    hardware_plugin: mock_components/GenericSystem
+    command_interfaces:
+    - position
+    state_interfaces:
+    - position
+    - velocity
+    joints:
+      body:
+        joint1:
+          idx: 0
+          init_pos: 0.0
+        joint2:
+          idx: 1
+          init_pos: 0.0
+        joint3:
+          idx: 2
+          init_pos: 0.0
+        joint4:
+          idx: 3
+          init_pos: 0.0
+        joint5:
+          idx: 4
+          init_pos: 0.0
+        joint6:
+          idx: 5
+          init_pos: 0.0
+        joint7:
+          idx: 6
+          init_pos: 0.0
+        joint8:
+          idx: 7
+          init_pos: 0.0
+        joint9:
+          idx: 8
+          init_pos: 0.0
+      primary_arm:
+        joint1:
+          idx: 9
+        joint2:
+          idx: 10
+        joint3:
+          idx: 11
+        joint4:
+          idx: 12
+          init_pos: 1.5707963267948966
+        joint5:
+          idx: 13
+        joint6:
+          idx: 14
+        joint7:
+          idx: 15
+      secondary_arm:
+        joint1:
+          idx: 16
+        joint2:
+          idx: 17
+        joint3:
+          idx: 18
+        joint4:
+          idx: 19
+          init_pos: 1.5707963267948966
+        joint5:
+          idx: 20
+        joint6:
+          idx: 21
+        joint7:
+          idx: 22
+      primary_arm_end_effector:
+        joint1:
+          idx: 23
+      secondary_arm_end_effector:
+        joint1:
+          idx: 24
+preview:
+  view:
+    eye:
+      x: 2.2
+      y: -2.6
+      z: 1.8
+    lookat:
+      x: 0.1
+      y: 0.0
+      z: 0.65

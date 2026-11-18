@@ -1,0 +1,273 @@
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <created>2026-11-18T22:21:52.734118</created>
+    <modified>2026-11-18T22:21:52.734120</modified>
+    <unit name="meter" meter="1.0" />
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_effects>
+    <effect id="steering_fork_00-effect" name="steering_fork_00-effect">
+      <profile_COMMON>
+        <technique sid="common">
+          <phong>
+            <emission>
+              <color>0.0 0.0 0.0 1.0</color>
+            </emission>
+            <ambient>
+              <color>0.0 0.0 0.0 1.0</color>
+            </ambient>
+            <diffuse>
+              <color>0.35 0.39 0.44 1.0</color>
+            </diffuse>
+            <specular>
+              <color>0.06 0.06 0.06 1.0</color>
+            </specular>
+            <shininess>
+              <float>25.0</float>
+            </shininess>
+            <reflective>
+              <color>0.0 0.0 0.0 1.0</color>
+            </reflective>
+            <reflectivity>
+              <float>0.0</float>
+            </reflectivity>
+            <transparent>
+              <color>0.0 0.0 0.0 1.0</color>
+            </transparent>
+            <transparency>
+              <float>1.0</float>
+            </transparency>
+          </phong>
+        </technique>
+        <extra>
+          <technique profile="GOOGLEEARTH">
+            <double_sided>0</double_sided>
+          </technique>
+        </extra>
+      </profile_COMMON>
+    </effect>
+    <effect id="steering_fork_01-effect" name="steering_fork_01-effect">
+      <profile_COMMON>
+        <technique sid="common">
+          <phong>
+            <emission>
+              <color>0.0 0.0 0.0 1.0</color>
+            </emission>
+            <ambient>
+              <color>0.0 0.0 0.0 1.0</color>
+            </ambient>
+            <diffuse>
+              <color>0.35 0.39 0.44 1.0</color>
+            </diffuse>
+            <specular>
+              <color>0.06 0.06 0.06 1.0</color>
+            </specular>
+            <shininess>
+              <float>25.0</float>
+            </shininess>
+            <reflective>
+              <color>0.0 0.0 0.0 1.0</color>
+            </reflective>
+            <reflectivity>
+              <float>0.0</float>
+            </reflectivity>
+            <transparent>
+              <color>0.0 0.0 0.0 1.0</color>
+            </transparent>
+            <transparency>
+              <float>1.0</float>
+            </transparency>
+          </phong>
+        </technique>
+        <extra>
+          <technique profile="GOOGLEEARTH">
+            <double_sided>0</double_sided>
+          </technique>
+        </extra>
+      </profile_COMMON>
+    </effect>
+    <effect id="steering_fork_02-effect" name="steering_fork_02-effect">
+      <profile_COMMON>
+        <technique sid="common">
+          <phong>
+            <emission>
+              <color>0.0 0.0 0.0 1.0</color>
+            </emission>
+            <ambient>
+              <color>0.0 0.0 0.0 1.0</color>
+            </ambient>
+            <diffuse>
+              <color>0.35 0.39 0.44 1.0</color>
+            </diffuse>
+            <specular>
+              <color>0.06 0.06 0.06 1.0</color>
+            </specular>
+            <shininess>
+              <float>25.0</float>
+            </shininess>
+            <reflective>
+              <color>0.0 0.0 0.0 1.0</color>
+            </reflective>
+            <reflectivity>
+              <float>0.0</float>
+            </reflectivity>
+            <transparent>
+              <color>0.0 0.0 0.0 1.0</color>
+            </transparent>
+            <transparency>
+              <float>1.0</float>
+            </transparency>
+          </phong>
+        </technique>
+        <extra>
+          <technique profile="GOOGLEEARTH">
+            <double_sided>0</double_sided>
+          </technique>
+        </extra>
+      </profile_COMMON>
+    </effect>
+  </library_effects>
+  <library_geometries>
+    <geometry id="steering_fork_00-mesh" name="steering_fork_00">
+      <mesh>
+        <source id="steering_fork_00-positions">
+          <float_array count="24" id="steering_fork_00-positions-array">-0.0275 -0.042 -0.016 -0.0275 -0.042 0 -0.0275 0.042 -0.016 -0.0275 0.042 0 0.0275 -0.042 -0.016 0.0275 -0.042 0 0.0275 0.042 -0.016 0.0275 0.042 0</float_array>
+          <technique_common>
+            <accessor count="8" source="#steering_fork_00-positions-array" stride="3">
+              <param type="float" name="X" />
+              <param type="float" name="Y" />
+              <param type="float" name="Z" />
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="steering_fork_00-normals">
+          <float_array count="36" id="steering_fork_00-normals-array">-1 0 0 0 -1 0 -1 0 0 0 0 -1 0 0 1 0 -1 0 0 0 1 0 1 0 0 0 -1 0 1 0 1 0 0 1 0 0</float_array>
+          <technique_common>
+            <accessor count="12" source="#steering_fork_00-normals-array" stride="3">
+              <param type="float" name="X" />
+              <param type="float" name="Y" />
+              <param type="float" name="Z" />
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="steering_fork_00-positions-vertices">
+          <input semantic="POSITION" source="#steering_fork_00-positions" />
+        </vertices>
+        <triangles count="12" material="material">
+          <input offset="0" semantic="VERTEX" source="#steering_fork_00-positions-vertices" />
+          <input offset="1" semantic="NORMAL" source="#steering_fork_00-normals" />
+          <p>1 0 3 0 0 0 4 1 1 1 0 1 0 2 3 2 2 2 2 3 4 3 0 3 1 4 7 4 3 4 5 5 1 5 4 5 5 6 7 6 1 6 3 7 7 7 2 7 6 8 4 8 2 8 2 9 7 9 6 9 6 10 5 10 4 10 7 11 5 11 6 11</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="steering_fork_01-mesh" name="steering_fork_01">
+      <mesh>
+        <source id="steering_fork_01-positions">
+          <float_array count="24" id="steering_fork_01-positions-array">-0.0275 -0.042 -0.098 -0.0275 -0.042 -0.018 -0.0275 -0.032 -0.098 -0.0275 -0.032 -0.018 0.0275 -0.042 -0.098 0.0275 -0.042 -0.018 0.0275 -0.032 -0.098 0.0275 -0.032 -0.018</float_array>
+          <technique_common>
+            <accessor count="8" source="#steering_fork_01-positions-array" stride="3">
+              <param type="float" name="X" />
+              <param type="float" name="Y" />
+              <param type="float" name="Z" />
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="steering_fork_01-normals">
+          <float_array count="36" id="steering_fork_01-normals-array">-1 0 0 0 -1 0 -1 0 0 0 0 -1 0 0 1 0 -1 0 0 0 1 0 1 0 0 0 -1 0 1 0 1 0 0 1 0 0</float_array>
+          <technique_common>
+            <accessor count="12" source="#steering_fork_01-normals-array" stride="3">
+              <param type="float" name="X" />
+              <param type="float" name="Y" />
+              <param type="float" name="Z" />
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="steering_fork_01-positions-vertices">
+          <input semantic="POSITION" source="#steering_fork_01-positions" />
+        </vertices>
+        <triangles count="12" material="material">
+          <input offset="0" semantic="VERTEX" source="#steering_fork_01-positions-vertices" />
+          <input offset="1" semantic="NORMAL" source="#steering_fork_01-normals" />
+          <p>1 0 3 0 0 0 4 1 1 1 0 1 0 2 3 2 2 2 2 3 4 3 0 3 1 4 7 4 3 4 5 5 1 5 4 5 5 6 7 6 1 6 3 7 7 7 2 7 6 8 4 8 2 8 2 9 7 9 6 9 6 10 5 10 4 10 7 11 5 11 6 11</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="steering_fork_02-mesh" name="steering_fork_02">
+      <mesh>
+        <source id="steering_fork_02-positions">
+          <float_array count="24" id="steering_fork_02-positions-array">-0.0275 0.032 -0.098 -0.0275 0.032 -0.018 -0.0275 0.042 -0.098 -0.0275 0.042 -0.018 0.0275 0.032 -0.098 0.0275 0.032 -0.018 0.0275 0.042 -0.098 0.0275 0.042 -0.018</float_array>
+          <technique_common>
+            <accessor count="8" source="#steering_fork_02-positions-array" stride="3">
+              <param type="float" name="X" />
+              <param type="float" name="Y" />
+              <param type="float" name="Z" />
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="steering_fork_02-normals">
+          <float_array count="36" id="steering_fork_02-normals-array">-1 0 0 0 -1 0 -1 0 0 0 0 -1 0 0 1 0 -1 0 0 0 1 0 1 0 0 0 -1 0 1 0 1 0 0 1 0 0</float_array>
+          <technique_common>
+            <accessor count="12" source="#steering_fork_02-normals-array" stride="3">
+              <param type="float" name="X" />
+              <param type="float" name="Y" />
+              <param type="float" name="Z" />
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="steering_fork_02-positions-vertices">
+          <input semantic="POSITION" source="#steering_fork_02-positions" />
+        </vertices>
+        <triangles count="12" material="material">
+          <input offset="0" semantic="VERTEX" source="#steering_fork_02-positions-vertices" />
+          <input offset="1" semantic="NORMAL" source="#steering_fork_02-normals" />
+          <p>1 0 3 0 0 0 4 1 1 1 0 1 0 2 3 2 2 2 2 3 4 3 0 3 1 4 7 4 3 4 5 5 1 5 4 5 5 6 7 6 1 6 3 7 7 7 2 7 6 8 4 8 2 8 2 9 7 9 6 9 6 10 5 10 4 10 7 11 5 11 6 11</p>
+        </triangles>
+      </mesh>
+    </geometry>
+  </library_geometries>
+  <library_materials>
+    <material id="steering_fork_00-material" name="steering_fork_00">
+      <instance_effect url="#steering_fork_00-effect" />
+    </material>
+    <material id="steering_fork_01-material" name="steering_fork_01">
+      <instance_effect url="#steering_fork_01-effect" />
+    </material>
+    <material id="steering_fork_02-material" name="steering_fork_02">
+      <instance_effect url="#steering_fork_02-effect" />
+    </material>
+  </library_materials>
+  <library_visual_scenes>
+    <visual_scene id="scene">
+      <node id="steering_fork_00" name="steering_fork_00">
+        <instance_geometry url="#steering_fork_00-mesh">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="material" target="#steering_fork_00-material" />
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="steering_fork_01" name="steering_fork_01">
+        <instance_geometry url="#steering_fork_01-mesh">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="material" target="#steering_fork_01-material" />
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="steering_fork_02" name="steering_fork_02">
+        <instance_geometry url="#steering_fork_02-mesh">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="material" target="#steering_fork_02-material" />
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#scene" />
+  </scene>
+</COLLADA>
