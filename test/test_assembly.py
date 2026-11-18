@@ -202,8 +202,9 @@ def test_folding_preserves_physical_properties_and_frames():
     geometry = dict(mesh='package://fixture_meshes/shape.stl',
                     scale=dict(x=1, y=1, z=1))
     shape = dict(origin=pose(.02, -.04, .01, .2, .1, -.3), geometry=geometry)
-    data['tool']['link/visuals.yaml']['base_link'] = deepcopy(shape)
-    data['tool']['link/collisions.yaml']['base_link'] = deepcopy(shape)
+    data['tool']['link/visuals.yaml']['default']['base_link'] = deepcopy(shape)
+    data['tool']['link/collisions.yaml']['default']['base_link'] = deepcopy(
+        shape)
     spec['tool']['reflect'] = dict(x=1, y=-1, z=1, include=dict(
         links=['base_link'], joints=[], reference_points=[]))
     spec['tool']['origin_override_joints'] = {
@@ -234,18 +235,52 @@ def test_folding_requires_enabled_empty_tip_and_child(mode):
     assert (robot.find("link[@name='arm_tip']") is None) == (mode == 'on')
 
 
-def test_compound_collisions_follow_input_geometry():
-    data = model()
+def test_geometry_groups_follow_input_geometry():
+    data = model(('root', 'extra'), {
+        'mount': dict(type='fixed', parent='root', child='extra')})
     boxes = [dict(name='first', origin=pose(x=.2), geometry=dict(box=dict(x=.2, y=.3, z=.4))),
              dict(name='second', origin=pose(y=.7), geometry=dict(box=dict(x=.1, y=.8, z=.2)))]
-    data['link/collisions.yaml']['root'] = boxes
-    robot = assemble(preset(unit=component()), {'unit': data})
-    generated = robot.findall("link[@name='unit_root']/collision")
-    assert len(generated) == len(boxes)
-    for item, source in zip(generated, boxes):
+    visual = dict(origin=pose(z=.3), geometry=dict(
+        mesh='package://fixture_meshes/default.stl', scale=dict(x=1, y=1, z=1)))
+    alternate = dict(origin=pose(z=.6), geometry=dict(
+        mesh='package://fixture_meshes/detail.stl', scale=dict(x=2, y=3, z=4)))
+    data['link/visuals.yaml'] = dict(
+        default=dict(root=visual, extra=visual), detail=dict(root=alternate))
+    data['link/collisions.yaml'] = dict(
+        default=dict(root=boxes, extra=boxes[0]), simple=dict(root=boxes[1]))
+    spec = preset(unit=component())
+    for visual_group, collision_group in ((None, None), ('default', 'default'),
+                                          ('detail', 'default'), ('default', 'simple'), ('detail', 'simple')):
+        if visual_group is not None:
+            spec['unit'].update(visuals=visual_group,
+                                collisions=collision_group)
+        robot = assemble(spec, {'unit': data})
+        selected = data['link/visuals.yaml'][visual_group or 'default']
+        source = selected['root']
+        item = robot.find("link[@name='unit_root']/visual")
         near(transform(item.find('origin')), transform(source['origin']))
+        assert item.find(
+            'geometry/mesh').get('filename') == source['geometry']['mesh']
         assert [float(v) for v in item.find(
-            'geometry/box').get('size').split()] == list(source['geometry']['box'].values())
+            'geometry/mesh').get('scale').split()] == list(source['geometry']['scale'].values())
+        assert (robot.find("link[@name='unit_extra']/visual")
+                is not None) == ('extra' in selected)
+        selected = data['link/collisions.yaml'][collision_group or 'default']
+        expected = selected['root'] if isinstance(
+            selected['root'], list) else [selected['root']]
+        generated = robot.findall("link[@name='unit_root']/collision")
+        assert len(generated) == len(expected)
+        for item, source in zip(generated, expected):
+            near(transform(item.find('origin')), transform(source['origin']))
+            assert [float(v) for v in item.find(
+                'geometry/box').get('size').split()] == list(source['geometry']['box'].values())
+        assert (robot.find("link[@name='unit_extra']/collision")
+                is not None) == ('extra' in selected)
+    for kind in ('visuals', 'collisions'):
+        spec['unit'].update(visuals='default', collisions='default')
+        spec['unit'][kind] = 'missing'
+        with pytest.raises(xacro.XacroException, match=f'unknown {kind} group'):
+            assemble(spec, {'unit': data})
 
 
 @pytest.mark.parametrize('error', ['joint_parent', 'mount_reference', 'parent_selectors'])

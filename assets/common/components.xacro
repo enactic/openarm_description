@@ -19,6 +19,17 @@ limitations under the License.
   <xacro:include filename="$(find openarm_description)/assets/common/validation.xacro" />
   <xacro:include filename="$(find openarm_description)/assets/common/kinematic_chain.xacro" />
 
+  <xacro:macro name="openarm_load_geometry_group" params="component_name component_cfg config_root kind out_name">
+    <xacro:property name="groups" value="${xacro.load_yaml(config_root + '/link/' + kind + '.yaml')}" lazy_eval="false" />
+    <xacro:property name="group_name" value="${component_cfg.get(kind, 'default')}" lazy_eval="false" />
+    <xacro:openarm_require
+      condition="${python.isinstance(group_name, str) and python.isinstance(groups, dict) and group_name in groups}"
+      message="${'Component `%s`: unknown %s group `%s` in %s/link/%s.yaml.' % (component_name, kind, group_name, config_root, kind)}" />
+    <xacro:openarm_require condition="${python.isinstance(groups[group_name], dict)}"
+      message="${'Component `%s`: %s group `%s` must map link keys to geometry configurations.' % (component_name, kind, group_name)}" />
+    <xacro:property name="${out_name}" value="${groups[group_name]}" scope="parent" lazy_eval="false" />
+  </xacro:macro>
+
   <xacro:macro name="openarm_describe_config_component"
     params="component_name component_cfg config_root options out_name">
     <xacro:property name="empty_dict" value="${dict()}" />
@@ -43,8 +54,10 @@ limitations under the License.
     <xacro:property name="component_joint_limits" value="${xacro.load_yaml(component_cfg_root + '/joint/joint_limits.yaml') if component_topology['joints'] else empty_dict}" lazy_eval="false" />
     <xacro:property name="component_joint_mimics" value="${xacro.load_yaml(component_cfg_root + '/joint/joint_mimics.yaml') if component_type == 'end_effector' else empty_dict}" lazy_eval="false" />
     <xacro:property name="component_inertials" value="${xacro.load_yaml(component_cfg_root + '/inertials/' + component_cfg['inertials'] + '.yaml')}" lazy_eval="false" />
-    <xacro:property name="component_visuals" value="${xacro.load_yaml(component_cfg_root + '/link/visuals.yaml')}" lazy_eval="false" />
-    <xacro:property name="component_collisions" value="${xacro.load_yaml(component_cfg_root + '/link/collisions.yaml')}" lazy_eval="false" />
+    <xacro:openarm_load_geometry_group component_name="${component_name}" component_cfg="${component_cfg}"
+      config_root="${component_cfg_root}" kind="visuals" out_name="component_visuals" />
+    <xacro:openarm_load_geometry_group component_name="${component_name}" component_cfg="${component_cfg}"
+      config_root="${component_cfg_root}" kind="collisions" out_name="component_collisions" />
     <xacro:property name="component_link_name_map" value="${dict([(key, component_prefix + cfg.get('name', key)) for key, cfg in component_topology['links'].items()])}" lazy_eval="false" />
     <xacro:property name="component_joint_name_map" value="${dict([(key, component_prefix + cfg.get('name', key)) for key, cfg in component_topology['joints'].items()])}" lazy_eval="false" />
     <xacro:property name="component_root_link_actual" value="${component_link_name_map[list(component_topology['links'])[0]]}" lazy_eval="false" />

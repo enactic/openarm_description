@@ -12,31 +12,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-base_link:
-  origin:
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    roll: 0.0
-    pitch: 0.0
-    yaw: 0.0
-  geometry:
-    mesh: package://openarm_description/assets/body/cell/meshes/visual/cell_base_link.dae
-    scale:
-      x: 1
-      y: 1
-      z: 1
-link1:
-  origin:
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    roll: 0.0
-    pitch: 0.0
-    yaw: 0.0
-  geometry:
-    mesh: package://openarm_description/assets/body/cell/meshes/visual/lifter_link.dae
-    scale:
-      x: 1
-      y: 1
-      z: 1
+default:
+  base_link:
+    origin:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      roll: 0.0
+      pitch: 0.0
+      yaw: 0.0
+    geometry:
+      mesh: package://openarm_description/assets/body/cell/meshes/visual/cell_base_link.dae
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  link1:
+    origin:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      roll: 0.0
+      pitch: 0.0
+      yaw: 0.0
+    geometry:
+      mesh: package://openarm_description/assets/body/cell/meshes/visual/lifter_link.dae
+      scale:
+        x: 1
+        y: 1
+        z: 1

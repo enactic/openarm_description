@@ -12,17 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-base_link:
-  origin:
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    roll: 0.0
-    pitch: 0.0
-    yaw: 0.0
-  geometry:
-    mesh: "package://openarm_description/assets/body/v2.0/meshes/visual/body_link0.dae"
-    scale:
-      x: 1.0
-      y: 1.0
-      z: 1.0
+default:
+  base_link:
+    origin:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      roll: 0.0
+      pitch: 0.0
+      yaw: 0.0
+    geometry:
+      mesh: "package://openarm_description/assets/body/v2.0/meshes/visual/body_link0.dae"
+      scale:
+        x: 1.0
+        y: 1.0
+        z: 1.0
