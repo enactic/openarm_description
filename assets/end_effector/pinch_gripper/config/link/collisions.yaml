@@ -12,45 +12,46 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-base_link:
-  origin:
-    x: 0
-    y: 0
-    z: 0
-    roll: 0
-    pitch: -0
-    yaw: 0
-  geometry:
-    mesh: "package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/ee_base_link/ee_base_link.stl"
-    scale:
-      x: 1
-      y: 1
-      z: 1
-link1:
-  origin:
-    x: 0
-    y: 0
-    z: 0
-    roll: 0
-    pitch: -0
-    yaw: 0
-  geometry:
-    mesh: "package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/finger_inner/finger_inner.stl"
-    scale:
-      x: 1
-      y: 1
-      z: 1
-link2:
-  origin:
-    x: 0
-    y: 0
-    z: 0
-    roll: 0
-    pitch: -0
-    yaw: 0
-  geometry:
-    mesh: "package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/finger_outer/finger_outer.stl"
-    scale:
-      x: 1
-      y: 1
-      z: 1
+default:
+  base_link:
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: -0
+      yaw: 0
+    geometry:
+      mesh: "package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/ee_base_link/ee_base_link.stl"
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  link1:
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: -0
+      yaw: 0
+    geometry:
+      mesh: "package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/finger_inner/finger_inner.stl"
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  link2:
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: -0
+      yaw: 0
+    geometry:
+      mesh: "package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/finger_outer/finger_outer.stl"
+      scale:
+        x: 1
+        y: 1
+        z: 1

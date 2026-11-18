@@ -12,101 +12,102 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-base_link:
-  origin:
-    x: 0
-    y: 0
-    z: 0
-    roll: 0
-    pitch: -0
-    yaw: 0
-  geometry:
-    mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/visual/base_link.dae"
-    scale:
-      x: 1
-      y: 1
-      z: 1
-link1:
-  origin:
-    x: 0
-    y: 0
-    z: 0
-    roll: 0
-    pitch: -0
-    yaw: 0
-  geometry:
-    mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/visual/link1.dae"
-    scale:
-      x: 1
-      y: 1
-      z: 1
-link2:
-  origin:
-    x: 0
-    y: 0
-    z: 0
-    roll: 0
-    pitch: -0
-    yaw: 0
-  geometry:
-    mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/visual/link2.dae"
-    scale:
-      x: 1
-      y: 1
-      z: 1
-link3:
-  origin:
-    x: 0
-    y: 0
-    z: 0
-    roll: 0
-    pitch: -0
-    yaw: 0
-  geometry:
-    mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/visual/link3.dae"
-    scale:
-      x: 1
-      y: 1
-      z: 1
-link4:
-  origin:
-    x: 0
-    y: 0
-    z: 0
-    roll: 0
-    pitch: -0
-    yaw: 0
-  geometry:
-    mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/visual/link4.dae"
-    scale:
-      x: 1
-      y: 1
-      z: 1
-link5:
-  origin:
-    x: 0
-    y: 0
-    z: 0
-    roll: 0
-    pitch: -0
-    yaw: 0
-  geometry:
-    mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/visual/link5.dae"
-    scale:
-      x: 1
-      y: 1
-      z: 1
-link6:
-  origin:
-    x: 0
-    y: 0
-    z: 0
-    roll: 0
-    pitch: -0
-    yaw: 0
-  geometry:
-    mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/visual/link6.dae"
-    scale:
-      x: 1
-      y: 1
-      z: 1
+default:
+  base_link:
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: -0
+      yaw: 0
+    geometry:
+      mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/visual/base_link.dae"
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  link1:
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: -0
+      yaw: 0
+    geometry:
+      mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/visual/link1.dae"
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  link2:
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: -0
+      yaw: 0
+    geometry:
+      mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/visual/link2.dae"
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  link3:
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: -0
+      yaw: 0
+    geometry:
+      mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/visual/link3.dae"
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  link4:
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: -0
+      yaw: 0
+    geometry:
+      mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/visual/link4.dae"
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  link5:
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: -0
+      yaw: 0
+    geometry:
+      mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/visual/link5.dae"
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  link6:
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: -0
+      yaw: 0
+    geometry:
+      mesh: "package://openarm_description/assets/arm/openarm_v2.0/meshes/visual/link6.dae"
+      scale:
+        x: 1
+        y: 1
+        z: 1

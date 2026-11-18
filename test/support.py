@@ -143,7 +143,7 @@ def model(links=('root',), joints=None):
             'joint/joint_mimics.yaml': {},
             'inertials/nominal.yaml': {links[0]: dict(origin=pose(.01, .02, .03), mass=2.3,
                                                       inertia=dict(xx=.04, yy=.05, zz=.06, xy=.001, xz=.002, yz=.003))},
-            'link/visuals.yaml': {}, 'link/collisions.yaml': {}}
+            'link/visuals.yaml': {'default': {}}, 'link/collisions.yaml': {'default': {}}}
 
 
 def chain():
