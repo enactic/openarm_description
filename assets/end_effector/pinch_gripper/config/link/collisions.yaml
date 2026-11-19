@@ -72,7 +72,7 @@ split_fingers_5parts:
         y: 1
         z: 1
   link1:
-  - name: finger_inner_00
+  - name: "00"
     origin:
       x: 0
       y: 0
@@ -86,7 +86,7 @@ split_fingers_5parts:
         x: 1
         y: 1
         z: 1
-  - name: finger_inner_01
+  - name: "01"
     origin:
       x: 0
       y: 0
@@ -100,7 +100,7 @@ split_fingers_5parts:
         x: 1
         y: 1
         z: 1
-  - name: finger_inner_02
+  - name: "02"
     origin:
       x: 0
       y: 0
@@ -114,7 +114,7 @@ split_fingers_5parts:
         x: 1
         y: 1
         z: 1
-  - name: finger_inner_03
+  - name: "03"
     origin:
       x: 0
       y: 0
@@ -128,7 +128,7 @@ split_fingers_5parts:
         x: 1
         y: 1
         z: 1
-  - name: finger_inner_04
+  - name: "04"
     origin:
       x: 0
       y: 0
@@ -143,7 +143,7 @@ split_fingers_5parts:
         y: 1
         z: 1
   link2:
-  - name: finger_outer_00
+  - name: "00"
     origin:
       x: 0
       y: 0
@@ -157,7 +157,7 @@ split_fingers_5parts:
         x: 1
         y: 1
         z: 1
-  - name: finger_outer_01
+  - name: "01"
     origin:
       x: 0
       y: 0
@@ -171,7 +171,7 @@ split_fingers_5parts:
         x: 1
         y: 1
         z: 1
-  - name: finger_outer_02
+  - name: "02"
     origin:
       x: 0
       y: 0
@@ -185,7 +185,7 @@ split_fingers_5parts:
         x: 1
         y: 1
         z: 1
-  - name: finger_outer_03
+  - name: "03"
     origin:
       x: 0
       y: 0
@@ -199,7 +199,7 @@ split_fingers_5parts:
         x: 1
         y: 1
         z: 1
-  - name: finger_outer_04
+  - name: "04"
     origin:
       x: 0
       y: 0
