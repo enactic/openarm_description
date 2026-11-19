@@ -111,3 +111,403 @@ default:
         x: 1
         y: 1
         z: 1
+
+split_isaac:
+  base_link:
+  - name: base_link_00_motor
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/base_link/normal_convex_2parts/base_link_00_motor.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: base_link_01_plate
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/base_link/normal_convex_2parts/base_link_01_plate.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  link1:
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link1/link1.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  link2:
+  - name: link2_00_upper
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link2/symp_convex_3parts/link2_00_upper.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: link2_01_middle
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link2/symp_convex_3parts/link2_01_middle.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: link2_02_lower
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link2/symp_convex_3parts/link2_02_lower.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  link3:
+  - name: link3_00_body
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link3/symp_convex_3parts/link3_00_body.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: link3_01_transition
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link3/symp_convex_3parts/link3_01_transition.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: link3_02_motor
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link3/symp_convex_3parts/link3_02_motor.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  link4:
+  - name: link4_00_tab
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link4/normal_convex_4parts/link4_00_tab.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: link4_01_body
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link4/normal_convex_4parts/link4_01_body.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: link4_02_cover0
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link4/normal_convex_4parts/link4_02_cover0.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: link4_03_cover1
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link4/normal_convex_4parts/link4_03_cover1.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  link5:
+  - name: link5_00_plate0
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link5/normal_convex_9parts/link5_00_plate0.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: link5_01_plate1
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link5/normal_convex_9parts/link5_01_plate1.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: link5_02_trim0
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link5/normal_convex_9parts/link5_02_trim0.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: link5_03_trim1
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link5/normal_convex_9parts/link5_03_trim1.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: link5_04_trim2
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link5/normal_convex_9parts/link5_04_trim2.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: link5_05_flange0
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link5/normal_convex_9parts/link5_05_flange0.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: link5_06_flange1
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link5/normal_convex_9parts/link5_06_flange1.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: link5_07_connector
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link5/normal_convex_9parts/link5_07_connector.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: link5_08_body
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link5/normal_convex_9parts/link5_08_body.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  link6:
+  - name: link6_00_motor
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link6/normal_convex_6parts/link6_00_motor.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: link6_01_ear0
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link6/normal_convex_6parts/link6_01_ear0.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: link6_02_ear1
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link6/normal_convex_6parts/link6_02_ear1.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: link6_03_base
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link6/normal_convex_6parts/link6_03_base.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: link6_04_connector
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link6/normal_convex_6parts/link6_04_connector.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: link6_05_pivot
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/arm/openarm_v2.0/meshes/collision/link6/normal_convex_6parts/link6_05_pivot.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1

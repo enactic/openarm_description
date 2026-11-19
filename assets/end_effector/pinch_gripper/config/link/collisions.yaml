@@ -55,3 +55,161 @@ default:
         x: 1
         y: 1
         z: 1
+
+split_fingers_5parts:
+  base_link:
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/ee_base_link/ee_base_link.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  link1:
+  - name: finger_inner_00
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/finger_inner/normal_mesh_5parts/finger_inner_00.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: finger_inner_01
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/finger_inner/normal_mesh_5parts/finger_inner_01.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: finger_inner_02
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/finger_inner/normal_mesh_5parts/finger_inner_02.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: finger_inner_03
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/finger_inner/normal_mesh_5parts/finger_inner_03.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: finger_inner_04
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/finger_inner/normal_mesh_5parts/finger_inner_04.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  link2:
+  - name: finger_outer_00
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/finger_outer/normal_mesh_5parts/finger_outer_00.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: finger_outer_01
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/finger_outer/normal_mesh_5parts/finger_outer_01.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: finger_outer_02
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/finger_outer/normal_mesh_5parts/finger_outer_02.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: finger_outer_03
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/finger_outer/normal_mesh_5parts/finger_outer_03.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
+  - name: finger_outer_04
+    origin:
+      x: 0
+      y: 0
+      z: 0
+      roll: 0
+      pitch: 0
+      yaw: 0
+    geometry:
+      mesh: package://openarm_description/assets/end_effector/pinch_gripper/meshes/collision/finger_outer/normal_mesh_5parts/finger_outer_04.stl
+      scale:
+        x: 1
+        y: 1
+        z: 1
