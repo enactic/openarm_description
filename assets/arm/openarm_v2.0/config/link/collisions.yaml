@@ -112,7 +112,7 @@ default:
         y: 1
         z: 1
 
-splited_isaac:
+split_isaac:
   base_link:
   - name: base_link_00_motor
     origin:

@@ -56,7 +56,7 @@ default:
         y: 1
         z: 1
 
-splited_isaac:
+split_fingers_5parts:
   base_link:
     origin:
       x: 0
