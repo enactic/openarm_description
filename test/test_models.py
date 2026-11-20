@@ -28,9 +28,12 @@ def test_shipped_presets_expand_and_resolve_resources():
                            robot_preset=f'{group}/{path.stem}', ros2_control=True,
                            use_fake_hardware=True, emit_grasp_frame=True)
             robots.append((group, path.stem, robot))
-    for path in sorted((ROOT/'assets/end_effector').glob('*/urdf/*_standalone.urdf.xacro')):
-        robots.append(('standalone', path.name, expand(
-            entry=str(path.relative_to(ROOT)))))
+    for kind in ('arm', 'body', 'accessory', 'end_effector', 'sensor'):
+        for directory in sorted((ROOT/'assets'/kind).iterdir()):
+            if directory.is_dir():
+                component = f'{kind}/{directory.name}'
+                robots.append(('component', component, expand(
+                    entry='urdf/component.urdf.xacro', component=component)))
     for version, name, robot in robots:
         for mesh in robot.findall('.//geometry/mesh'):
             uri = urlparse(mesh.get('filename'))

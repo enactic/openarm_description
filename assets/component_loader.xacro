@@ -25,7 +25,7 @@ limitations under the License.
   </xacro:macro>
 
   <xacro:macro name="openarm_describe_auto_component"
-    params="component_name component_cfg options out_name config_root_override:=''">
+    params="component_name component_cfg options out_name">
     <xacro:macro name="describe_component" params="component_name component_cfg config_root options out_name">
       <xacro:openarm_describe_config_component component_name="${component_name}" component_cfg="${component_cfg}" config_root="${config_root}" options="${options}" out_name="description" />
       <xacro:property name="${out_name}" value="${description}" scope="parent" lazy_eval="false" />
@@ -33,7 +33,7 @@ limitations under the License.
     <xacro:openarm_resolve_component_paths component_cfg="${component_cfg}" out_name="component_paths" />
     <xacro:include filename="${component_paths['interface']}" optional="true" />
     <xacro:describe_component component_name="${component_name}" component_cfg="${component_cfg}"
-      config_root="${config_root_override or component_paths['config_root']}" options="${options}" out_name="loaded_description" />
+      config_root="${component_paths['config_root']}" options="${options}" out_name="loaded_description" />
     <xacro:property name="${out_name}" value="${dict(loaded_description, component_dir=component_paths['component_dir'])}" scope="parent" lazy_eval="false" />
   </xacro:macro>
 

@@ -18,7 +18,7 @@ limitations under the License.
     <xacro:property name="empty_dict" value="${dict()}" />
     <xacro:property name="source_type" value="${component_cfg['type']}" />
     <xacro:property name="product" value="${component_cfg['product']}" />
-    <xacro:property name="component_config" value="${component_cfg['config']}" />
+    <xacro:property name="component_config" value="${component_cfg['config'] if component_cfg['config'] != None else xacro.load_yaml(config_root + '/preview.yaml')['config']}" lazy_eval="false" />
     <xacro:property name="component_prefix" value="${component_cfg.get('prefix', '')}" />
     <xacro:openarm_require condition="${component_config != None and 'camera_model' in component_config}"
       message="${'Camera component %s requires config.camera_model.' % component_name}" />
