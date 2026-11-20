@@ -220,7 +220,7 @@ def test_folding_preserves_physical_properties_and_frames():
         "link[@name='tool_ee_base_link']/inertial/mass").get('value')) == mass
 
 
-@pytest.mark.parametrize('mode', ['missing', 'off', 'on', 'physical', 'unattached'])
+@pytest.mark.parametrize('mode', ['missing', 'off', 'on', 'physical', 'unattached', 'preserve'])
 def test_folding_requires_enabled_empty_tip_and_child(mode):
     spec, data = installed_tool(mode not in ('missing', 'off'))
     if mode == 'missing':
@@ -228,6 +228,8 @@ def test_folding_requires_enabled_empty_tip_and_child(mode):
     if mode == 'physical':
         data['arm']['inertials/nominal.yaml']['tip'] = deepcopy(
             data['arm']['inertials/nominal.yaml']['root'])
+    if mode == 'preserve':
+        data['tool']['struct/topology.yaml']['preserve_base_frame'] = True
     if mode == 'unattached':
         spec = preset(arm=spec['arm'])
         del data['tool']

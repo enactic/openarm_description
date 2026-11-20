@@ -88,7 +88,7 @@ limitations under the License.
                    joint_name_map=component_joint_name_map,
                    default_mount_parent=component_default_mount_parent,
                    collapse_empty_end=component_collapse_empty_end,
-                   supports_frame_shift=True)}"
+                   supports_frame_shift=not component_topology.get('preserve_base_frame', False))}"
       scope="parent"
       lazy_eval="false" />
   </xacro:macro>

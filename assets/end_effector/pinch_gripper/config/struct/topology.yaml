@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Keep the mounting frame independent of the arm terminal frame.
+preserve_base_frame: true
 links:
   base_link:
     name: ee_base_link
