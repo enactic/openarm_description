@@ -42,6 +42,7 @@ foreach(install_dir assets launch presets rviz scripts)
   endif()
 endforeach()
 
-install(FILES urdf/openarm.urdf.xacro DESTINATION share/${PROJECT_NAME}/urdf)
+install(FILES urdf/openarm.urdf.xacro urdf/component.urdf.xacro
+        DESTINATION share/${PROJECT_NAME}/urdf)
 
 ament_package()

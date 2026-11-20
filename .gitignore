@@ -37,6 +37,7 @@ __pycache__
 .agents/
 /urdf/*
 !/urdf/openarm.urdf.xacro
+!/urdf/component.urdf.xacro
 
 docs/
 scripts/
