@@ -13,42 +13,18 @@
 # limitations under the License.
 
 default:
-  source:
-    kind: manually_tuned_from_real_images
-    repository: enactic/openarm_mujoco
-    commit: e6c08931cc5aa365e2092d90ba10dd719b79c977
-    files:
-    - v2/components/right_arm.xml
-    - v2/components/left_arm.xml
-    - v2/cell/cell.xml
-    branch: fix/v2-camera-intrinsics
-    calibration_status: Further calibration required; not factory or solved camera
-      calibration.
-  image:
-    width: 960
-    height: 600
+  width: 960
+  height: 600
+  frame: optical_frame
   projection: pinhole
-  vertical_fov_degrees: 52.9
+
+  # Pixel coordinates: continuous image bounds [0, width] and [0, height].
   intrinsics:
-    fx: 603.0241820845116
-    fy: 603.0241820845116
+    fx: 603.024182
+    fy: 603.024182
     cx: 480.0
     cy: 300.0
-    pixel_convention: continuous_image_coordinates
-    source: derived_from_vertical_fov_and_resolution_assuming_square_pixels
+
   distortion:
     model: none
     coefficients: []
-  frame: optical_frame
-  optical_pose_source: Shared CAD cam_center shifted 0.016 m along base_link +Z; image
-    axes converted from MuJoCo. Canonical axial pose removes sub-micrometer CAD rounding
-    differences.
-  cam_center_source: CAD approximate sensor center; not a measured optical center
-  mount_datum: Rear base-plate mounting plane at sensor centerline; axes aligned with
-    the Cell board geometry
-  mass_accounting: Camera mass and collision remain in the owning gripper/Cell aggregate.
-  optical_center_offset_m: 0.016
-  rendering:
-    near_clip_m: 0.0204
-    source: MuJoCo visual/map znear multiplied by model statistic extent; rendering
-      setting, separate from optical-center offset.
