@@ -34,13 +34,13 @@ grasp_frame:
       original_name: grasp_frame
       canonical_name: null
 
-camera_view_frame:
+camera_mount_point:
   parent: base_link
-  emit: true
+  emit: false
   origin:
-    x: 0.0013353
-    y: -0.024136
-    z: -0.086895
-    roll: 2.1009
-    pitch: 1.1424
-    yaw: 2.1431
+    x: 0.006093750844691326
+    y: -0.03152265403793905
+    z: -0.06765249928748707
+    roll: -2.7663028946521195
+    pitch: 0.21158515473039952
+    yaw: 0.08254745346156955

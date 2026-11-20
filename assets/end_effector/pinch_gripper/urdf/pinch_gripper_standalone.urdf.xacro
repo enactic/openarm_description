@@ -33,5 +33,18 @@ limitations under the License.
     value="${dict(type='end_effector', product='pinch_gripper', config=None, inertials='$(arg ee_inertials_name)', prefix='', enabled=True, reflect=dict(x=reflect_x_value, y=reflect_y_value, z=reflect_z_value))}" />
   <xacro:openarm_describe_auto_component component_name="gripper" component_cfg="${component_cfg}" options="${options}"
     config_root_override="$(arg ee_config_dir)" out_name="description" />
-  <xacro:openarm_emit_standalone_component component_cfg="${component_cfg}" component_desc="${description}" options="${options}" />
+  <xacro:if value="${'camera_mount_point' in description['reference_points']}">
+    <xacro:property name="camera_cfg" value="${dict(type='sensor', product='b0495', config=None, inertials='nominal', prefix='', enabled=True, connection=dict(attach_to='gripper', parent_reference_point='camera_mount_point'))}" />
+    <xacro:openarm_describe_auto_component component_name="camera" component_cfg="${camera_cfg}" options="${options}" out_name="camera_description" />
+    <link name="world" />
+    <xacro:openarm_emit_component_tree
+      component_api="${dict(describe='openarm_describe_auto_component', emit='openarm_emit_auto_component')}"
+      component_descriptions="${dict(gripper=description, camera=camera_description)}"
+      component_name="gripper" components="${['gripper', 'camera']}"
+      robot_preset="${dict(gripper=component_cfg, camera=camera_cfg)}" root_frame="world"
+      emit_grasp_frame="${options['emit_grasp_frame']}" />
+  </xacro:if>
+  <xacro:unless value="${'camera_mount_point' in description['reference_points']}">
+    <xacro:openarm_emit_standalone_component component_cfg="${component_cfg}" component_desc="${description}" options="${options}" />
+  </xacro:unless>
 </robot>
