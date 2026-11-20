@@ -114,7 +114,7 @@ default:
 
 split_isaac:
   base_link:
-  - name: base_link_00_motor
+  - name: "00_motor"
     origin:
       x: 0
       y: 0
@@ -128,7 +128,7 @@ split_isaac:
         x: 1
         y: 1
         z: 1
-  - name: base_link_01_plate
+  - name: "01_plate"
     origin:
       x: 0
       y: 0
@@ -157,7 +157,7 @@ split_isaac:
         y: 1
         z: 1
   link2:
-  - name: link2_00_upper
+  - name: "00_upper"
     origin:
       x: 0
       y: 0
@@ -171,7 +171,7 @@ split_isaac:
         x: 1
         y: 1
         z: 1
-  - name: link2_01_middle
+  - name: "01_middle"
     origin:
       x: 0
       y: 0
@@ -185,7 +185,7 @@ split_isaac:
         x: 1
         y: 1
         z: 1
-  - name: link2_02_lower
+  - name: "02_lower"
     origin:
       x: 0
       y: 0
@@ -200,7 +200,7 @@ split_isaac:
         y: 1
         z: 1
   link3:
-  - name: link3_00_body
+  - name: "00_body"
     origin:
       x: 0
       y: 0
@@ -214,7 +214,7 @@ split_isaac:
         x: 1
         y: 1
         z: 1
-  - name: link3_01_transition
+  - name: "01_transition"
     origin:
       x: 0
       y: 0
@@ -228,7 +228,7 @@ split_isaac:
         x: 1
         y: 1
         z: 1
-  - name: link3_02_motor
+  - name: "02_motor"
     origin:
       x: 0
       y: 0
@@ -243,7 +243,7 @@ split_isaac:
         y: 1
         z: 1
   link4:
-  - name: link4_00_tab
+  - name: "00_tab"
     origin:
       x: 0
       y: 0
@@ -257,7 +257,7 @@ split_isaac:
         x: 1
         y: 1
         z: 1
-  - name: link4_01_body
+  - name: "01_body"
     origin:
       x: 0
       y: 0
@@ -271,7 +271,7 @@ split_isaac:
         x: 1
         y: 1
         z: 1
-  - name: link4_02_cover0
+  - name: "02_cover0"
     origin:
       x: 0
       y: 0
@@ -285,7 +285,7 @@ split_isaac:
         x: 1
         y: 1
         z: 1
-  - name: link4_03_cover1
+  - name: "03_cover1"
     origin:
       x: 0
       y: 0
@@ -300,7 +300,7 @@ split_isaac:
         y: 1
         z: 1
   link5:
-  - name: link5_00_plate0
+  - name: "00_plate0"
     origin:
       x: 0
       y: 0
@@ -314,7 +314,7 @@ split_isaac:
         x: 1
         y: 1
         z: 1
-  - name: link5_01_plate1
+  - name: "01_plate1"
     origin:
       x: 0
       y: 0
@@ -328,7 +328,7 @@ split_isaac:
         x: 1
         y: 1
         z: 1
-  - name: link5_02_trim0
+  - name: "02_trim0"
     origin:
       x: 0
       y: 0
@@ -342,7 +342,7 @@ split_isaac:
         x: 1
         y: 1
         z: 1
-  - name: link5_03_trim1
+  - name: "03_trim1"
     origin:
       x: 0
       y: 0
@@ -356,7 +356,7 @@ split_isaac:
         x: 1
         y: 1
         z: 1
-  - name: link5_04_trim2
+  - name: "04_trim2"
     origin:
       x: 0
       y: 0
@@ -370,7 +370,7 @@ split_isaac:
         x: 1
         y: 1
         z: 1
-  - name: link5_05_flange0
+  - name: "05_flange0"
     origin:
       x: 0
       y: 0
@@ -384,7 +384,7 @@ split_isaac:
         x: 1
         y: 1
         z: 1
-  - name: link5_06_flange1
+  - name: "06_flange1"
     origin:
       x: 0
       y: 0
@@ -398,7 +398,7 @@ split_isaac:
         x: 1
         y: 1
         z: 1
-  - name: link5_07_connector
+  - name: "07_connector"
     origin:
       x: 0
       y: 0
@@ -412,7 +412,7 @@ split_isaac:
         x: 1
         y: 1
         z: 1
-  - name: link5_08_body
+  - name: "08_body"
     origin:
       x: 0
       y: 0
@@ -427,7 +427,7 @@ split_isaac:
         y: 1
         z: 1
   link6:
-  - name: link6_00_motor
+  - name: "00_motor"
     origin:
       x: 0
       y: 0
@@ -441,7 +441,7 @@ split_isaac:
         x: 1
         y: 1
         z: 1
-  - name: link6_01_ear0
+  - name: "01_ear0"
     origin:
       x: 0
       y: 0
@@ -455,7 +455,7 @@ split_isaac:
         x: 1
         y: 1
         z: 1
-  - name: link6_02_ear1
+  - name: "02_ear1"
     origin:
       x: 0
       y: 0
@@ -469,7 +469,7 @@ split_isaac:
         x: 1
         y: 1
         z: 1
-  - name: link6_03_base
+  - name: "03_base"
     origin:
       x: 0
       y: 0
@@ -483,7 +483,7 @@ split_isaac:
         x: 1
         y: 1
         z: 1
-  - name: link6_04_connector
+  - name: "04_connector"
     origin:
       x: 0
       y: 0
@@ -497,7 +497,7 @@ split_isaac:
         x: 1
         y: 1
         z: 1
-  - name: link6_05_pivot
+  - name: "05_pivot"
     origin:
       x: 0
       y: 0
