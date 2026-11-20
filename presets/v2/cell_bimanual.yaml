@@ -17,10 +17,13 @@ robot:
   root_frame: world
   components:
   - body
+  - ceiling_camera
   - primary_arm
   - secondary_arm
   - primary_arm_end_effector
+  - primary_arm_end_effector_camera
   - secondary_arm_end_effector
+  - secondary_arm_end_effector_camera
   - body_camera_mount
   - body_camera
 body:
@@ -208,3 +211,49 @@ preview:
   view:
     eye: {x: -2.0, y: 0.0, z: 1.45}
     lookat: {x: 0.40, y: 0.0, z: 1.10}
+
+ceiling_camera:
+  type: sensor
+  product: b0495
+  config: null
+  inertials: nominal
+  visuals: cell
+  prefix: openarm_cell_ceiling_camera_
+  enabled: true
+  connection:
+    attach_to: body
+    parent_reference_point: ceiling_camera_mount_point
+primary_arm_end_effector_camera:
+  type: sensor
+  product: b0495
+  config: null
+  inertials: nominal
+  prefix: openarm_left_camera_
+  enabled: true
+  connection:
+    attach_to: primary_arm_end_effector
+    parent_reference_point: camera_mount_point
+  reflect:
+    x: 1
+    y: -1
+    z: 1
+    include:
+      reference_points:
+      - cam_center
+secondary_arm_end_effector_camera:
+  type: sensor
+  product: b0495
+  config: null
+  inertials: nominal
+  prefix: openarm_right_camera_
+  enabled: true
+  connection:
+    attach_to: secondary_arm_end_effector
+    parent_reference_point: camera_mount_point
+  reflect:
+    x: 1
+    y: 1
+    z: 1
+    include:
+      reference_points:
+      - cam_center

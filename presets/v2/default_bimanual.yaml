@@ -20,7 +20,9 @@ robot:
   - primary_arm
   - secondary_arm
   - primary_arm_end_effector
+  - primary_arm_end_effector_camera
   - secondary_arm_end_effector
+  - secondary_arm_end_effector_camera
   - body_camera_mount
   - body_camera
 body:
@@ -187,3 +189,38 @@ preview:
   view:
     eye: {x: 3.35215806, y: -3.3373551, z: 1.6202152}
     lookat: {x: 0.0, y: 0.0, z: 0.0}
+
+primary_arm_end_effector_camera:
+  type: sensor
+  product: b0495
+  config: null
+  inertials: nominal
+  prefix: openarm_left_camera_
+  enabled: true
+  connection:
+    attach_to: primary_arm_end_effector
+    parent_reference_point: camera_mount_point
+  reflect:
+    x: 1
+    y: -1
+    z: 1
+    include:
+      reference_points:
+      - cam_center
+secondary_arm_end_effector_camera:
+  type: sensor
+  product: b0495
+  config: null
+  inertials: nominal
+  prefix: openarm_right_camera_
+  enabled: true
+  connection:
+    attach_to: secondary_arm_end_effector
+    parent_reference_point: camera_mount_point
+  reflect:
+    x: 1
+    y: 1
+    z: 1
+    include:
+      reference_points:
+      - cam_center
