@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Optical center: CAD cam_center + 16 mm along the lens axis (base_link +Z).
+# Optical center: CAD camera_center + 16 mm along the lens axis (base_link +Z).
 # Optical axes: image right/down/forward; keep roll independent of mesh reflection.
-cam_center:
+camera_center:
   parent: base_link
-  emit: true
+  emit: false
   origin:
     x: 0.0
     y: 0.0
@@ -24,7 +24,7 @@ cam_center:
     roll: 0.0
     pitch: 0.0
     yaw: 0.0
-optical_frame:
+camera_optical_frame:
   parent: base_link
   emit: true
   origin:

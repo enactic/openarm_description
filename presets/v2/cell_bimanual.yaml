@@ -218,7 +218,7 @@ ceiling_camera:
   config: null
   inertials: nominal
   visuals: cell
-  prefix: openarm_cell_ceiling_camera_
+  prefix: openarm_cell_ceiling_
   enabled: true
   connection:
     attach_to: body
@@ -228,7 +228,7 @@ primary_arm_end_effector_camera:
   product: b0495
   config: null
   inertials: nominal
-  prefix: openarm_left_camera_
+  prefix: openarm_left_
   enabled: true
   connection:
     attach_to: primary_arm_end_effector
@@ -239,13 +239,13 @@ primary_arm_end_effector_camera:
     z: 1
     include:
       reference_points:
-      - cam_center
+      - camera_center
 secondary_arm_end_effector_camera:
   type: sensor
   product: b0495
   config: null
   inertials: nominal
-  prefix: openarm_right_camera_
+  prefix: openarm_right_
   enabled: true
   connection:
     attach_to: secondary_arm_end_effector
@@ -256,4 +256,4 @@ secondary_arm_end_effector_camera:
     z: 1
     include:
       reference_points:
-      - cam_center
+      - camera_center
