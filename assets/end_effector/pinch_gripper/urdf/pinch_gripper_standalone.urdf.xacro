@@ -34,7 +34,7 @@ limitations under the License.
   <xacro:openarm_describe_auto_component component_name="gripper" component_cfg="${component_cfg}" options="${options}"
     config_root_override="$(arg ee_config_dir)" out_name="description" />
   <xacro:if value="${'camera_mount_point' in description['reference_points']}">
-    <xacro:property name="camera_cfg" value="${dict(type='sensor', product='b0495', config=None, inertials='nominal', prefix='camera_', enabled=True, reflect=dict(component_cfg['reflect'], include=dict(reference_points=['cam_center'])), connection=dict(attach_to='gripper', parent_reference_point='camera_mount_point'))}" />
+    <xacro:property name="camera_cfg" value="${dict(type='sensor', product='b0495', config=None, inertials='nominal', prefix='', enabled=True, reflect=dict(component_cfg['reflect'], include=dict(reference_points=['camera_center'])), connection=dict(attach_to='gripper', parent_reference_point='camera_mount_point'))}" />
     <xacro:openarm_describe_auto_component component_name="camera" component_cfg="${camera_cfg}" options="${options}" out_name="camera_description" />
     <link name="world" />
     <xacro:openarm_emit_component_tree

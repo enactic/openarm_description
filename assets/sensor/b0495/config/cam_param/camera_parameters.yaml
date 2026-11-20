@@ -15,7 +15,7 @@
 default:
   width: 960
   height: 600
-  frame: optical_frame
+  frame: camera_optical_frame
   projection: pinhole
 
   # Pixel coordinates: continuous image bounds [0, width] and [0, height].

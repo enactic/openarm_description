@@ -13,5 +13,6 @@
 # limitations under the License.
 
 links:
-  base_link: {}
+  base_link:
+    name: camera_base_link
 joints: {}
