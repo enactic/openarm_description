@@ -15,12 +15,12 @@
 grasp_frame:
   parent: base_link
   origin:
-    x: -0.0219300000000009
-    y: 0
-    z: -0.138000000000019
-    roll: 3.141592653589793
-    pitch: 1.570796326794893
-    yaw: 3.141592653589793
+    x: 0.138000000000019
+    y: 0.0
+    z: -0.0219300000000009
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
   meta:
     comment: grasp_frame
     source_joint:
@@ -38,9 +38,9 @@ camera_view_frame:
   parent: base_link
   emit: true
   origin:
-    x: 0.0013353
+    x: 0.086895
     y: -0.024136
-    z: -0.086895
-    roll: 2.1009
-    pitch: 1.1424
-    yaw: 2.1431
+    z: 0.0013353
+    roll: 3.668295301495483e-05
+    pitch: 0.2269174047707958
+    yaw: 0.36656080560011095
