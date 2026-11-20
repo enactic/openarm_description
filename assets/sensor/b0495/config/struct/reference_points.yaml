@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # Optical center: CAD camera_center + 16 mm along the lens axis (base_link +Z).
-# Optical axes: image right/down/forward; keep roll independent of mesh reflection.
+# Optical axes: image right/down/forward.
 camera_center:
   parent: base_link
   emit: false
