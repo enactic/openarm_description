@@ -1,0 +1,331 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot name="linkerhand_o6_left" version="1.0">
+  <material name="linkerhand_o6_left_silver">
+    <color rgba="0.5 0.5 0.52 1.0" />
+  </material>
+  <material name="linkerhand_o6_left_BlackAccent">
+    <color rgba="0.15 0.15 0.15 1.0" />
+  </material>
+  <link name="lh_hand_base_link">
+    <inertial>
+      <origin xyz="-0.00157788568070457 -0.00034876725935859 0.0538452219801211" rpy="-0.0 -0.0 -0.0" />
+      <mass value="0.2374" />
+      <inertia ixx="5.6375e-05" ixy="3.31172e-07" ixz="-4.21137e-07" iyy="3.5983e-05" iyz="-8.37956e-07" izz="2.4649e-05" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/linkerhand_o6/left/meshes/visual/lh_hand_base_link_vis.glb" />
+      </geometry>
+      <material name="linkerhand_o6_left_silver" />
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/linkerhand_o6/left/meshes/collision/lh_hand_base_link_col.obj" />
+      </geometry>
+    </collision>
+  </link>
+  <link name="lh_thumb_metacarpals_base2">
+    <inertial>
+      <origin xyz="0.00162795738393474 -0.0027667197833771 -0.00184227725602705" rpy="-0.0 -0.0 -0.0" />
+      <mass value="0.00258" />
+      <inertia ixx="9.7974575996e-08" ixy="7.3138244367e-09" ixz="4.5379328624e-09" iyy="8.9844836854e-08" iyz="-6.9226596212e-09" izz="5.37172594e-08" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/linkerhand_o6/left/meshes/visual/lh_thumb_metacarpals_base2_vis.glb" />
+      </geometry>
+      <material name="linkerhand_o6_left_BlackAccent" />
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/linkerhand_o6/left/meshes/collision/lh_thumb_metacarpals_base2_col.obj" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="lh_thumb_cmc_yaw" type="revolute">
+    <origin xyz="0.010457 -0.022975 0.030794" rpy="-0.0 -0.0 -0.0" />
+    <axis xyz="-0.0 -0.0 1.0" />
+    <parent link="lh_hand_base_link" />
+    <child link="lh_thumb_metacarpals_base2" />
+    <limit effort="100" lower="0.0" upper="1.36" velocity="1" />
+  </joint>
+  <link name="lh_thumb_metacarpals">
+    <inertial>
+      <origin xyz="-1.84622133177631e-05 0.000164684333964604 0.022696504519568" rpy="-0.0 -0.0 -0.0" />
+      <mass value="0.04724" />
+      <inertia ixx="7.2358317019e-06" ixy="-2.532551649e-09" ixz="-1.7874737118e-09" iyy="4.5390480908e-06" iyz="4.802304328e-07" izz="3.7252650599e-06" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/linkerhand_o6/left/meshes/visual/lh_thumb_metacarpals_vis.glb" />
+      </geometry>
+      <material name="linkerhand_o6_left_silver" />
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/linkerhand_o6/left/meshes/collision/lh_thumb_metacarpals_col.obj" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="lh_thumb_cmc_pitch" type="revolute">
+    <origin xyz="0.0061649 -0.010678 -0.004891" rpy="1.1529 -0.0 0.5236" />
+    <axis xyz="-1.0 -0.0 -0.0" />
+    <parent link="lh_thumb_metacarpals_base2" />
+    <child link="lh_thumb_metacarpals" />
+    <limit effort="100" lower="0.0" upper="0.58" velocity="1" />
+  </joint>
+  <link name="lh_thumb_distal">
+    <inertial>
+      <origin xyz="-4.4744e-07 -0.0041369 0.02301" rpy="-0.0 -0.0 -0.0" />
+      <mass value="0.0142" />
+      <inertia ixx="2.2781763396e-06" ixy="-4.6616481069e-12" ixz="3.010221407e-11" iyy="2.4286781082e-06" iyz="1.3376426045e-07" izz="5.1587318224e-07" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/linkerhand_o6/left/meshes/visual/lh_thumb_distal_vis.glb" />
+      </geometry>
+      <material name="linkerhand_o6_left_silver" />
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/linkerhand_o6/left/meshes/collision/lh_thumb_distal_col.obj" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="lh_thumb_ip" type="revolute">
+    <origin xyz="0.0 0.0037776 0.045368" rpy="-0.0 -0.0 -0.0" />
+    <axis xyz="-1.0 -0.0 -0.0" />
+    <parent link="lh_thumb_metacarpals" />
+    <child link="lh_thumb_distal" />
+    <limit effort="100" lower="0.0" upper="1.08" velocity="1" />
+    <mimic joint="lh_thumb_cmc_pitch" multiplier="1.86" offset="0.0" />
+  </joint>
+  <link name="lh_index_proximal">
+    <inertial>
+      <origin xyz="-0.00208656556336452 2.53838713251686e-06 0.0172734941980264" rpy="-0.0 -0.0 -0.0" />
+      <mass value="0.01082" />
+      <inertia ixx="3.53128e-07" ixy="-2.21942e-11" ixz="-5.72262e-08" iyy="3.62322e-07" iyz="2.49015e-10" izz="1.13645e-07" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/linkerhand_o6/left/meshes/visual/lh_index_proximal_vis.glb" />
+      </geometry>
+      <material name="linkerhand_o6_left_silver" />
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/linkerhand_o6/left/meshes/collision/lh_index_proximal_col.obj" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="lh_index_mcp_pitch" type="revolute">
+    <origin xyz="0.0024758 -0.02419 0.098779" rpy="0.05236 -0.0 -0.0" />
+    <axis xyz="0.0 1.0 0.0" />
+    <parent link="lh_hand_base_link" />
+    <child link="lh_index_proximal" />
+    <limit effort="100" lower="0.0" upper="1.6" velocity="1" />
+  </joint>
+  <link name="lh_index_distal">
+    <inertial>
+      <origin xyz="0.00658986616416549 5.13855642059191e-06 0.0194393600039178" rpy="-0.0 -0.0 -0.0" />
+      <mass value="0.00632" />
+      <inertia ixx="1.68896e-07" ixy="7.23157e-12" ixz="-5.99162e-08" iyy="1.91417e-07" iyz="-1.1082e-10" izz="6.51218e-08" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/linkerhand_o6/left/meshes/visual/lh_index_distal_vis.glb" />
+      </geometry>
+      <material name="linkerhand_o6_left_silver" />
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/linkerhand_o6/left/meshes/collision/lh_index_distal_col.obj" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="lh_index_dip" type="revolute">
+    <origin xyz="-0.0052516 -0.0 0.036625" rpy="-0.0 -0.0 -0.0" />
+    <axis xyz="0.0 1.0 0.0" />
+    <parent link="lh_index_proximal" />
+    <child link="lh_index_distal" />
+    <limit effort="100" lower="0.0" upper="1.43" velocity="1" />
+    <mimic joint="lh_index_mcp_pitch" multiplier="0.89" offset="0.0" />
+  </joint>
+  <link name="lh_middle_proximal">
+    <inertial>
+      <origin xyz="-0.00208660654138235 2.56918180119303e-06 0.0172735011723351" rpy="-0.0 -0.0 -0.0" />
+      <mass value="0.01082" />
+      <inertia ixx="3.53128e-07" ixy="-2.25449e-11" ixz="-5.7226e-08" iyy="3.62323e-07" iyz="2.48906e-10" izz="1.13646e-07" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/linkerhand_o6/left/meshes/visual/lh_middle_proximal_vis.glb" />
+      </geometry>
+      <material name="linkerhand_o6_left_silver" />
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/linkerhand_o6/left/meshes/collision/lh_middle_proximal_col.obj" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="lh_middle_mcp_pitch" type="revolute">
+    <origin xyz="0.00052576 -0.00634 0.1027" rpy="-0.0 -0.0 -0.0" />
+    <axis xyz="0.0 1.0 0.0" />
+    <parent link="lh_hand_base_link" />
+    <child link="lh_middle_proximal" />
+    <limit effort="100" lower="0.0" upper="1.6" velocity="1" />
+  </joint>
+  <link name="lh_middle_distal">
+    <inertial>
+      <origin xyz="0.00658986516319194 5.10862924271716e-06 0.0194393315699782" rpy="-0.0 -0.0 -0.0" />
+      <mass value="0.00632" />
+      <inertia ixx="1.68897e-07" ixy="7.18465e-12" ixz="-5.99163e-08" iyy="1.91417e-07" iyz="-1.10269e-10" izz="6.51221e-08" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/linkerhand_o6/left/meshes/visual/lh_middle_distal_vis.glb" />
+      </geometry>
+      <material name="linkerhand_o6_left_silver" />
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/linkerhand_o6/left/meshes/collision/lh_middle_distal_col.obj" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="lh_middle_dip" type="revolute">
+    <origin xyz="-0.0052516 -0.0 0.036625" rpy="-0.0 -0.0 -0.0" />
+    <axis xyz="0.0 1.0 0.0" />
+    <parent link="lh_middle_proximal" />
+    <child link="lh_middle_distal" />
+    <limit effort="100" lower="0.0" upper="1.43" velocity="1" />
+    <mimic joint="lh_middle_mcp_pitch" multiplier="0.89" offset="0.0" />
+  </joint>
+  <link name="lh_ring_proximal">
+    <inertial>
+      <origin xyz="-0.00208667931345812 2.63000419462034e-06 0.0172734926448377" rpy="-0.0 -0.0 -0.0" />
+      <mass value="0.01082" />
+      <inertia ixx="3.53129e-07" ixy="-2.32215e-11" ixz="-5.72256e-08" iyy="3.62324e-07" iyz="2.48472e-10" izz="1.13647e-07" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/linkerhand_o6/left/meshes/visual/lh_ring_proximal_vis.glb" />
+      </geometry>
+      <material name="linkerhand_o6_left_silver" />
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/linkerhand_o6/left/meshes/collision/lh_ring_proximal_col.obj" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="lh_ring_mcp_pitch" type="revolute">
+    <origin xyz="0.0010258 0.011135 0.098767" rpy="-0.05236 -0.0 -0.0" />
+    <axis xyz="0.0 1.0 0.0" />
+    <parent link="lh_hand_base_link" />
+    <child link="lh_ring_proximal" />
+    <limit effort="100" lower="0.0" upper="1.6" velocity="1" />
+  </joint>
+  <link name="lh_ring_distal">
+    <inertial>
+      <origin xyz="0.00658986648895491 5.05883528165163e-06 0.019439397215532" rpy="-0.0 -0.0 -0.0" />
+      <mass value="0.00632" />
+      <inertia ixx="1.68895e-07" ixy="7.11364e-12" ixz="-5.99163e-08" iyy="1.91416e-07" iyz="-1.09335e-10" izz="6.51217e-08" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/linkerhand_o6/left/meshes/visual/lh_ring_distal_vis.glb" />
+      </geometry>
+      <material name="linkerhand_o6_left_silver" />
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/linkerhand_o6/left/meshes/collision/lh_ring_distal_col.obj" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="lh_ring_dip" type="revolute">
+    <origin xyz="-0.0052516 -0.0 0.036625" rpy="-0.0 -0.0 -0.0" />
+    <axis xyz="0.0 1.0 0.0" />
+    <parent link="lh_ring_proximal" />
+    <child link="lh_ring_distal" />
+    <limit effort="100" lower="0.0" upper="1.43" velocity="1" />
+    <mimic joint="lh_ring_mcp_pitch" multiplier="0.89" offset="0.0" />
+  </joint>
+  <link name="lh_pinky_proximal">
+    <inertial>
+      <origin xyz="-0.00208673599799501 2.68062251165824e-06 0.0172734848131236" rpy="-0.0 -0.0 -0.0" />
+      <mass value="0.01082" />
+      <inertia ixx="3.5313e-07" ixy="-2.37682e-11" ixz="-5.72252e-08" iyy="3.62324e-07" iyz="2.48138e-10" izz="1.13648e-07" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/linkerhand_o6/left/meshes/visual/lh_pinky_proximal_vis.glb" />
+      </geometry>
+      <material name="linkerhand_o6_left_silver" />
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/linkerhand_o6/left/meshes/collision/lh_pinky_proximal_col.obj" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="lh_pinky_mcp_pitch" type="revolute">
+    <origin xyz="0.0024758 0.028372 0.092741" rpy="-0.087266 -0.0 -0.0" />
+    <axis xyz="0.0 1.0 0.0" />
+    <parent link="lh_hand_base_link" />
+    <child link="lh_pinky_proximal" />
+    <limit effort="100" lower="0.0" upper="1.6" velocity="1" />
+  </joint>
+  <link name="lh_pinky_distal">
+    <inertial>
+      <origin xyz="0.00658987588903027 5.03087534178825e-06 0.0194394491065091" rpy="-0.0 -0.0 -0.0" />
+      <mass value="0.00632" />
+      <inertia ixx="1.68894e-07" ixy="7.1137e-12" ixz="-5.99164e-08" iyy="1.91415e-07" iyz="-1.08691e-10" izz="6.51216e-08" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/linkerhand_o6/left/meshes/visual/lh_pinky_distal_vis.glb" />
+      </geometry>
+      <material name="linkerhand_o6_left_silver" />
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://openarm_description/assets/end_effector/linkerhand_o6/left/meshes/collision/lh_pinky_distal_col.obj" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="lh_pinky_dip" type="revolute">
+    <origin xyz="-0.0052516 -0.0 0.036625" rpy="-0.0 -0.0 -0.0" />
+    <axis xyz="0.0 1.0 0.0" />
+    <parent link="lh_pinky_proximal" />
+    <child link="lh_pinky_distal" />
+    <limit effort="100" lower="0.0" upper="1.43" velocity="1" />
+    <mimic joint="lh_pinky_mcp_pitch" multiplier="0.89" offset="0.0" />
+  </joint>
+</robot>
