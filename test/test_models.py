@@ -22,7 +22,7 @@ def test_shipped_presets_expand_and_resolve_resources():
     robots = [('<shared>', '<default>', expand(
         entry='urdf/openarm.urdf.xacro', ros2_control=True,
         use_fake_hardware=True, emit_grasp_frame=True))]
-    for group in ('v1', 'v2'):
+    for group in ('v1', 'v2', 'example'):
         for path in sorted((ROOT/'presets'/group).glob('*.yaml')):
             robot = expand(entry='urdf/openarm.urdf.xacro',
                            robot_preset=f'{group}/{path.stem}', ros2_control=True,

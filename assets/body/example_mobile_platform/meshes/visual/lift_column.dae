@@ -1,0 +1,105 @@
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <created>2026-11-18T22:21:52.736351</created>
+    <modified>2026-11-18T22:21:52.736353</modified>
+    <unit name="meter" meter="1.0" />
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_effects>
+    <effect id="lift_column_00-effect" name="lift_column_00-effect">
+      <profile_COMMON>
+        <technique sid="common">
+          <phong>
+            <emission>
+              <color>0.0 0.0 0.0 1.0</color>
+            </emission>
+            <ambient>
+              <color>0.0 0.0 0.0 1.0</color>
+            </ambient>
+            <diffuse>
+              <color>0.55 0.58 0.62 1.0</color>
+            </diffuse>
+            <specular>
+              <color>0.06 0.06 0.06 1.0</color>
+            </specular>
+            <shininess>
+              <float>25.0</float>
+            </shininess>
+            <reflective>
+              <color>0.0 0.0 0.0 1.0</color>
+            </reflective>
+            <reflectivity>
+              <float>0.0</float>
+            </reflectivity>
+            <transparent>
+              <color>0.0 0.0 0.0 1.0</color>
+            </transparent>
+            <transparency>
+              <float>1.0</float>
+            </transparency>
+          </phong>
+        </technique>
+        <extra>
+          <technique profile="GOOGLEEARTH">
+            <double_sided>0</double_sided>
+          </technique>
+        </extra>
+      </profile_COMMON>
+    </effect>
+  </library_effects>
+  <library_geometries>
+    <geometry id="lift_column_00-mesh" name="lift_column_00">
+      <mesh>
+        <source id="lift_column_00-positions">
+          <float_array count="24" id="lift_column_00-positions-array">-0.05 -0.03 -0.2 -0.05 -0.03 0.36 -0.05 0.03 -0.2 -0.05 0.03 0.36 0.05 -0.03 -0.2 0.05 -0.03 0.36 0.05 0.03 -0.2 0.05 0.03 0.36</float_array>
+          <technique_common>
+            <accessor count="8" source="#lift_column_00-positions-array" stride="3">
+              <param type="float" name="X" />
+              <param type="float" name="Y" />
+              <param type="float" name="Z" />
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="lift_column_00-normals">
+          <float_array count="36" id="lift_column_00-normals-array">-1 0 0 0 -1 0 -1 0 0 0 0 -1 0 0 1 0 -1 0 0 0 1 0 1 0 0 0 -1 0 1 0 1 0 0 1 0 0</float_array>
+          <technique_common>
+            <accessor count="12" source="#lift_column_00-normals-array" stride="3">
+              <param type="float" name="X" />
+              <param type="float" name="Y" />
+              <param type="float" name="Z" />
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="lift_column_00-positions-vertices">
+          <input semantic="POSITION" source="#lift_column_00-positions" />
+        </vertices>
+        <triangles count="12" material="material">
+          <input offset="0" semantic="VERTEX" source="#lift_column_00-positions-vertices" />
+          <input offset="1" semantic="NORMAL" source="#lift_column_00-normals" />
+          <p>1 0 3 0 0 0 4 1 1 1 0 1 0 2 3 2 2 2 2 3 4 3 0 3 1 4 7 4 3 4 5 5 1 5 4 5 5 6 7 6 1 6 3 7 7 7 2 7 6 8 4 8 2 8 2 9 7 9 6 9 6 10 5 10 4 10 7 11 5 11 6 11</p>
+        </triangles>
+      </mesh>
+    </geometry>
+  </library_geometries>
+  <library_materials>
+    <material id="lift_column_00-material" name="lift_column_00">
+      <instance_effect url="#lift_column_00-effect" />
+    </material>
+  </library_materials>
+  <library_visual_scenes>
+    <visual_scene id="scene">
+      <node id="lift_column_00" name="lift_column_00">
+        <instance_geometry url="#lift_column_00-mesh">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="material" target="#lift_column_00-material" />
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#scene" />
+  </scene>
+</COLLADA>

@@ -1,0 +1,81 @@
+# Copyright 2026 Enactic, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Example platform: four steerable wheel modules and one telescoping lift.
+links:
+  base_link: {}
+  link1:
+    name: front_left_steer_link
+  link2:
+    name: front_left_wheel_link
+  link3:
+    name: front_right_steer_link
+  link4:
+    name: front_right_wheel_link
+  link5:
+    name: rear_left_steer_link
+  link6:
+    name: rear_left_wheel_link
+  link7:
+    name: rear_right_steer_link
+  link8:
+    name: rear_right_wheel_link
+  link9:
+    name: lift_column_link
+joints:
+  joint1:
+    name: front_left_steer_joint
+    type: revolute
+    parent: base_link
+    child: link1
+  joint2:
+    name: front_left_wheel_joint
+    type: continuous
+    parent: link1
+    child: link2
+  joint3:
+    name: front_right_steer_joint
+    type: revolute
+    parent: base_link
+    child: link3
+  joint4:
+    name: front_right_wheel_joint
+    type: continuous
+    parent: link3
+    child: link4
+  joint5:
+    name: rear_left_steer_joint
+    type: revolute
+    parent: base_link
+    child: link5
+  joint6:
+    name: rear_left_wheel_joint
+    type: continuous
+    parent: link5
+    child: link6
+  joint7:
+    name: rear_right_steer_joint
+    type: revolute
+    parent: base_link
+    child: link7
+  joint8:
+    name: rear_right_wheel_joint
+    type: continuous
+    parent: link7
+    child: link8
+  joint9:
+    name: lift_joint
+    type: prismatic
+    parent: base_link
+    child: link9
