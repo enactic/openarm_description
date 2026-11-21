@@ -37,3 +37,7 @@ joints:
     type: prismatic
     parent: link1
     child: link3
+    mimic:
+      target: joint2
+      multiplier: 1
+      offset: 0

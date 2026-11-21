@@ -35,7 +35,7 @@ limitations under the License.
         parent_link="${link_name_map[joint['parent']]}" child_link="${tip_collapse_child_link if collapse_child else link_name_map[child]}"
         joint_origins="${joint_origins}" joint_axes="${joint_axes}" joint_limits="${joint_limits}" source_name="${name}"
         origin_override="${origin_override_joints.get(name, 'none')}" limit_override="${limit_override_joints.get(name, 'none')}"
-        mimic_override="${dict(joint=joint_name_map[mimic['joint']], multiplier=mimic['multiplier'], offset=mimic['offset']) if mimic != 'none' else 'none'}"
+        mimic_override="${dict(joint=joint_name_map[mimic['target']], multiplier=mimic['multiplier'], offset=mimic['offset']) if mimic != 'none' else 'none'}"
         reflect_x="${reflect_x if joint_reflects else 1}" reflect_y="${reflect_y if joint_reflects else 1}" reflect_z="${reflect_z if joint_reflects else 1}"
         reflect_rotation="${True}" mirror_limit_sign="${joint_reflects and (reflect_x == -1 or reflect_y == -1 or reflect_z == -1)}"
         frame_shift="${base_frame_shift if joint['parent'] == list(topology['links'])[0] else 'none'}" />

@@ -73,7 +73,7 @@ def test_names_and_mimics_follow_configuration(product):
     assert {link.get('name') for link in robot.findall('link')} == {'world'} | {
         prefix + cfg.get('name', key) for prefix in ('alpha_', 'beta_')
         for key, cfg in topology['links'].items()}
-    mimic = data['joint/joint_mimics.yaml']['joint2']
+    mimic = data['struct/topology.yaml']['joints']['joint2']['mimic']
     for prefix in ('alpha_', 'beta_'):
         joint = robot.find(f"joint[@name='{prefix}follower']")
         assert joint.get('type') == 'prismatic'
@@ -82,7 +82,7 @@ def test_names_and_mimics_follow_configuration(product):
             for key in ('lower', 'upper'):
                 assert float(limit.get(key)) == configured['limit'][key]
         assert joint.find('mimic').get(
-            'joint') == prefix + names[mimic['joint']]
+            'joint') == prefix + names[mimic['target']]
         for key in ('multiplier', 'offset'):
             assert float(joint.find('mimic').get(key)) == mimic[key]
 

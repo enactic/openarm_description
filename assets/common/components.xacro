@@ -52,7 +52,7 @@ limitations under the License.
     <xacro:property name="component_joint_origins" value="${xacro.load_yaml(component_cfg_root + '/joint/joint_origins.yaml') if component_topology['joints'] else empty_dict}" lazy_eval="false" />
     <xacro:property name="component_joint_axes" value="${xacro.load_yaml(component_cfg_root + '/joint/joint_axes.yaml') if component_topology['joints'] else empty_dict}" lazy_eval="false" />
     <xacro:property name="component_joint_limits" value="${xacro.load_yaml(component_cfg_root + '/joint/joint_limits.yaml') if component_topology['joints'] else empty_dict}" lazy_eval="false" />
-    <xacro:property name="component_joint_mimics" value="${xacro.load_yaml(component_cfg_root + '/joint/joint_mimics.yaml') if component_type == 'end_effector' else empty_dict}" lazy_eval="false" />
+    <xacro:property name="component_joint_mimics" value="${dict([(name, cfg['mimic']) for name, cfg in component_topology['joints'].items() if 'mimic' in cfg])}" lazy_eval="false" />
     <xacro:property name="component_inertials" value="${xacro.load_yaml(component_cfg_root + '/inertials/' + component_cfg['inertials'] + '.yaml')}" lazy_eval="false" />
     <xacro:openarm_load_geometry_group component_name="${component_name}" component_cfg="${component_cfg}"
       config_root="${component_cfg_root}" kind="visuals" out_name="component_visuals" />

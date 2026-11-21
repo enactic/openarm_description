@@ -42,8 +42,8 @@ limitations under the License.
     <xacro:property name="finger2_joint_reflects" value="${component_reflects and finger2_joint_source in reflect_include_joints}" lazy_eval="false" />
     <xacro:property name="finger1_has_mimic" value="${finger1_joint_source in joint_mimics}" />
     <xacro:property name="finger2_has_mimic" value="${finger2_joint_source in joint_mimics}" />
-    <xacro:property name="finger1_mimic_target_source" value="${joint_mimics[finger1_joint_source]['joint'] if finger1_has_mimic else ''}" />
-    <xacro:property name="finger2_mimic_target_source" value="${joint_mimics[finger2_joint_source]['joint'] if finger2_has_mimic else ''}" />
+    <xacro:property name="finger1_mimic_target_source" value="${joint_mimics[finger1_joint_source]['target'] if finger1_has_mimic else ''}" />
+    <xacro:property name="finger2_mimic_target_source" value="${joint_mimics[finger2_joint_source]['target'] if finger2_has_mimic else ''}" />
     <xacro:property name="finger1_mimic_target_name" value="${joint_name_map[finger1_mimic_target_source] if finger1_has_mimic else ''}" />
     <xacro:property name="finger2_mimic_target_name" value="${joint_name_map[finger2_mimic_target_source] if finger2_has_mimic else ''}" />
     <xacro:property name="finger1_mimic_override" value="${dict(joint=finger1_mimic_target_name, multiplier=joint_mimics[finger1_joint_source]['multiplier'], offset=joint_mimics[finger1_joint_source]['offset']) if finger1_has_mimic else 'none'}" />
