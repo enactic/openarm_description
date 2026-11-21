@@ -14,19 +14,31 @@
 
 # Joint-side SI units; MuJoCo tuning, including estimated armature.
 mujoco:
-  joint1: &id001
+  joint1:
     frictionloss: 0.2
     damping: 1.0
     armature: 0.016
-  joint2: *id001
-  joint3: &id002
+  joint2:
+    frictionloss: 0.2
+    damping: 1.0
+    armature: 0.016
+  joint3:
     frictionloss: 0.1
     damping: 0.9
     armature: 0.03
-  joint4: *id002
-  joint5: &id003
+  joint4:
+    frictionloss: 0.1
+    damping: 0.9
+    armature: 0.03
+  joint5:
     frictionloss: 0.04
     damping: 0.9
     armature: 0.002
-  joint6: *id003
-  joint7: *id003
+  joint6:
+    frictionloss: 0.04
+    damping: 0.9
+    armature: 0.002
+  joint7:
+    frictionloss: 0.04
+    damping: 0.9
+    armature: 0.002

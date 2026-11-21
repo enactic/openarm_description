@@ -109,10 +109,10 @@ def robot_state_publisher_spawner(
         }
         with open(os.path.join(pkg_share, 'presets', preset_id + '.yaml')) as stream:
             preset = yaml.safe_load(stream)
-        robot_description, joint_bindings = preview.expand_preview_model(
+        robot_description, joint_names = preview.expand_preview_model(
             os.path.join(pkg_share, 'urdf', 'openarm.urdf.xacro'), mappings, preset)
         positions = preview.resolve_initial_positions(
-            preset, joint_bindings, robot_description)
+            preset, joint_names, robot_description)
         view = preset.get('preview', {}).get('view')
         root_frame = preset['robot']['root_frame']
     rviz_path = os.path.join(

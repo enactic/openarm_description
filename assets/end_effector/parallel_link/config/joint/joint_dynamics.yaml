@@ -14,8 +14,11 @@
 
 # Joint-side SI units: parallel-link armature is in kg; pinch armature is in kg*m^2.
 mujoco:
-  joint2: &id001
+  joint2:
     damping: 9.0
     frictionloss: 0.0
     armature: 0.566
-  joint3: *id001
+  joint3:
+    damping: 9.0
+    frictionloss: 0.0
+    armature: 0.566
