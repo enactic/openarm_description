@@ -22,7 +22,6 @@ limitations under the License.
     message="component must be a type/product identifier, such as end_effector/pinch_gripper." />
   <xacro:property name="component_cfg"
     value="${dict(type=component_parts[0], product=component_parts[1], config=None, inertials='nominal', prefix='', enabled=True)}" />
-  <xacro:openarm_validate_robot_preset components="${['component']}" robot_preset="${dict(component=component_cfg)}" />
   <xacro:openarm_describe_auto_component component_name="component" component_cfg="${component_cfg}"
     options="${dict()}" out_name="description" />
   <xacro:openarm_emit_standalone_component component_cfg="${component_cfg}" component_desc="${description}" />
