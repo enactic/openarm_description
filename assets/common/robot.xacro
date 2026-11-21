@@ -23,7 +23,7 @@ limitations under the License.
        The macro leaves component_descriptions in the caller scope so preview tools
        can resolve final joint names from the same expansion. -->
   <xacro:macro name="openarm_robot"
-    params="robot_preset emit_grasp_frame:=false ros2_control:=true use_fake_hardware:=true fake_sensor_commands:=false can_interface:='' left_can_interface:='' right_can_interface:='' can_fd:='' out_name:=component_descriptions">
+    params="robot_preset emit_grasp_frame:=false ros2_control:=true use_fake_hardware:=true fake_sensor_commands:=false can_interface:='' left_can_interface:='' right_can_interface:='' can_fd:='' hardware_overrides:=${dict()} out_name:=component_descriptions">
 
     <xacro:property name="preset_root" value="$(find openarm_description)/presets" lazy_eval="false" />
     <xacro:property name="robot_preset_cfg" value="${xacro.load_yaml(preset_root + '/' + robot_preset + '.yaml')}" lazy_eval="false" />
@@ -49,14 +49,14 @@ limitations under the License.
       <xacro:property name="single_override" value="${dict(can_interface=can_interface) if can_interface else dict()}" />
       <xacro:property name="left_override" value="${dict(can_interface=left_can_interface) if left_can_interface else dict()}" />
       <xacro:property name="right_override" value="${dict(can_interface=right_can_interface) if right_can_interface else dict()}" />
-      <xacro:property name="hardware_overrides" value="${dict(
+      <xacro:property name="can_overrides" value="${dict(
         openarm_hardware_interface=dict(fd_override, **single_override),
         openarm_left_hardware_interface=dict(fd_override, **left_override),
         openarm_right_hardware_interface=dict(fd_override, **right_override))}" />
       <xacro:openarm_ros2_control robot_preset="${robot_preset_cfg}"
         component_descriptions="${component_descriptions}"
         use_fake_hardware="${use_fake_hardware}" fake_sensor_commands="${fake_sensor_commands}"
-        hardware_defaults="${hardware_defaults}" hardware_overrides="${hardware_overrides}" />
+        hardware_defaults="${hardware_defaults}" hardware_overrides="${dict(can_overrides, **hardware_overrides)}" />
     </xacro:if>
 
     <xacro:property name="${out_name}" value="${component_descriptions}" scope="parent" lazy_eval="false" />

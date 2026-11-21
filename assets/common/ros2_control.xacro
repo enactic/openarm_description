@@ -68,7 +68,13 @@ limitations under the License.
     <xacro:if value="${index &lt; len(system_names)}">
       <xacro:property name="system_name" value="${system_names[index]}" lazy_eval="false" />
       <xacro:property name="control" value="${dict(hardware_defaults.get(system_name, dict()), **systems[system_name])}" lazy_eval="false" />
-      <xacro:property name="control" value="${dict(control, **hardware_overrides.get(system_name, dict()))}" lazy_eval="false" />
+      <xacro:property name="override" value="${hardware_overrides.get(system_name, dict())}" lazy_eval="false" />
+      <!-- A different plugin replaces device parameters, but keeps the preset's
+           joint selection and interface declarations. -->
+      <xacro:if value="${'hardware_plugin' in override and override['hardware_plugin'] != control.get('hardware_plugin')}">
+        <xacro:property name="control" value="${dict([(key, control[key]) for key in ['joints', 'components', 'command_interfaces', 'state_interfaces'] if key in control])}" lazy_eval="false" />
+      </xacro:if>
+      <xacro:property name="control" value="${dict(control, **override)}" lazy_eval="false" />
       <xacro:property name="selection" value="${control['joints']}" lazy_eval="false" />
       <xacro:openarm_require condition="${python.all(name in robot_preset['robot']['components'] for name in selection)}"
         message="${'System `%s` references an unknown component.' % system_name}" />
