@@ -210,34 +210,41 @@ body_camera:
 
 systems:
   openarm_cell_hardware_interface:
-    joints:
+    components:
       body:
-        joint1: {idx: 1, init_pos: 0.0}
+        joints: [joint1]
+        idx: [1]
+        control_gains: default
+        offset: default
+        init_pos: default
   openarm_left_hardware_interface:
-    joints:
+    components:
       primary_arm:
-        joint1: {idx: 1}
-        joint2: {idx: 2}
-        joint3: {idx: 3}
-        joint4: {idx: 4, init_pos: 1.5707963267948966}
-        joint5: {idx: 5}
-        joint6: {idx: 6}
-        joint7: {idx: 7}
+        joints: [joint1, joint2, joint3, joint4, joint5, joint6, joint7]
+        idx: [1, 2, 3, 4, 5, 6, 7]
+        control_gains: default
+        offset: default
+        init_pos: folded
       primary_arm_end_effector:
-        joint1: {idx: 8}
+        joints: [joint1]
+        idx: [8]
+        control_gains: default
+        offset: default
+        init_pos: default
   openarm_right_hardware_interface:
-    joints:
+    components:
       secondary_arm:
-        joint1: {idx: 1}
-        joint2: {idx: 2}
-        joint3: {idx: 3}
-        joint4: {idx: 4, init_pos: 1.5707963267948966}
-        joint5: {idx: 5}
-        joint6: {idx: 6}
-        joint7: {idx: 7}
+        joints: [joint1, joint2, joint3, joint4, joint5, joint6, joint7]
+        idx: [1, 2, 3, 4, 5, 6, 7]
+        control_gains: default
+        offset: default
+        init_pos: folded
       secondary_arm_end_effector:
-        joint1: {idx: 8}
-
+        joints: [joint1]
+        idx: [8]
+        control_gains: default
+        offset: default
+        init_pos: default
 preview:
   view:
     eye: {x: -2.0, y: 0.0, z: 1.45}

@@ -19,6 +19,19 @@ limitations under the License.
   <xacro:include filename="$(find openarm_description)/assets/common/validation.xacro" />
   <xacro:include filename="$(find openarm_description)/assets/common/kinematic_chain.xacro" />
 
+  <xacro:macro name="openarm_load_joint_profile" params="config_root file group joint_keys out_name">
+    <xacro:property name="profile" value="${dict()}" lazy_eval="false" />
+    <xacro:if value="${group != None}">
+      <xacro:property name="groups" value="${xacro.load_yaml(config_root + '/' + file)}" lazy_eval="false" />
+      <xacro:openarm_require condition="${python.isinstance(group, str) and group in groups}"
+        message="${'Unknown parameter group `%s` in %s/%s.' % (group, config_root, file)}" />
+      <xacro:property name="profile" value="${groups[group]}" lazy_eval="false" />
+      <xacro:openarm_require condition="${python.isinstance(profile, dict) and python.all(key in joint_keys for key in profile)}"
+        message="${'Parameter group `%s` in %s must use component joint keys.' % (group, file)}" />
+    </xacro:if>
+    <xacro:property name="${out_name}" value="${profile}" scope="parent" lazy_eval="false" />
+  </xacro:macro>
+
   <xacro:macro name="openarm_load_geometry_group" params="component_name component_cfg config_root kind out_name">
     <xacro:property name="groups" value="${xacro.load_yaml(config_root + '/link/' + kind + '.yaml')}" lazy_eval="false" />
     <xacro:property name="group_name" value="${component_cfg.get(kind, 'default')}" lazy_eval="false" />
@@ -53,6 +66,8 @@ limitations under the License.
     <xacro:property name="component_joint_axes" value="${xacro.load_yaml(component_cfg_root + '/joint/joint_axes.yaml') if component_topology['joints'] else empty_dict}" lazy_eval="false" />
     <xacro:property name="component_joint_limits" value="${xacro.load_yaml(component_cfg_root + '/joint/joint_limits.yaml') if component_topology['joints'] else empty_dict}" lazy_eval="false" />
     <xacro:property name="component_joint_mimics" value="${dict([(name, cfg['mimic']) for name, cfg in component_topology['joints'].items() if 'mimic' in cfg])}" lazy_eval="false" />
+    <xacro:openarm_load_joint_profile config_root="${component_cfg_root}" file="joint/joint_dynamics.yaml"
+      group="${component_cfg.get('joint_dynamics')}" joint_keys="${component_topology['joints']}" out_name="component_joint_dynamics" />
     <xacro:property name="component_inertials" value="${xacro.load_yaml(component_cfg_root + '/inertials/' + component_cfg['inertials'] + '.yaml')}" lazy_eval="false" />
     <xacro:openarm_load_geometry_group component_name="${component_name}" component_cfg="${component_cfg}"
       config_root="${component_cfg_root}" kind="visuals" out_name="component_visuals" />
@@ -81,6 +96,7 @@ limitations under the License.
                    joint_axes=component_joint_axes,
                    joint_limits=component_joint_limits,
                    joint_mimics=component_joint_mimics,
+                   joint_dynamics=component_joint_dynamics,
                    inertials=component_inertials,
                    visuals=component_visuals,
                    collisions=component_collisions,

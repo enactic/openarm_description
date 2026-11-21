@@ -149,78 +149,38 @@ secondary_arm_end_effector_camera:
 systems:
   example_mobile_robot:
     hardware_plugin: mock_components/GenericSystem
-    command_interfaces:
-    - position
-    state_interfaces:
-    - position
-    - velocity
-    joints:
+    command_interfaces: [position]
+    state_interfaces: [position, velocity]
+    components:
       body:
-        joint1:
-          idx: 0
-          init_pos: 0.0
-        joint2:
-          idx: 1
-          init_pos: 0.0
-        joint3:
-          idx: 2
-          init_pos: 0.0
-        joint4:
-          idx: 3
-          init_pos: 0.0
-        joint5:
-          idx: 4
-          init_pos: 0.0
-        joint6:
-          idx: 5
-          init_pos: 0.0
-        joint7:
-          idx: 6
-          init_pos: 0.0
-        joint8:
-          idx: 7
-          init_pos: 0.0
-        joint9:
-          idx: 8
-          init_pos: 0.0
+        joints: [joint1, joint2, joint3, joint4, joint5, joint6, joint7, joint8, joint9]
+        idx: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+        offset: default
+        init_pos: default
       primary_arm:
-        joint1:
-          idx: 9
-        joint2:
-          idx: 10
-        joint3:
-          idx: 11
-        joint4:
-          idx: 12
-          init_pos: 1.5707963267948966
-        joint5:
-          idx: 13
-        joint6:
-          idx: 14
-        joint7:
-          idx: 15
+        joints: [joint1, joint2, joint3, joint4, joint5, joint6, joint7]
+        idx: [9, 10, 11, 12, 13, 14, 15]
+        control_gains: default
+        offset: default
+        init_pos: folded
       secondary_arm:
-        joint1:
-          idx: 16
-        joint2:
-          idx: 17
-        joint3:
-          idx: 18
-        joint4:
-          idx: 19
-          init_pos: 1.5707963267948966
-        joint5:
-          idx: 20
-        joint6:
-          idx: 21
-        joint7:
-          idx: 22
+        joints: [joint1, joint2, joint3, joint4, joint5, joint6, joint7]
+        idx: [16, 17, 18, 19, 20, 21, 22]
+        control_gains: default
+        offset: default
+        init_pos: folded
       primary_arm_end_effector:
-        joint1:
-          idx: 23
+        joints: [joint1]
+        idx: [23]
+        control_gains: default
+        offset: default
+        init_pos: default
       secondary_arm_end_effector:
-        joint1:
-          idx: 24
+        joints: [joint1]
+        idx: [24]
+        control_gains: default
+        offset: default
+        init_pos: default
 preview:
   view:
     eye:

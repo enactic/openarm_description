@@ -19,31 +19,54 @@ import xacro
 
 
 def expand_preview_model(path, mappings, preset):
-    """Read final joint names from the component descriptions in the same expansion."""
+    """Read final joint names and initial-position groups in the same expansion."""
     xacro.init_stacks(path)
     doc = xacro.parse(None, path)
     bindings = []
     enabled = {name for name in preset['robot']
                ['components'] if preset[name]['enabled']}
-    for system in preset.get('systems', {}).values():
-        for component, joints in system['joints'].items():
+    for system_name, system in preset.get('systems', {}).items():
+        for component, selection in system['components'].items():
             if component not in enabled:
                 continue
-            for key in joints:
+            if len(selection['joints']) != len(selection['idx']):
+                raise ValueError('joints and idx must have the same length')
+            if not selection['joints']:
+                continue
+            group = selection.get('init_pos')
+            profile_name = 'preview_initial_' + str(len(bindings))
+            if group is not None:
+                profile = doc.createElement('xacro:openarm_load_joint_profile')
+                profile.setAttribute(
+                    'config_root', '${component_descriptions[%r]["config_root"]}' % component)
+                profile.setAttribute('file', 'control/initial_positions.yaml')
+                profile.setAttribute('group', '${%r}' % group)
+                profile.setAttribute(
+                    'joint_keys', '${component_descriptions[%r]["topology"]["joints"]}' % component)
+                profile.setAttribute('out_name', profile_name)
+                doc.documentElement.appendChild(profile)
+            for key in selection['joints']:
                 node = doc.createElement('preview_binding')
                 node.setAttribute(
                     'name', '${component_descriptions[%r]["joint_name_map"][%r]}' % (component, key))
+                if group is not None:
+                    node.setAttribute(
+                        'init_pos', '${%s.get(%r, "")}' % (profile_name, key))
                 doc.documentElement.appendChild(node)
-                bindings.append((component, key, node))
+                bindings.append((system_name, component, key, node))
     xacro.process_doc(doc, mappings=mappings)
-    names = {}
-    for component, key, node in bindings:
-        names.setdefault(component, {})[key] = node.getAttribute('name')
+    joint_bindings = {}
+    for system_name, component, key, node in bindings:
+        binding = dict(name=node.getAttribute('name'))
+        if node.getAttribute('init_pos') != '':
+            binding['init_pos'] = float(node.getAttribute('init_pos'))
+        joint_bindings.setdefault(system_name, {}).setdefault(
+            component, {})[key] = binding
         doc.documentElement.removeChild(node)
-    return doc.toxml(), names
+    return doc.toxml(), joint_bindings
 
 
-def resolve_initial_positions(preset, joint_name_maps, robot_description, overrides=None):
+def resolve_initial_positions(preset, joint_bindings, robot_description, overrides=None):
     """Resolve init_pos, optionally overridden by {system_name: {idx: position}}.
 
     Omitted positions stay omitted. Returned names are the generated URDF names.
@@ -58,11 +81,13 @@ def resolve_initial_positions(preset, joint_name_maps, robot_description, overri
     for system_name, system in systems.items():
         entries = overrides.get(system_name, {})
         seen = set()
-        for component, selection in system['joints'].items():
-            if component not in joint_name_maps:
+        for component, selection in system['components'].items():
+            if component not in joint_bindings.get(system_name, {}):
                 continue
-            for key, config in selection.items():
-                idx = config['idx']
+            if len(selection['joints']) != len(selection['idx']):
+                raise ValueError('joints and idx must have the same length')
+            for key, idx in zip(selection['joints'], selection['idx']):
+                config = joint_bindings[system_name][component][key]
                 if idx in seen:
                     raise ValueError(f'Duplicate idx {idx} in {system_name}')
                 seen.add(idx)
@@ -70,7 +95,7 @@ def resolve_initial_positions(preset, joint_name_maps, robot_description, overri
                     continue
                 value = float(
                     entries[idx] if idx in entries else config['init_pos'])
-                name = joint_name_maps[component][key]
+                name = config['name']
                 joint = joints[name]
                 if joint.get('type') not in ('revolute', 'continuous', 'prismatic') or joint.find('mimic') is not None:
                     raise ValueError(
