@@ -230,10 +230,9 @@ def test_hardware_parameters_follow_input():
         for name, values in data['arm']['control/control_gains.yaml']['default'].items()}
     control['components']['arm']['control_gains'] = 'tuned'
     control['components']['tool'].update(
-        control_gains='default', offset='default')
+        control_gains='default')
     data['tool']['control/control_gains.yaml'] = {
         'default': {'joint1': dict(kp=8., kd=.4)}}
-    data['tool']['control/offsets.yaml'] = {'default': {'joint1': 0.0}}
     for prefix, can_interface in [('openarm_left_', 'can_left_test'),
                                   ('openarm_right_', 'can_right_test')]:
         control.update(can_interface=can_interface, can_fd=False)
@@ -254,12 +253,6 @@ def test_hardware_parameters_follow_input():
         for name, gains in data['arm']['control/control_gains.yaml'][control['components']['arm']['control_gains']].items():
             for key, value in gains.items():
                 assert float(params[key+name.removeprefix('joint')]) == value
-
-    data['tool']['control/offsets.yaml']['default']['joint1'] = .1
-    with pytest.raises(xacro.XacroException, match='offsets require driver support'):
-        support.assemble(spec, data, ros2_control=True,
-                         use_fake_hardware=False)
-    data['tool']['control/offsets.yaml']['default']['joint1'] = 0.0
 
     for side in ('left', 'right'):
         spec['systems'] = {f'openarm_{side}_hardware_interface': control}

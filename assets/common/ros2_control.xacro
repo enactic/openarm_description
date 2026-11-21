@@ -53,11 +53,6 @@ limitations under the License.
       <xacro:property name="description" value="${descriptions[name]}" />
       <xacro:openarm_load_joint_profile config_root="${description['config_root']}" file="control/control_gains.yaml"
         group="${selection[name].get('control_gains')}" joint_keys="${description['topology']['joints']}" out_name="gains" />
-      <xacro:openarm_load_joint_profile config_root="${description['config_root']}" file="control/offsets.yaml"
-        group="${selection[name].get('offset')}" joint_keys="${description['topology']['joints']}" out_name="offsets" />
-      <!-- Offset application belongs to the driver integration. -->
-      <xacro:openarm_require condition="${python.all(offsets.get(joint, 0) == 0 for joint in selection[name]['joints'])}"
-        message="Non-zero control offsets require driver support." />
       <xacro:openarm_load_control_profiles components="${components}" selection="${selection}" descriptions="${descriptions}"
         out_name="next_profiles" index="${index + 1}" result="${dict(list(result.items()) + [(name, gains)])}" />
       <xacro:property name="${out_name}" value="${next_profiles}" scope="parent" lazy_eval="false" />
