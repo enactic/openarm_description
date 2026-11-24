@@ -17,7 +17,7 @@ limitations under the License.
   <xacro:arg name="ee_config_dir" default="$(find openarm_description)/assets/end_effector/parallel_link/config" />
   <xacro:arg name="mesh_root" default="" />
   <xacro:arg name="reflect_y" default="1" />
-  <xacro:arg name="tcp_xyz" default="0 0 0.09" />
+  <xacro:arg name="tcp_xyz" default="0 0 0.095" />
   <xacro:arg name="tcp_rpy" default="0 0 0" />
   <xacro:property name="reflect_y" value="${float('$(arg reflect_y)')}" />
   <xacro:property name="component_cfg"

@@ -18,7 +18,7 @@ hand_tcp:
   origin:
     x: 0
     y: 0
-    z: 0.09
+    z: 0.095
     roll: 0
     pitch: 0
     yaw: 0
