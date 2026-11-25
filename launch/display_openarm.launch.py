@@ -92,7 +92,8 @@ def robot_state_publisher_spawner(
         robot_description = xacro.process_file(
             os.path.join(pkg_share, 'urdf', 'component.urdf.xacro'),
             mappings={'component': component_id,
-                      'config': config_literal or repr(settings.get('config'))}).toxml()
+                      'config': config_literal or repr(settings.get('config')),
+                      'emit_grasp_frame': context.perform_substitution(emit_grasp_frame)}).toxml()
         view = settings.get('view')
         root_frame = 'world'
         positions = {}

@@ -17,6 +17,7 @@ limitations under the License.
   <xacro:arg name="component" default="" />
   <!-- Component config as a Python dict literal, e.g. "{'camera_model': 'zedm'}". -->
   <xacro:arg name="config" default="None" />
+  <xacro:arg name="emit_grasp_frame" default="false" />
   <xacro:property name="component_id" value="$(arg component)" />
   <xacro:property name="component_parts" value="${component_id.split('/')}" />
   <xacro:openarm_require
@@ -24,8 +25,10 @@ limitations under the License.
     message="component must be a type/product identifier, such as end_effector/pinch_gripper." />
   <xacro:property name="component_cfg"
     value="${dict(type=component_parts[0], product=component_parts[1], config=$(arg config), inertials='nominal', prefix='', enabled=True)}" />
-  <xacro:openarm_describe_auto_component component_name="component" component_cfg="${component_cfg}"
-    options="${dict()}" out_name="description" />
-  <xacro:openarm_emit_standalone_component component_cfg="${component_cfg}" component_desc="${description}" />
+  <xacro:property name="options" value="${dict(emit_grasp_frame='$(arg emit_grasp_frame)'.lower() in ['true', '1'])}" />
+  <xacro:openarm_describe_auto_component component_name="${component_id}" component_cfg="${component_cfg}"
+    options="${options}" out_name="description" />
+  <xacro:openarm_emit_standalone_component component_name="${component_id}" component_cfg="${component_cfg}"
+    component_desc="${description}" options="${options}" />
   <xacro:attribute name="name" value="${component_parts[1]}" />
 </robot>

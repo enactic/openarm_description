@@ -45,13 +45,13 @@ limitations under the License.
     <xacro:emit_component component_desc="${component_desc}" component_runtime="${component_runtime}" options="${options}" />
   </xacro:macro>
 
-  <xacro:macro name="openarm_emit_standalone_component" params="component_cfg component_desc options:=${dict()} root_frame:=world">
-    <xacro:property name="preset" value="${dict(component=component_cfg)}" />
-    <xacro:openarm_validate_robot_preset components="${['component']}" robot_preset="${preset}" />
+  <xacro:macro name="openarm_emit_standalone_component" params="component_cfg component_desc component_name:=component options:=${dict()} root_frame:=world">
+    <xacro:property name="preset" value="${dict([(component_name, component_cfg)])}" />
+    <xacro:openarm_validate_robot_preset components="${[component_name]}" robot_preset="${preset}" />
     <link name="${root_frame}" />
-    <xacro:openarm_resolve_component_runtime component_name="component" components="${['component']}"
+    <xacro:openarm_resolve_component_runtime component_name="${component_name}" components="${[component_name]}"
       robot_preset="${preset}" root_frame="${root_frame}"
-      component_cfg="${component_cfg}" component_desc="${component_desc}" component_descriptions="${dict(component=component_desc)}" out_name="component_runtime" />
+      component_cfg="${component_cfg}" component_desc="${component_desc}" component_descriptions="${dict([(component_name, component_desc)])}" out_name="component_runtime" />
     <xacro:openarm_emit_auto_component component_desc="${component_desc}" component_runtime="${component_runtime}" options="${options}" />
   </xacro:macro>
 </robot>
