@@ -20,7 +20,9 @@ robot:
   - primary_arm
   - secondary_arm
   - primary_arm_end_effector
+  - primary_arm_end_effector_camera
   - secondary_arm_end_effector
+  - secondary_arm_end_effector_camera
   - body_camera_mount
   - body_camera
 body:
@@ -112,6 +114,16 @@ primary_arm_end_effector:
     y: -1
     z: 1
   limit_override_joints: {}
+primary_arm_end_effector_camera:
+  type: sensor
+  enabled: true
+  product: b0495
+  config: null
+  inertials: nominal
+  prefix: openarm_left_
+  connection:
+    attach_to: primary_arm_end_effector
+    parent_reference_point: camera_mount_point
 secondary_arm_end_effector:
   type: end_effector
   enabled: true
@@ -129,6 +141,16 @@ secondary_arm_end_effector:
     y: 1
     z: 1
   limit_override_joints: {}
+secondary_arm_end_effector_camera:
+  type: sensor
+  enabled: true
+  product: b0495
+  config: null
+  inertials: nominal
+  prefix: openarm_right_
+  connection:
+    attach_to: secondary_arm_end_effector
+    parent_reference_point: camera_mount_point
 body_camera_mount:
   type: accessory
   enabled: true
