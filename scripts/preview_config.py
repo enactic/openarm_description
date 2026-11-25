@@ -90,7 +90,8 @@ def resolve_initial_positions(preset, joint_bindings, robot_description, overrid
                 config = joint_bindings[system_name][component][key]
                 if entries:
                     if idx in seen:
-                        raise ValueError(f'Duplicate idx {idx} in {system_name}')
+                        raise ValueError(
+                            f'Duplicate idx {idx} in {system_name}')
                     seen.add(idx)
                 if idx not in entries and 'init_pos' not in config:
                     continue
