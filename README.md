@@ -64,6 +64,23 @@ xacro $(ros2 pkg prefix openarm_description)/share/openarm_description/urdf/open
 
 [*] These are the effective defaults when neither an argument nor the preset specifies a value. The CAN arguments themselves default to an empty string (`""`), which preserves the preset settings. Priority: explicit argument → preset system setting → value shown above. They apply when `use_fake_hardware:=false`.
 
+### Single components
+
+Preview one component on its own by passing its `type/product` identifier instead of a preset:
+
+```bash
+ros2 launch openarm_description display_openarm.launch.py component:=end_effector/pinch_gripper
+```
+
+Generate the URDF of a single component:
+
+```bash
+xacro $(ros2 pkg prefix openarm_description)/share/openarm_description/urdf/component.urdf.xacro \
+  component:=end_effector/pinch_gripper > pinch_gripper.urdf
+```
+
+`component` and `robot_preset` cannot be combined. An optional `config/preview.yaml` in the component directory sets the initial RViz view (example: [pinch_gripper](assets/end_effector/pinch_gripper/config/preview.yaml)).
+
 ## Compatibility with earlier versions
 
 The presets moved from `assets/robot/openarm_v*/config/robot_presets/` to `presets/v1/` and `presets/v2/`. The previous preset directories are symbolic links to the new ones. The V1/V2 Xacro entry points remain at their previous paths.
