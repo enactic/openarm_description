@@ -13,7 +13,10 @@
 # limitations under the License.
 
 default: {}
-mujoco:
-  joint1:
-    kp: 8000.0
-    kd: 4000.0
+# The MuJoCo servo gains are disabled until gain groups record whether their
+# values are safe for real hardware; a hardware backend would apply them as
+# motor gains.
+# mujoco:
+#   joint1:
+#     kp: 8000.0
+#     kd: 4000.0
