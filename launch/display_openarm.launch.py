@@ -62,6 +62,7 @@ def robot_state_publisher_spawner(
     arm_type,
     robot_preset,
     component,
+    config,
     emit_grasp_frame,
     bimanual,
     ros2_control,
@@ -87,10 +88,11 @@ def robot_state_publisher_spawner(
                 settings = yaml.safe_load(stream) or {}
         except FileNotFoundError:
             settings = {}
+        config_literal = context.perform_substitution(config).strip()
         robot_description = xacro.process_file(
             os.path.join(pkg_share, 'urdf', 'component.urdf.xacro'),
             mappings={'component': component_id,
-                      'config': repr(settings.get('config'))}).toxml()
+                      'config': config_literal or repr(settings.get('config'))}).toxml()
         view = settings.get('view')
         root_frame = 'world'
         positions = {}
@@ -167,6 +169,11 @@ def generate_launch_description():
         "component", default_value="",
         description="Preview one component by type/product, e.g. end_effector/pinch_gripper.",
     )
+    config_arg = DeclareLaunchArgument(
+        "config", default_value="",
+        description="Component config as a Python dict literal; "
+                    "empty uses config/preview.yaml.",
+    )
     rviz_config_arg = DeclareLaunchArgument(
         "rviz_config",
         default_value="bimanual.rviz",
@@ -196,6 +203,7 @@ def generate_launch_description():
     arm_type = LaunchConfiguration("arm_type")
     robot_preset = LaunchConfiguration("robot_preset")
     component = LaunchConfiguration("component")
+    config = LaunchConfiguration("config")
     rviz_config = LaunchConfiguration("rviz_config")
     grasp_frame = LaunchConfiguration("emit_grasp_frame")
     bimanual = LaunchConfiguration("bimanual")
@@ -207,6 +215,7 @@ def generate_launch_description():
         arm_type_arg,
         robot_preset_arg,
         component_arg,
+        config_arg,
         rviz_config_arg,
         grasp_frame_arg,
         bimanual_arg,
@@ -219,6 +228,7 @@ def generate_launch_description():
                 arm_type,
                 robot_preset,
                 component,
+                config,
                 grasp_frame,
                 bimanual,
                 ros2_control,

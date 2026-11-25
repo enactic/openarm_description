@@ -79,9 +79,9 @@ xacro $(ros2 pkg prefix openarm_description)/share/openarm_description/urdf/comp
   component:=end_effector/pinch_gripper > pinch_gripper.urdf
 ```
 
-`component` and `robot_preset` cannot be combined. A component that needs a `config` takes it as a Python dict literal, for example `component:=sensor/zed config:="{'camera_model': 'zedm'}"`.
+`component` and `robot_preset` cannot be combined. Both commands accept a component `config` as a Python dict literal, for example `component:=sensor/zed config:="{'camera_model': 'zedm'}"`.
 
-An optional `config/preview.yaml` in the component directory is read only by the launch preview: `view` sets the initial RViz view and `config` is passed as the component config (example: [ZED](assets/sensor/zed/config/preview.yaml)). Presets never read it.
+An optional `config/preview.yaml` in the component directory is read only by the launch preview: `view` sets the initial RViz view and `config` is the default component config when `config:=` is not given (example: [ZED](assets/sensor/zed/config/preview.yaml)). Presets never read it.
 
 ## Compatibility with earlier versions
 
