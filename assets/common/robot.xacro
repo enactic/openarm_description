@@ -23,7 +23,7 @@ limitations under the License.
        The macro leaves component_descriptions in the caller scope so preview tools
        can resolve final joint names from the same expansion. -->
   <xacro:macro name="openarm_robot"
-    params="robot_preset emit_grasp_frame:=false ros2_control:=true use_fake_hardware:=true fake_sensor_commands:=false can_interface:='' left_can_interface:='' right_can_interface:='' can_fd:='' hardware_overrides:=${dict()} out_name:=component_descriptions">
+    params="robot_preset emit_grasp_frame:=false ros2_control:=true use_fake_hardware:=true fake_sensor_commands:=false can_interface:='' left_can_interface:='' right_can_interface:='' can_fd:='' hardware_overrides:=${dict()} hardware_config:='' out_name:=component_descriptions">
 
     <xacro:property name="preset_root" value="$(find openarm_description)/presets" lazy_eval="false" />
     <xacro:property name="robot_preset_cfg" value="${xacro.load_yaml(preset_root + '/' + robot_preset + '.yaml')}" lazy_eval="false" />
@@ -53,10 +53,20 @@ limitations under the License.
         openarm_hardware_interface=dict(params=dict(fd_override, **single_override)),
         openarm_left_hardware_interface=dict(params=dict(fd_override, **left_override)),
         openarm_right_hardware_interface=dict(params=dict(fd_override, **right_override)))}" />
+      <!-- hardware_config is a file path or an already loaded mapping. -->
+      <xacro:property name="external_config"
+        value="${(xacro.load_yaml(hardware_config) if hardware_config else None) if python.isinstance(hardware_config, python.str) else hardware_config}" lazy_eval="false" />
+      <xacro:if value="${external_config != None}">
+        <xacro:openarm_require condition="${python.isinstance(external_config, dict) and python.isinstance(external_config.get('systems'), dict) and python.all(python.isinstance(system, dict) for system in external_config['systems'].values())}"
+          message="hardware_config must contain a systems mapping." />
+        <xacro:openarm_require condition="${not hardware_overrides and not (can_interface or left_can_interface or right_can_interface or can_fd != '')}"
+          message="hardware_config replaces hardware_overrides and the CAN arguments; set the device parameters in its params." />
+      </xacro:if>
       <xacro:openarm_ros2_control robot_preset="${robot_preset_cfg}"
         component_descriptions="${component_descriptions}"
         use_fake_hardware="${use_fake_hardware}" fake_sensor_commands="${fake_sensor_commands}"
-        hardware_defaults="${hardware_defaults}" hardware_overrides="${dict(can_overrides, **hardware_overrides)}" />
+        hardware_defaults="${hardware_defaults}" hardware_overrides="${dict(can_overrides, **hardware_overrides)}"
+        hardware_config="${external_config}" />
     </xacro:if>
 
     <xacro:property name="${out_name}" value="${component_descriptions}" scope="parent" lazy_eval="false" />

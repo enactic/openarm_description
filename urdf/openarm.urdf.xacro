@@ -26,6 +26,7 @@ limitations under the License.
   <xacro:arg name="left_can_interface" default="" />
   <xacro:arg name="right_can_interface" default="" />
   <xacro:arg name="can_fd" default="" />
+  <xacro:arg name="hardware_config" default="" />
 
   <xacro:openarm_robot robot_preset="$(arg robot_preset)"
     emit_grasp_frame="$(arg emit_grasp_frame)"
@@ -35,7 +36,8 @@ limitations under the License.
     can_interface="$(arg can_interface)"
     left_can_interface="$(arg left_can_interface)"
     right_can_interface="$(arg right_can_interface)"
-    can_fd="$(arg can_fd)" />
+    can_fd="$(arg can_fd)"
+    hardware_config="$(arg hardware_config)" />
 
   <xacro:attribute name="name" value="${robot_name}" />
 
