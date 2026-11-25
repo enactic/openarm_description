@@ -42,16 +42,6 @@ lifter_camera_mount_point:
     roll: 0.0
     pitch: 0.0
     yaw: 0.0
-ceiling_camera_frame:
-  parent: base_link
-  emit: true
-  origin:
-    x: 0.526165063509461
-    y: 0.0
-    z: 0.737346493924647
-    roll: 3.141592653589793
-    pitch: 0.0
-    yaw: 0.0
 arm_origin:
   parent: link1
   emit: true
