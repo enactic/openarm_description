@@ -48,6 +48,7 @@ end_effector:
   connection:
     attach_to: arm
     parent_reference_point: ee_mount_point
+    origin: {x: 0, y: 0, z: 0, roll: 0, pitch: -1.5707963267948966, yaw: 0}
   reflect:
     x: 1
     y: 1

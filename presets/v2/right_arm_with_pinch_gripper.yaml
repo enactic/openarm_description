@@ -96,7 +96,7 @@ primary_arm_end_effector:
     attach_to: primary_arm
     parent_reference_point: ee_mount_point
     parent: null
-    origin: null
+    origin: {x: 0, y: 0, z: 0, roll: 0, pitch: 1.5707963267948966, yaw: 0}
   reflect:
     x: 1
     y: 1
@@ -114,7 +114,7 @@ secondary_arm_end_effector:
     attach_to: secondary_arm
     parent_reference_point: ee_mount_point
     parent: null
-    origin: null
+    origin: {x: 0, y: 0, z: 0, roll: 0, pitch: 1.5707963267948966, yaw: 0}
   reflect:
     x: 1
     y: -1

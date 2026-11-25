@@ -15,11 +15,11 @@
 default:
   base_link:
     origin:
-      x: 0.0
-      y: -0.0
-      z: -0.5585
+      x: -0.5585
+      y: 0.0
+      z: 0.0
       roll: 0.0
-      pitch: 0.0
+      pitch: 1.5707963267948966
       yaw: 0.0
     geometry:
       mesh: package://openarm_description/assets/end_effector/parallel_link/meshes/visual/link7.dae
