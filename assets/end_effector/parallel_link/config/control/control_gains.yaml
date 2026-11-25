@@ -12,12 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# default: legacy OpenArmHW motor gains; mujoco: joint-coordinate servo gains.
+# default: legacy OpenArmHW motor gains.
 default:
   joint2:
     kp: 5.0
     kd: 0.1
-mujoco:
-  joint2:
-    kp: 5664.0
-    kd: 113.3
+# The MuJoCo servo gains are disabled until gain groups record whether their
+# values are safe for real hardware; OpenArmHW would apply them as motor gains.
+# mujoco:
+#   joint2:
+#     kp: 5664.0
+#     kd: 113.3
