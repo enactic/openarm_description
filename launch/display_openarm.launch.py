@@ -16,6 +16,7 @@ import importlib.util
 import tempfile
 
 import yaml
+import xacro
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription, LaunchContext
 from launch.actions import DeclareLaunchArgument, OpaqueFunction, RegisterEventHandler
@@ -60,6 +61,8 @@ def robot_state_publisher_spawner(
     context: LaunchContext,
     arm_type,
     robot_preset,
+    component,
+    config,
     emit_grasp_frame,
     bimanual,
     ros2_control,
@@ -67,42 +70,58 @@ def robot_state_publisher_spawner(
     fake_sensor_commands,
     rviz_config,
 ):
-    arm_type_str = context.perform_substitution(arm_type)
-    preset_id = resolve_preset_id(arm_type_str,
-                                  context.perform_substitution(robot_preset),
-                                  context.perform_substitution(bimanual))
-
     pkg_share = get_package_share_directory("openarm_description")
-
-    xacro_path = os.path.join(pkg_share, "urdf", "openarm.urdf.xacro")
-
-    mappings = {
-        "robot_preset": preset_id,
-        "emit_grasp_frame": context.perform_substitution(emit_grasp_frame),
-        "ros2_control": context.perform_substitution(ros2_control),
-        "use_fake_hardware": context.perform_substitution(use_fake_hardware),
-        "fake_sensor_commands": context.perform_substitution(fake_sensor_commands),
-    }
-
-    preset_path = os.path.join(pkg_share, "presets", preset_id + ".yaml")
-    with open(preset_path) as stream:
-        preset = yaml.safe_load(stream)
     spec = importlib.util.spec_from_file_location(
         'openarm_preview_config', os.path.join(pkg_share, 'scripts', 'preview_config.py'))
     preview = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(preview)
-    robot_description, joint_names = preview.expand_preview_model(
-        xacro_path, mappings, preset)
-    positions = preview.resolve_initial_positions(
-        preset, joint_names, robot_description)
+    component_id = context.perform_substitution(component).strip()
+    requested_preset = context.perform_substitution(robot_preset).strip()
+    if component_id:
+        if requested_preset:
+            raise ValueError(
+                "Choose either component or robot_preset, not both.")
+        preview_path = os.path.join(
+            pkg_share, 'assets', component_id, 'config', 'preview.yaml')
+        try:
+            with open(preview_path) as stream:
+                settings = yaml.safe_load(stream) or {}
+        except FileNotFoundError:
+            settings = {}
+        config_literal = context.perform_substitution(config).strip()
+        robot_description = xacro.process_file(
+            os.path.join(pkg_share, 'urdf', 'component.urdf.xacro'),
+            mappings={'component': component_id,
+                      'config': config_literal or repr(settings.get('config')),
+                      'emit_grasp_frame': context.perform_substitution(emit_grasp_frame)}).toxml()
+        view = settings.get('view')
+        root_frame = 'world'
+        positions = {}
+    else:
+        preset_id = resolve_preset_id(context.perform_substitution(arm_type),
+                                      requested_preset, context.perform_substitution(bimanual))
+        mappings = {
+            "robot_preset": preset_id,
+            "emit_grasp_frame": context.perform_substitution(emit_grasp_frame),
+            "ros2_control": context.perform_substitution(ros2_control),
+            "use_fake_hardware": context.perform_substitution(use_fake_hardware),
+            "fake_sensor_commands": context.perform_substitution(fake_sensor_commands),
+        }
+        with open(os.path.join(pkg_share, 'presets', preset_id + '.yaml')) as stream:
+            preset = yaml.safe_load(stream)
+        robot_description, joint_names = preview.expand_preview_model(
+            os.path.join(pkg_share, 'urdf', 'openarm.urdf.xacro'), mappings, preset)
+        positions = preview.resolve_initial_positions(
+            preset, joint_names, robot_description)
+        view = preset.get('preview', {}).get('view')
+        root_frame = preset['robot']['root_frame']
     rviz_path = os.path.join(
         pkg_share, 'rviz', context.perform_substitution(rviz_config))
     cleanup = []
-    view = preset.get('preview', {}).get('view')
     if view:
         with open(rviz_path) as stream:
             config = preview.apply_preview_view(
-                yaml.safe_load(stream), view, preset['robot']['root_frame'])
+                yaml.safe_load(stream), view, root_frame)
         temporary = tempfile.TemporaryDirectory(prefix='openarm-preview-')
         rviz_path = os.path.join(temporary.name, 'preview.rviz')
         with open(rviz_path, 'w') as stream:
@@ -147,6 +166,15 @@ def generate_launch_description():
         description="Robot preset, either a full identifier such as v2/cell_bimanual "
                     "or a short name completed from arm_type; empty selects the default.",
     )
+    component_arg = DeclareLaunchArgument(
+        "component", default_value="",
+        description="Preview one component by type/product, e.g. end_effector/pinch_gripper.",
+    )
+    config_arg = DeclareLaunchArgument(
+        "config", default_value="",
+        description="Component config as a Python dict literal; "
+                    "empty uses config/preview.yaml.",
+    )
     rviz_config_arg = DeclareLaunchArgument(
         "rviz_config",
         default_value="bimanual.rviz",
@@ -175,6 +203,8 @@ def generate_launch_description():
 
     arm_type = LaunchConfiguration("arm_type")
     robot_preset = LaunchConfiguration("robot_preset")
+    component = LaunchConfiguration("component")
+    config = LaunchConfiguration("config")
     rviz_config = LaunchConfiguration("rviz_config")
     grasp_frame = LaunchConfiguration("emit_grasp_frame")
     bimanual = LaunchConfiguration("bimanual")
@@ -185,6 +215,8 @@ def generate_launch_description():
     return LaunchDescription([
         arm_type_arg,
         robot_preset_arg,
+        component_arg,
+        config_arg,
         rviz_config_arg,
         grasp_frame_arg,
         bimanual_arg,
@@ -196,6 +228,8 @@ def generate_launch_description():
             args=[
                 arm_type,
                 robot_preset,
+                component,
+                config,
                 grasp_frame,
                 bimanual,
                 ros2_control,
