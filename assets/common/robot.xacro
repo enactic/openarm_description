@@ -40,9 +40,9 @@ limitations under the License.
 
     <xacro:if value="${ros2_control}">
       <xacro:property name="hardware_defaults" value="${dict(
-        openarm_hardware_interface=dict(hardware_plugin='openarm_hardware/OpenArmHW', can_interface='can0', can_fd=True),
-        openarm_left_hardware_interface=dict(hardware_plugin='openarm_hardware/OpenArmHW', can_interface='can1', can_fd=True),
-        openarm_right_hardware_interface=dict(hardware_plugin='openarm_hardware/OpenArmHW', can_interface='can0', can_fd=True))}" />
+        openarm_hardware_interface=dict(plugin='openarm_hardware/OpenArmHW', params=dict(can_interface='can0', can_fd=True)),
+        openarm_left_hardware_interface=dict(plugin='openarm_hardware/OpenArmHW', params=dict(can_interface='can1', can_fd=True)),
+        openarm_right_hardware_interface=dict(plugin='openarm_hardware/OpenArmHW', params=dict(can_interface='can0', can_fd=True)))}" />
       <xacro:openarm_require condition="${str(can_fd).lower() in ['', 'true', 'false', '1', '0']}"
         message="can_fd must be true, false, 1, 0, or empty." />
       <xacro:property name="fd_override" value="${dict(can_fd=str(can_fd).lower() in ['true', '1']) if can_fd != '' else dict()}" />
@@ -50,9 +50,9 @@ limitations under the License.
       <xacro:property name="left_override" value="${dict(can_interface=left_can_interface) if left_can_interface else dict()}" />
       <xacro:property name="right_override" value="${dict(can_interface=right_can_interface) if right_can_interface else dict()}" />
       <xacro:property name="can_overrides" value="${dict(
-        openarm_hardware_interface=dict(fd_override, **single_override),
-        openarm_left_hardware_interface=dict(fd_override, **left_override),
-        openarm_right_hardware_interface=dict(fd_override, **right_override))}" />
+        openarm_hardware_interface=dict(params=dict(fd_override, **single_override)),
+        openarm_left_hardware_interface=dict(params=dict(fd_override, **left_override)),
+        openarm_right_hardware_interface=dict(params=dict(fd_override, **right_override)))}" />
       <xacro:openarm_ros2_control robot_preset="${robot_preset_cfg}"
         component_descriptions="${component_descriptions}"
         use_fake_hardware="${use_fake_hardware}" fake_sensor_commands="${fake_sensor_commands}"

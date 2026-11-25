@@ -119,7 +119,7 @@ def control_input(product='openarm_v2.0'):
     spec = support.preset(arm=support.component('arm', product, 'openarm_right_'),
                           tool=support.component('end_effector', 'pinch_gripper', 'openarm_right_', connection=dict(attach_to='arm')))
     spec['systems'] = {'fixture_system': dict(
-        hardware_plugin='openarm_hardware/OpenArmHW', can_interface='can_test', can_fd=True,
+        plugin='openarm_hardware/OpenArmHW', params=dict(can_interface='can_test', can_fd=True),
         components=dict(arm=dict(joints=list(data['struct/topology.yaml']['joints']), idx=list(range(7)), control_gains='default'),
                         tool=dict(joints=['joint1'], idx=[8])))}
     return spec, {'arm': data, 'tool': support.pinch()}
@@ -196,7 +196,7 @@ def test_control_joints_follow_model_names_and_enabled_components():
         assert {joint.get('name') for joint in robot.find(
             f"ros2_control[@name='{name}']").findall('joint')} == expected
     spec['systems']['shoulder'].update(
-        hardware_plugin='openarm_hardware/OpenArmHW', can_interface='can_test')
+        plugin='openarm_hardware/OpenArmHW', params=dict(can_interface='can_test'))
     with pytest.raises(xacro.XacroException, match='seven arm joints'):
         support.assemble(spec, data, ros2_control=True,
                          use_fake_hardware=False)
@@ -235,16 +235,16 @@ def test_hardware_parameters_follow_input():
         'default': {'joint1': dict(kp=8., kd=.4)}}
     for prefix, can_interface in [('openarm_left_', 'can_left_test'),
                                   ('openarm_right_', 'can_right_test')]:
-        control.update(can_interface=can_interface, can_fd=False)
+        control['params'].update(can_interface=can_interface, can_fd=False)
         for name in ('arm', 'tool'):
             spec[name]['prefix'] = prefix
         robot = support.assemble(spec, data, ros2_control=True,
                                  use_fake_hardware=False)
         hardware = robot.find('ros2_control/hardware')
-        assert hardware.find('plugin').text == control['hardware_plugin']
+        assert hardware.find('plugin').text == control['plugin']
         params = {p.get('name'): p.text for p in hardware.findall('param')}
         assert len(params) == len(hardware.findall('param'))
-        assert params['can_interface'] == control['can_interface']
+        assert params['can_interface'] == control['params']['can_interface']
         assert params['can_fd'].lower() == 'false'
         assert params['arm_prefix'] == prefix.removeprefix('openarm_')
         assert params['ee_type'] == spec['tool']['product']
@@ -256,7 +256,7 @@ def test_hardware_parameters_follow_input():
 
     for side in ('left', 'right'):
         spec['systems'] = {f'openarm_{side}_hardware_interface': control}
-        control.update(can_fd=True)
+        control['params'].update(can_fd=True)
         overrides = dict(left_can_interface='runtime_left',
                          right_can_interface='runtime_right', can_fd=False)
         robot = support.assemble(spec, data, ros2_control=True,
@@ -276,7 +276,7 @@ def test_hardware_parameters_follow_input():
                                  use_fake_hardware=False, **overrides)
         hardware = robot.find('ros2_control/hardware')
         assert hardware.find("param[@name='can_interface']").text == (
-            interface or control['can_interface'])
+            interface or control['params']['can_interface'])
 
     robot = support.assemble(spec, data, ros2_control=True,
                              use_fake_hardware=True, fake_sensor_commands=True)
@@ -302,7 +302,7 @@ def test_hardware_parameters_follow_input():
     files['urdf/backend.xacro'] = """<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
       <xacro:include filename="$(find openarm_description)/assets/common/robot.xacro" />
       <xacro:openarm_robot robot_preset="v1/fixture" use_fake_hardware="false"
-        hardware_overrides="${dict(openarm_hardware_interface=dict(hardware_plugin='fixture/Backend', websocket_port=1337, command_interfaces=['position']))}" />
+        hardware_overrides="${dict(openarm_hardware_interface=dict(plugin='fixture/Backend', params=dict(websocket_port=1337), command_interfaces=['position']))}" />
     </robot>"""
     overridden = support.expand(files, entry='urdf/backend.xacro')
     hardware = overridden.find('ros2_control/hardware')
@@ -317,14 +317,14 @@ def test_articulated_body_control_uses_declared_names():
     data = support.chain()
     data['struct/topology.yaml']['joints']['pivot']['type'] = 'prismatic'
     spec = support.preset(lift=support.component(prefix='platform_'))
-    spec['systems'] = {'lift_control': dict(hardware_plugin='fixture/Lift', device='lift_test',
+    spec['systems'] = {'lift_control': dict(plugin='fixture/Lift', params=dict(device='lift_test'),
                                             components=dict(lift=dict(joints=list(data['struct/topology.yaml']['joints']), idx=[0, 1])))}
     robot = support.assemble(spec, {'lift': data},
                              ros2_control=True, use_fake_hardware=False)
     system = robot.find('ros2_control')
     assert system.get('name') == 'lift_control'
     assert system.find(
-        'hardware/plugin').text == spec['systems']['lift_control']['hardware_plugin']
+        'hardware/plugin').text == spec['systems']['lift_control']['plugin']
     assert system.find("hardware/param[@name='device']").text == 'lift_test'
     expected = {spec['lift']['prefix']+name for name,
                 joint in data['struct/topology.yaml']['joints'].items() if joint['type'] != 'fixed'}

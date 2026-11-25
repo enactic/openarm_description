@@ -148,7 +148,7 @@ secondary_arm_end_effector_camera:
     parent_reference_point: camera_mount_point
 systems:
   example_mobile_robot:
-    hardware_plugin: mock_components/GenericSystem
+    plugin: mock_components/GenericSystem
     command_interfaces: [position]
     state_interfaces: [position, velocity]
     components:
