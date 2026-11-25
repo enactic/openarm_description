@@ -140,7 +140,6 @@ def model(links=('root',), joints=None):
             'joint/joint_origins.yaml': {j: dict(origin=pose(z=.1)) for j in joints},
             'joint/joint_axes.yaml': {j: dict(axis=dict(x=0, y=0, z=1)) for j in joints},
             'joint/joint_limits.yaml': {j: dict(limit=dict(lower=-.4, upper=.8, effort=8, velocity=2)) for j in joints},
-            'joint/joint_mimics.yaml': {},
             'inertials/nominal.yaml': {links[0]: dict(origin=pose(.01, .02, .03), mass=2.3,
                                                       inertia=dict(xx=.04, yy=.05, zz=.06, xy=.001, xz=.002, yz=.003))},
             'link/visuals.yaml': {'default': {}}, 'link/collisions.yaml': {'default': {}}}
@@ -159,8 +158,8 @@ def pinch():
     data['struct/topology.yaml']['links'] = {
         'base_link': dict(name='ee_base_link'),
         'link1': dict(name='ee_link1'), 'link2': dict(name='ee_link2')}
-    data['joint/joint_mimics.yaml'] = {'joint2': dict(
-        joint='joint1', multiplier=-1, offset=.1)}
+    data['struct/topology.yaml']['joints']['joint2']['mimic'] = dict(
+        target='joint1', multiplier=-1, offset=.1)
     data['struct/reference_points.yaml'] = {'grasp_frame': dict(
         parent='base_link', emit=False, origin=pose(z=.12))}
     return data

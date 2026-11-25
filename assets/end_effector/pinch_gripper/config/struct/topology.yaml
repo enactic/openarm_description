@@ -30,3 +30,7 @@ joints:
     type: revolute
     parent: base_link
     child: link2
+    mimic:
+      target: joint1
+      multiplier: 1
+      offset: 0

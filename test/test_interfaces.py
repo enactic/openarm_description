@@ -144,7 +144,7 @@ def test_control_joints_follow_model_names_and_enabled_components():
         if tool_enabled:
             expected.update(spec['tool']['prefix'] + cfg.get('name', name)
                             for name, cfg in data['tool']['struct/topology.yaml']['joints'].items()
-                            if name not in data['tool']['joint/joint_mimics.yaml'])
+                            if 'mimic' not in cfg)
         active = {joint.get('name') for joint in robot.findall('joint')
                   if joint.get('type') != 'fixed' and joint.find('mimic') is None}
         assert active == expected
