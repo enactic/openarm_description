@@ -26,12 +26,8 @@ def expand_preview_model(path, mappings, preset):
     enabled = {name for name in preset['robot']
                ['components'] if preset[name]['enabled']}
     for system_name, system in preset.get('systems', {}).items():
-        for component, selection in system['components'].items():
-            if component not in enabled:
-                continue
-            if len(selection['joints']) != len(selection['idx']):
-                raise ValueError('joints and idx must have the same length')
-            if not selection['joints']:
+        for component, selection in system.get('components', {}).items():
+            if component not in enabled or not selection.get('joints'):
                 continue
             group = selection.get('init_pos')
             profile_name = 'preview_initial_' + str(len(bindings))
@@ -81,16 +77,21 @@ def resolve_initial_positions(preset, joint_bindings, robot_description, overrid
     for system_name, system in systems.items():
         entries = overrides.get(system_name, {})
         seen = set()
-        for component, selection in system['components'].items():
+        for component, selection in system.get('components', {}).items():
             if component not in joint_bindings.get(system_name, {}):
                 continue
-            if len(selection['joints']) != len(selection['idx']):
-                raise ValueError('joints and idx must have the same length')
-            for key, idx in zip(selection['joints'], selection['idx']):
+            keys = selection['joints']
+            # idx is only needed to address overrides.
+            indices = selection.get('idx') if entries else [None] * len(keys)
+            if not isinstance(indices, list) or len(indices) != len(keys):
+                raise ValueError(
+                    f'Overrides for {system_name} need one idx per joint of {component}')
+            for key, idx in zip(keys, indices):
                 config = joint_bindings[system_name][component][key]
-                if idx in seen:
-                    raise ValueError(f'Duplicate idx {idx} in {system_name}')
-                seen.add(idx)
+                if entries:
+                    if idx in seen:
+                        raise ValueError(f'Duplicate idx {idx} in {system_name}')
+                    seen.add(idx)
                 if idx not in entries and 'init_pos' not in config:
                     continue
                 value = float(
