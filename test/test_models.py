@@ -16,6 +16,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 from support import ROOT, expand, packages
+import yaml
 
 
 def test_shipped_presets_expand_and_resolve_resources():
@@ -32,8 +33,12 @@ def test_shipped_presets_expand_and_resolve_resources():
         for directory in sorted((ROOT/'assets'/kind).iterdir()):
             if directory.is_dir():
                 component = f'{kind}/{directory.name}'
+                preview = directory/'config'/'preview.yaml'
+                settings = yaml.safe_load(preview.read_text()) or {} \
+                    if preview.is_file() else {}
                 robots.append(('component', component, expand(
-                    entry='urdf/component.urdf.xacro', component=component)))
+                    entry='urdf/component.urdf.xacro', component=component,
+                    config=repr(settings.get('config')))))
     for version, name, robot in robots:
         for mesh in robot.findall('.//geometry/mesh'):
             uri = urlparse(mesh.get('filename'))

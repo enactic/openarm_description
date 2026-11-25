@@ -80,9 +80,6 @@ def robot_state_publisher_spawner(
         if requested_preset:
             raise ValueError(
                 "Choose either component or robot_preset, not both.")
-        robot_description = xacro.process_file(
-            os.path.join(pkg_share, 'urdf', 'component.urdf.xacro'),
-            mappings={'component': component_id}).toxml()
         preview_path = os.path.join(
             pkg_share, 'assets', component_id, 'config', 'preview.yaml')
         try:
@@ -90,6 +87,10 @@ def robot_state_publisher_spawner(
                 settings = yaml.safe_load(stream) or {}
         except FileNotFoundError:
             settings = {}
+        robot_description = xacro.process_file(
+            os.path.join(pkg_share, 'urdf', 'component.urdf.xacro'),
+            mappings={'component': component_id,
+                      'config': repr(settings.get('config'))}).toxml()
         view = settings.get('view')
         root_frame = 'world'
         positions = {}

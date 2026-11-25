@@ -15,13 +15,15 @@ limitations under the License.
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
   <xacro:include filename="$(find openarm_description)/assets/component_loader.xacro" />
   <xacro:arg name="component" default="" />
+  <!-- Component config as a Python dict literal, e.g. "{'camera_model': 'zedm'}". -->
+  <xacro:arg name="config" default="None" />
   <xacro:property name="component_id" value="$(arg component)" />
   <xacro:property name="component_parts" value="${component_id.split('/')}" />
   <xacro:openarm_require
     condition="${len(component_parts) == 2 and python.all(part and part not in ['.', '..'] for part in component_parts)}"
     message="component must be a type/product identifier, such as end_effector/pinch_gripper." />
   <xacro:property name="component_cfg"
-    value="${dict(type=component_parts[0], product=component_parts[1], config=None, inertials='nominal', prefix='', enabled=True)}" />
+    value="${dict(type=component_parts[0], product=component_parts[1], config=$(arg config), inertials='nominal', prefix='', enabled=True)}" />
   <xacro:openarm_describe_auto_component component_name="component" component_cfg="${component_cfg}"
     options="${dict()}" out_name="description" />
   <xacro:openarm_emit_standalone_component component_cfg="${component_cfg}" component_desc="${description}" />
