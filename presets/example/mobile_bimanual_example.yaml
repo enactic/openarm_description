@@ -109,6 +109,16 @@ primary_arm_end_effector:
     y: -1
     z: 1
   limit_override_joints: {}
+primary_arm_end_effector_camera:
+  type: sensor
+  enabled: true
+  product: b0495
+  config: null
+  inertials: nominal
+  prefix: openarm_left_
+  connection:
+    attach_to: primary_arm_end_effector
+    parent_reference_point: camera_mount_point
 secondary_arm_end_effector:
   type: end_effector
   enabled: true
@@ -126,6 +136,16 @@ secondary_arm_end_effector:
     y: 1
     z: 1
   limit_override_joints: {}
+secondary_arm_end_effector_camera:
+  type: sensor
+  enabled: true
+  product: b0495
+  config: null
+  inertials: nominal
+  prefix: openarm_right_
+  connection:
+    attach_to: secondary_arm_end_effector
+    parent_reference_point: camera_mount_point
 systems:
   example_mobile_robot:
     hardware_plugin: mock_components/GenericSystem
@@ -211,24 +231,3 @@ preview:
       x: 0.1
       y: 0.0
       z: 0.65
-
-primary_arm_end_effector_camera:
-  type: sensor
-  product: b0495
-  config: null
-  inertials: nominal
-  prefix: openarm_left_
-  enabled: true
-  connection:
-    attach_to: primary_arm_end_effector
-    parent_reference_point: camera_mount_point
-secondary_arm_end_effector_camera:
-  type: sensor
-  product: b0495
-  config: null
-  inertials: nominal
-  prefix: openarm_right_
-  enabled: true
-  connection:
-    attach_to: secondary_arm_end_effector
-    parent_reference_point: camera_mount_point

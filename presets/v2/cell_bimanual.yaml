@@ -46,6 +46,17 @@ body:
     x: 1
     y: 1
     z: 1
+ceiling_camera:
+  type: sensor
+  enabled: true
+  product: b0495
+  config: null
+  inertials: nominal
+  visuals: cell
+  prefix: openarm_cell_ceiling_
+  connection:
+    attach_to: body
+    parent_reference_point: ceiling_camera_mount_point
 primary_arm:
   type: arm
   enabled: true
@@ -132,6 +143,16 @@ primary_arm_end_effector:
     y: -1
     z: 1
   limit_override_joints: {}
+primary_arm_end_effector_camera:
+  type: sensor
+  enabled: true
+  product: b0495
+  config: null
+  inertials: nominal
+  prefix: openarm_left_
+  connection:
+    attach_to: primary_arm_end_effector
+    parent_reference_point: camera_mount_point
 secondary_arm_end_effector:
   type: end_effector
   enabled: true
@@ -149,6 +170,16 @@ secondary_arm_end_effector:
     y: 1
     z: 1
   limit_override_joints: {}
+secondary_arm_end_effector_camera:
+  type: sensor
+  enabled: true
+  product: b0495
+  config: null
+  inertials: nominal
+  prefix: openarm_right_
+  connection:
+    attach_to: secondary_arm_end_effector
+    parent_reference_point: camera_mount_point
 body_camera_mount:
   type: accessory
   enabled: true
@@ -211,35 +242,3 @@ preview:
   view:
     eye: {x: -2.0, y: 0.0, z: 1.45}
     lookat: {x: 0.40, y: 0.0, z: 1.10}
-
-ceiling_camera:
-  type: sensor
-  product: b0495
-  config: null
-  inertials: nominal
-  visuals: cell
-  prefix: openarm_cell_ceiling_
-  enabled: true
-  connection:
-    attach_to: body
-    parent_reference_point: ceiling_camera_mount_point
-primary_arm_end_effector_camera:
-  type: sensor
-  product: b0495
-  config: null
-  inertials: nominal
-  prefix: openarm_left_
-  enabled: true
-  connection:
-    attach_to: primary_arm_end_effector
-    parent_reference_point: camera_mount_point
-secondary_arm_end_effector_camera:
-  type: sensor
-  product: b0495
-  config: null
-  inertials: nominal
-  prefix: openarm_right_
-  enabled: true
-  connection:
-    attach_to: secondary_arm_end_effector
-    parent_reference_point: camera_mount_point
