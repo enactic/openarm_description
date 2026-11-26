@@ -85,7 +85,7 @@ limitations under the License.
   </xacro:macro>
 
   <xacro:macro name="openarm_ros2_control"
-    params="robot_preset component_descriptions use_fake_hardware:=true fake_sensor_commands:=false hardware_defaults:=${dict()} hardware_overrides:=${dict()} hardware_config:=${None} index:=0 claimed_joints:=${[]}">
+    params="robot_preset component_descriptions use_fake_hardware:=true fake_sensor_commands:=false hardware_defaults:=${dict()} can_parameters:=${dict()} hardware_config:=${None} index:=0 claimed_joints:=${[]}">
     <!-- A hardware_config replaces the preset systems; see the README. -->
     <xacro:property name="external" value="${hardware_config != None}" lazy_eval="false" />
     <xacro:property name="systems" value="${hardware_config['systems'] if external else robot_preset.get('systems', dict())}" lazy_eval="false" />
@@ -94,14 +94,8 @@ limitations under the License.
       <xacro:property name="system_name" value="${system_names[index]}" lazy_eval="false" />
       <xacro:property name="defaults" value="${dict() if external else hardware_defaults.get(system_name, dict())}" lazy_eval="false" />
       <xacro:property name="control" value="${dict(defaults, **dict(systems[system_name], params=dict(defaults.get('params', dict()), **systems[system_name].get('params', dict()))))}" lazy_eval="false" />
-      <xacro:property name="override" value="${hardware_overrides.get(system_name, dict())}" lazy_eval="false" />
-      <!-- A different plugin replaces device parameters, but keeps the preset's
-           joint selection and interface declarations. -->
-      <xacro:if value="${'plugin' in override and override['plugin'] != control.get('plugin')}">
-        <xacro:property name="control" value="${dict([(key, control[key]) for key in ['components', 'command_interfaces', 'state_interfaces'] if key in control])}" lazy_eval="false" />
-      </xacro:if>
-      <!-- Parameters merge per key, so an override can change one CAN setting. -->
-      <xacro:property name="control" value="${dict(control, **dict(override, params=dict(control.get('params', dict()), **override.get('params', dict()))))}" lazy_eval="false" />
+      <!-- The CAN launch arguments merge per key into the system params. -->
+      <xacro:property name="control" value="${dict(control, params=dict(control.get('params', dict()), **can_parameters.get(system_name, dict())))}" lazy_eval="false" />
       <xacro:openarm_require condition="${python.isinstance(control.get('components'), dict) and python.isinstance(control['params'], dict)}"
         message="${'System `%s` requires a components mapping and a params mapping.' % system_name}" />
       <xacro:property name="selection" value="${control['components']}" lazy_eval="false" />
@@ -192,7 +186,7 @@ limitations under the License.
       </xacro:if>
       <xacro:openarm_ros2_control robot_preset="${robot_preset}" component_descriptions="${component_descriptions}"
         use_fake_hardware="${use_fake_hardware}" fake_sensor_commands="${fake_sensor_commands}"
-        hardware_defaults="${hardware_defaults}" hardware_overrides="${hardware_overrides}" hardware_config="${hardware_config}" index="${index + 1}" claimed_joints="${claimed_joints + joint_names}" />
+        hardware_defaults="${hardware_defaults}" can_parameters="${can_parameters}" hardware_config="${hardware_config}" index="${index + 1}" claimed_joints="${claimed_joints + joint_names}" />
     </xacro:if>
   </xacro:macro>
 </robot>
