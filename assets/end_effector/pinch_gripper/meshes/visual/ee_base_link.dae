@@ -8,7 +8,7 @@
     <created>2026-05-19T02:38:06</created>
     <modified>2026-05-19T02:38:06</modified>
     <unit name="meter" meter="1"/>
-    <up_axis>Y_UP</up_axis>
+    <up_axis>Z_UP</up_axis>
   </asset>
   <library_effects>
     <effect id="ee_base_link_02_mat-effect">
