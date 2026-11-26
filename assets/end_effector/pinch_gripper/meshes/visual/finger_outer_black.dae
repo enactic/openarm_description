@@ -8,7 +8,7 @@
     <created>2026-05-19T02:38:13</created>
     <modified>2026-05-19T02:38:13</modified>
     <unit name="meter" meter="1" />
-    <up_axis>Y_UP</up_axis>
+    <up_axis>Z_UP</up_axis>
   </asset>
   <library_effects>
     <effect id="finger_outer_02_mat-effect">
