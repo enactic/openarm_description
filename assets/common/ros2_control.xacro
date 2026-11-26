@@ -23,38 +23,47 @@ limitations under the License.
     </xacro:if>
   </xacro:macro>
 
-  <xacro:macro name="openarm_control_interfaces" params="kind names index:=0">
+  <xacro:macro name="openarm_control_interfaces" params="kind names initial_position:=0.0 index:=0">
     <xacro:if value="${index &lt; len(names)}">
       <xacro:element xacro:name="${kind}">
         <xacro:attribute name="name" value="${names[index]}" />
         <xacro:if value="${kind == 'state_interface'}">
-          <param name="initial_value">0.0</param>
+          <param name="initial_value">${initial_position if names[index] == 'position' else 0.0}</param>
         </xacro:if>
       </xacro:element>
-      <xacro:openarm_control_interfaces kind="${kind}" names="${names}" index="${index + 1}" />
+      <xacro:openarm_control_interfaces kind="${kind}" names="${names}" initial_position="${initial_position}" index="${index + 1}" />
     </xacro:if>
   </xacro:macro>
 
-  <xacro:macro name="openarm_control_joints" params="joint_names joint_indices command_interfaces state_interfaces index:=0">
+  <!-- joint_parameters and initial_positions are optional lists aligned with joint_names. -->
+  <xacro:macro name="openarm_control_joints"
+    params="joint_names joint_indices command_interfaces state_interfaces joint_parameters:=${None} initial_positions:=${None} index:=0">
     <xacro:if value="${index &lt; len(joint_names)}">
       <joint name="${joint_names[index]}">
-        <param name="idx">${joint_indices[index]}</param>
+        <xacro:if value="${joint_indices[index] != None}">
+          <param name="idx">${joint_indices[index]}</param>
+        </xacro:if>
+        <xacro:if value="${joint_parameters}">
+          <xacro:openarm_control_parameters values="${joint_parameters[index]}" />
+        </xacro:if>
         <xacro:openarm_control_interfaces kind="command_interface" names="${command_interfaces}" />
-        <xacro:openarm_control_interfaces kind="state_interface" names="${state_interfaces}" />
+        <xacro:openarm_control_interfaces kind="state_interface" names="${state_interfaces}"
+          initial_position="${initial_positions[index] if initial_positions else 0.0}" />
       </joint>
       <xacro:openarm_control_joints joint_names="${joint_names}" joint_indices="${joint_indices}" command_interfaces="${command_interfaces}"
-        state_interfaces="${state_interfaces}" index="${index + 1}" />
+        state_interfaces="${state_interfaces}" joint_parameters="${joint_parameters}" initial_positions="${initial_positions}" index="${index + 1}" />
     </xacro:if>
   </xacro:macro>
 
-  <xacro:macro name="openarm_load_control_profiles" params="components selection descriptions out_name index:=0 result:=${dict()}">
+  <xacro:macro name="openarm_load_control_profiles"
+    params="components selection descriptions out_name file:=control/control_gains.yaml selector:=control_gains index:=0 result:=${dict()}">
     <xacro:if value="${index &lt; len(components)}">
       <xacro:property name="name" value="${components[index]}" />
       <xacro:property name="description" value="${descriptions[name]}" />
-      <xacro:openarm_load_joint_profile config_root="${description['config_root']}" file="control/control_gains.yaml"
-        group="${selection[name].get('control_gains')}" joint_keys="${description['topology']['joints']}" out_name="gains" />
+      <xacro:openarm_load_joint_profile config_root="${description['config_root']}" file="${file}"
+        group="${selection[name].get(selector)}" joint_keys="${description['topology']['joints']}" out_name="gains" />
       <xacro:openarm_load_control_profiles components="${components}" selection="${selection}" descriptions="${descriptions}"
-        out_name="next_profiles" index="${index + 1}" result="${dict(list(result.items()) + [(name, gains)])}" />
+        out_name="next_profiles" file="${file}" selector="${selector}" index="${index + 1}" result="${dict(list(result.items()) + [(name, gains)])}" />
       <xacro:property name="${out_name}" value="${next_profiles}" scope="parent" lazy_eval="false" />
     </xacro:if>
     <xacro:unless value="${index &lt; len(components)}">
@@ -76,26 +85,26 @@ limitations under the License.
   </xacro:macro>
 
   <xacro:macro name="openarm_ros2_control"
-    params="robot_preset component_descriptions use_fake_hardware:=true fake_sensor_commands:=false hardware_defaults:=${dict()} hardware_overrides:=${dict()} index:=0 claimed_joints:=${[]}">
-    <xacro:property name="systems" value="${robot_preset.get('systems', dict())}" lazy_eval="false" />
+    params="robot_preset component_descriptions use_fake_hardware:=true fake_sensor_commands:=false hardware_defaults:=${dict()} can_parameters:=${dict()} hardware_config:=${None} index:=0 claimed_joints:=${[]}">
+    <!-- A hardware_config replaces the preset systems; see the README. -->
+    <xacro:property name="external" value="${hardware_config != None}" lazy_eval="false" />
+    <xacro:property name="systems" value="${hardware_config['systems'] if external else robot_preset.get('systems', dict())}" lazy_eval="false" />
     <xacro:property name="system_names" value="${list(systems)}" lazy_eval="false" />
     <xacro:if value="${index &lt; len(system_names)}">
       <xacro:property name="system_name" value="${system_names[index]}" lazy_eval="false" />
-      <xacro:property name="defaults" value="${hardware_defaults.get(system_name, dict())}" lazy_eval="false" />
+      <xacro:property name="defaults" value="${dict() if external else hardware_defaults.get(system_name, dict())}" lazy_eval="false" />
       <xacro:property name="control" value="${dict(defaults, **dict(systems[system_name], params=dict(defaults.get('params', dict()), **systems[system_name].get('params', dict()))))}" lazy_eval="false" />
-      <xacro:property name="override" value="${hardware_overrides.get(system_name, dict())}" lazy_eval="false" />
-      <!-- A different plugin replaces device parameters, but keeps the preset's
-           joint selection and interface declarations. -->
-      <xacro:if value="${'plugin' in override and override['plugin'] != control.get('plugin')}">
-        <xacro:property name="control" value="${dict([(key, control[key]) for key in ['components', 'command_interfaces', 'state_interfaces'] if key in control])}" lazy_eval="false" />
-      </xacro:if>
-      <!-- Parameters merge per key, so an override can change one CAN setting. -->
-      <xacro:property name="control" value="${dict(control, **dict(override, params=dict(control.get('params', dict()), **override.get('params', dict()))))}" lazy_eval="false" />
+      <!-- The CAN launch arguments merge per key into the system params. -->
+      <xacro:property name="control" value="${dict(control, params=dict(control.get('params', dict()), **can_parameters.get(system_name, dict())))}" lazy_eval="false" />
+      <xacro:openarm_require condition="${python.isinstance(control.get('components'), dict) and python.isinstance(control['params'], dict)}"
+        message="${'System `%s` requires a components mapping and a params mapping.' % system_name}" />
       <xacro:property name="selection" value="${control['components']}" lazy_eval="false" />
-      <xacro:openarm_require condition="${python.all(name in robot_preset['robot']['components'] for name in selection)}"
+      <xacro:openarm_require condition="${python.all(name in robot_preset['robot']['components'] and python.isinstance(cfg, dict) for name, cfg in selection.items())}"
         message="${'System `%s` references an unknown component.' % system_name}" />
+      <!-- An external system may omit idx: its joints then keep the listed order. -->
+      <xacro:property name="indexed" value="${not external or python.any('idx' in cfg for cfg in selection.values())}" lazy_eval="false" />
       <xacro:openarm_require
-        condition="${python.all(python.isinstance(cfg.get('joints'), list) and python.isinstance(cfg.get('idx'), list) and len(cfg['joints']) == len(cfg['idx']) for cfg in selection.values())}"
+        condition="${python.all(python.isinstance(cfg.get('joints'), list) and (not indexed or python.isinstance(cfg.get('idx'), list) and len(cfg['joints']) == len(cfg['idx'])) for cfg in selection.values())}"
         message="${'System `%s` requires equally sized joints and idx lists.' % system_name}" />
       <xacro:property name="components" value="${[name for name in selection if name in component_descriptions and selection[name]['joints']]}" lazy_eval="false" />
       <xacro:property name="bindings" value="${[(name, joint) for name in components for joint in selection[name]['joints']]}" lazy_eval="false" />
@@ -107,26 +116,47 @@ limitations under the License.
         message="${'System `%s` must expose at least one interface.' % system_name}" />
       <xacro:openarm_require condition="${not command_interfaces or python.all(component_descriptions[name]['topology']['joints'][joint]['type'] != 'fixed' and joint not in component_descriptions[name]['joint_mimics'] for name, joint in bindings)}"
         message="${'System `%s` assigns commands to a fixed or mimic joint.' % system_name}" />
-      <xacro:property name="indices" value="${[idx for name in components for idx in selection[name]['idx']]}" lazy_eval="false" />
+      <xacro:property name="indices" value="${[idx for name in components for idx in selection[name]['idx']] if indexed else []}" lazy_eval="false" />
       <xacro:openarm_require condition="${python.all(python.type(idx) == int and idx &gt;= 0 for idx in indices)}"
         message="${'System `%s` requires a non-negative integer idx for each joint.' % system_name}" />
       <xacro:openarm_require condition="${len(python.set(indices)) == len(indices)}"
         message="${'System `%s` contains duplicate idx values.' % system_name}" />
-      <xacro:property name="ordered_bindings" value="${python.sorted([(idx, name, joint) for name in components for joint, idx in python.zip(selection[name]['joints'], selection[name]['idx'])])}" lazy_eval="false" />
+      <xacro:property name="ordered_bindings"
+        value="${python.sorted([(idx, name, joint) for name in components for joint, idx in python.zip(selection[name]['joints'], selection[name]['idx'])]) if indexed else [(None, name, joint) for name in components for joint in selection[name]['joints']]}" lazy_eval="false" />
       <xacro:property name="joint_names" value="${[component_descriptions[name]['joint_name_map'][joint] for idx, name, joint in ordered_bindings]}" lazy_eval="false" />
       <xacro:property name="joint_indices" value="${[idx for idx, name, joint in ordered_bindings]}" lazy_eval="false" />
       <xacro:openarm_require condition="${len(python.set(joint_names)) == len(joint_names) and python.all(name not in claimed_joints for name in joint_names)}"
         message="${'System `%s` contains a duplicate joint assignment.' % system_name}" />
       <xacro:openarm_load_control_profiles components="${components}" selection="${selection}"
         descriptions="${component_descriptions}" out_name="control_profiles" />
+      <xacro:property name="joint_parameters" value="${None}" lazy_eval="false" />
+      <xacro:property name="initial_positions" value="${None}" lazy_eval="false" />
+      <xacro:if value="${external}">
+        <xacro:openarm_load_control_profiles components="${components}" selection="${selection}" descriptions="${component_descriptions}"
+          file="control/initial_positions.yaml" selector="init_pos" out_name="position_profiles" />
+        <xacro:property name="initial_positions" value="${[python.float(position_profiles[name].get(joint, 0.0)) for idx, name, joint in ordered_bindings]}" lazy_eval="false" />
+        <!-- joint_params maps a parameter name to one value per listed joint. -->
+        <xacro:property name="extras" value="${dict([(name, selection[name].get('joint_params') or dict()) for name in components])}" lazy_eval="false" />
+        <xacro:openarm_require
+          condition="${python.all(python.isinstance(extra, dict) and python.all(python.isinstance(values, list) and len(values) == len(selection[name]['joints']) and python.all(value == None or python.isinstance(value, (python.str, python.int, python.float)) for value in values) for values in extra.values()) for name, extra in extras.items())}"
+          message="${'System `%s` requires joint_params lists of scalars, one per listed joint.' % system_name}" />
+        <xacro:property name="joint_parameters"
+          value="${[dict(list(control_profiles[name].get(joint, dict()).items()) + [(key, values[selection[name]['joints'].index(joint)]) for key, values in extras[name].items() if values[selection[name]['joints'].index(joint)] != None]) for idx, name, joint in ordered_bindings]}" lazy_eval="false" />
+        <xacro:openarm_require
+          condition="${python.all(key not in ['idx'] + list(control_profiles[name].get(joint, dict())) for idx, name, joint in ordered_bindings for key in extras[name])}"
+          message="${'System `%s` joint_params must not repeat idx or gain names.' % system_name}" />
+      </xacro:if>
       <xacro:if value="${joint_names}">
         <xacro:property name="parameters" value="${dict()}" lazy_eval="false" />
         <xacro:property name="plugin" value="${control.get('plugin', '')}" lazy_eval="false" />
-        <xacro:if value="${use_fake_hardware}">
+        <xacro:if value="${external and not plugin}">
+          <xacro:property name="plugin" value="mock_components/GenericSystem" />
+        </xacro:if>
+        <xacro:if value="${use_fake_hardware and not external}">
           <xacro:property name="plugin" value="mock_components/GenericSystem" />
           <xacro:property name="parameters" value="${dict(mock_sensor_commands=fake_sensor_commands, position_state_following_offset=0.0)}" lazy_eval="false" />
         </xacro:if>
-        <xacro:unless value="${use_fake_hardware}">
+        <xacro:unless value="${use_fake_hardware or external}">
           <xacro:openarm_require condition="${plugin != ''}" message="${'Configure plugin for system `%s`.' % system_name}" />
           <xacro:if value="${plugin == 'openarm_hardware/OpenArmHW'}">
             <xacro:property name="arms" value="${[name for name in components if component_descriptions[name]['component_type'] == 'arm']}" lazy_eval="false" />
@@ -150,12 +180,13 @@ limitations under the License.
             <plugin>${plugin}</plugin>
             <xacro:openarm_control_parameters values="${parameters}" />
           </hardware>
-          <xacro:openarm_control_joints joint_names="${joint_names}" joint_indices="${joint_indices}" command_interfaces="${command_interfaces}" state_interfaces="${state_interfaces}" />
+          <xacro:openarm_control_joints joint_names="${joint_names}" joint_indices="${joint_indices}" command_interfaces="${command_interfaces}" state_interfaces="${state_interfaces}"
+            joint_parameters="${joint_parameters}" initial_positions="${initial_positions}" />
         </ros2_control>
       </xacro:if>
       <xacro:openarm_ros2_control robot_preset="${robot_preset}" component_descriptions="${component_descriptions}"
         use_fake_hardware="${use_fake_hardware}" fake_sensor_commands="${fake_sensor_commands}"
-        hardware_defaults="${hardware_defaults}" hardware_overrides="${hardware_overrides}" index="${index + 1}" claimed_joints="${claimed_joints + joint_names}" />
+        hardware_defaults="${hardware_defaults}" can_parameters="${can_parameters}" hardware_config="${hardware_config}" index="${index + 1}" claimed_joints="${claimed_joints + joint_names}" />
     </xacro:if>
   </xacro:macro>
 </robot>

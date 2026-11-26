@@ -297,21 +297,6 @@ def test_hardware_parameters_follow_input():
         assert [i.get('name')
                 for i in joint.findall('state_interface')] == ['position']
 
-    # A runtime backend changes the driver, not the selected joints/indices.
-    files = support.files_for(spec, data, version='v1.0')
-    files['urdf/backend.xacro'] = """<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-      <xacro:include filename="$(find openarm_description)/assets/common/robot.xacro" />
-      <xacro:openarm_robot robot_preset="v1/fixture" use_fake_hardware="false"
-        hardware_overrides="${dict(openarm_hardware_interface=dict(plugin='fixture/Backend', params=dict(websocket_port=1337), command_interfaces=['position']))}" />
-    </robot>"""
-    overridden = support.expand(files, entry='urdf/backend.xacro')
-    hardware = overridden.find('ros2_control/hardware')
-    assert hardware.find('plugin').text == 'fixture/Backend'
-    assert {p.get('name'): p.text for p in hardware.findall('param')} == {
-        'websocket_port': '1337'}
-    assert [(j.get('name'), j.find("param[@name='idx']").text) for j in overridden.findall('ros2_control/joint')] == [
-        (j.get('name'), j.find("param[@name='idx']").text) for j in robot.findall('ros2_control/joint')]
-
 
 def test_articulated_body_control_uses_declared_names():
     data = support.chain()

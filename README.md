@@ -61,8 +61,43 @@ xacro $(ros2 pkg prefix openarm_description)/share/openarm_description/urdf/open
 | `left_can_interface` | `can1` [*] | Override the left-arm CAN interface. |
 | `right_can_interface` | `can0` [*] | Override the right-arm CAN interface. |
 | `can_fd` | `true` [*] | Override CAN FD mode; `false` selects classic CAN. |
+| `hardware_config` | `""` | Path to a hardware configuration that replaces the preset systems; see [Hardware configuration](#hardware-configuration). |
 
 [*] These are the effective defaults when neither an argument nor the preset specifies a value. The CAN arguments themselves default to an empty string (`""`), which preserves the preset settings. Priority: explicit argument → preset system setting → value shown above. They apply when `use_fake_hardware:=false`.
+
+### Hardware configuration
+
+`hardware_config:=<file>` lets another package define the `ros2_control` systems of a preset. The file's `systems` replace the preset's, so it decides how joints are grouped, which plugin each system uses and which parameters it receives. `use_fake_hardware`, `fake_sensor_commands` and the built-in hardware defaults are not used, and the CAN arguments cannot be combined with it.
+
+```yaml
+systems:
+  MujocoSystem:
+    plugin: mujoco_ros2_control/MujocoSystemInterface   # default: mock_components/GenericSystem
+    params: {mujoco_model: /path/to/scene.xml, initial_keyframe: home}
+    command_interfaces: [position]                      # default: position, velocity, effort
+    state_interfaces: [position, velocity, effort]      # default: position, velocity, effort
+    components:
+      primary_arm:
+        joints: [joint1, joint2, joint3, joint4, joint5, joint6, joint7]
+        idx: [1, 2, 3, 4, 5, 6, 7]         # optional
+        init_pos: default                  # optional
+        control_gains: default             # optional
+        joint_params:                      # optional
+          can_id: [1, 2, 3, 4, 5, 6, 7]
+```
+
+| Key | Written to the URDF as |
+| --- | --- |
+| `plugin` | `<hardware><plugin>` |
+| `params` | `<hardware><param>`, unchanged |
+| `command_interfaces`, `state_interfaces` | the interfaces of every joint in the system |
+| `components.<name>.joints` | `<joint>` entries with full names; components are named as in the preset |
+| `idx` | `<param name="idx">` on each joint; joints are ordered by `idx`. Without `idx` in a system, joints keep the listed order and get no `idx`. |
+| `init_pos` | `initial_value` of the `position` state interface, from `control/initial_positions.yaml` |
+| `control_gains` | joint parameters named as in `control/control_gains.yaml`, for example `kp` and `kd` |
+| `joint_params` | joint parameters; each list holds one scalar per listed joint, and `null` skips that joint |
+
+Keys other than these are ignored, so the calling package can keep its own settings in the same file. Parameter values are written as strings.
 
 ### Single components
 
