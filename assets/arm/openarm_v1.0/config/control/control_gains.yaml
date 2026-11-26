@@ -12,27 +12,48 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-joint1:
-  kp: 70.0
-  kd: 2.75
-joint2:
-  kp: 70.0
-  kd: 2.5
-joint3:
-  kp: 70.0
-  kd: 2.0
-joint4:
-  kp: 60.0
-  kd: 2.0
-joint5:
-  kp: 10.0
-  kd: 0.7
-joint6:
-  kp: 10.0
-  kd: 0.6
-joint7:
-  kp: 10.0
-  kd: 0.5
-hand:
-  kp: 5.0
-  kd: 0.1
+# mujoco: position-servo gains from the simulation model.
+default:
+  joint1:
+    kp: 70.0
+    kd: 2.75
+  joint2:
+    kp: 70.0
+    kd: 2.5
+  joint3:
+    kp: 70.0
+    kd: 2.0
+  joint4:
+    kp: 60.0
+    kd: 2.0
+  joint5:
+    kp: 10.0
+    kd: 0.7
+  joint6:
+    kp: 10.0
+    kd: 0.6
+  joint7:
+    kp: 10.0
+    kd: 0.5
+mujoco:
+  joint1:
+    kp: 230.0
+    kd: 2.7
+  joint2:
+    kp: 230.0
+    kd: 2.7
+  joint3:
+    kp: 190.0
+    kd: 2.2
+  joint4:
+    kp: 190.0
+    kd: 2.2
+  joint5:
+    kp: 30.0
+    kd: 1.5
+  joint6:
+    kp: 30.0
+    kd: 1.5
+  joint7:
+    kp: 30.0
+    kd: 1.5
