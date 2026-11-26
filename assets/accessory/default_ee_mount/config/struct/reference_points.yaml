@@ -1,0 +1,27 @@
+# Copyright 2026 Enactic, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# base_link matches the arm ee_mount_point. The output frame is centred
+# on the former motor seat, with +Z pointing out toward the adapter.
+
+adapter_mount_point:
+  parent: base_link
+  emit: false
+  origin:
+    x: -0.0205
+    y: 0.0
+    z: -0.0495
+    roll: 3.141592653589793
+    pitch: 0.0
+    yaw: 0.0
