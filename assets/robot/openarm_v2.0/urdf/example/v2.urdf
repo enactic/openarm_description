@@ -358,7 +358,7 @@ limitations under the License.
       <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
       <!-- Preserve the mesh's embedded materials. -->
       <geometry>
-        <mesh filename="package://openarm_description/assets/sensor/b0495/meshes/visual/camera.dae" scale="1 1 1"/>
+        <mesh filename="package://openarm_description/assets/sensor/b0495/meshes/visual/b0495_camera.dae" scale="1 1 1"/>
       </geometry>
     </visual>
   </link>
@@ -647,7 +647,7 @@ limitations under the License.
       <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
       <!-- Preserve the mesh's embedded materials. -->
       <geometry>
-        <mesh filename="package://openarm_description/assets/sensor/b0495/meshes/visual/camera.dae" scale="1 1 1"/>
+        <mesh filename="package://openarm_description/assets/sensor/b0495/meshes/visual/b0495_camera.dae" scale="1 1 1"/>
       </geometry>
     </visual>
   </link>

@@ -52,7 +52,6 @@ ceiling_camera:
   product: b0495
   config: null
   inertials: nominal
-  visuals: cell
   prefix: openarm_cell_ceiling_
   connection:
     attach_to: body

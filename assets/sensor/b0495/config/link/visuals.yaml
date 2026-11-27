@@ -22,22 +22,7 @@ default:
       pitch: 0.0
       yaw: 0.0
     geometry:
-      mesh: package://openarm_description/assets/sensor/b0495/meshes/visual/camera.dae
-      scale:
-        x: 1
-        y: 1
-        z: 1
-cell:
-  base_link:
-    origin:
-      x: 0.0
-      y: 0.0
-      z: 0.0
-      roll: 0.0
-      pitch: 0.0
-      yaw: 0.0
-    geometry:
-      mesh: package://openarm_description/assets/sensor/b0495/meshes/visual/camera_cell.dae
+      mesh: package://openarm_description/assets/sensor/b0495/meshes/visual/b0495_camera.dae
       scale:
         x: 1
         y: 1
