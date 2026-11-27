@@ -44,7 +44,7 @@
   <library_materials>
     <material id="cell_carriage_material" name="carriage"><instance_effect url="#cell_carriage_effect" /></material></library_materials>
   <library_visual_scenes>
-  <visual_scene id="scene">
+  <visual_scene id="lifter_link-scene">
     <node id="cell_carriage" name="carriage">
       <instance_geometry url="#cell_carriage_geometry">
         <bind_material>
@@ -57,6 +57,6 @@
   </visual_scene>
 </library_visual_scenes>
   <scene>
-    <instance_visual_scene url="#scene" />
+    <instance_visual_scene url="#lifter_link-scene" />
   </scene>
 </COLLADA>

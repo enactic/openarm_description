@@ -303,7 +303,7 @@
     </material>
   </library_materials>
   <library_visual_scenes>
-    <visual_scene id="scene">
+    <visual_scene id="body_link0-scene">
       <node id="body_link0_00" name="body_link0_00">
         <instance_geometry url="#body_link0_00-mesh">
           <bind_material>
@@ -361,6 +361,6 @@
     </visual_scene>
   </library_visual_scenes>
   <scene>
-    <instance_visual_scene url="#scene" />
+    <instance_visual_scene url="#body_link0-scene" />
   </scene>
 </COLLADA>

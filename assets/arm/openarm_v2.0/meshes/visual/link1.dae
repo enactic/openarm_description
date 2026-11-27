@@ -134,7 +134,7 @@
     </geometry>
   </library_geometries>
   <library_visual_scenes>
-    <visual_scene id="Scene" name="Scene">
+    <visual_scene id="link1-scene" name="link1-scene">
       <node id="link1_00" name="link1_00" type="NODE">
         <matrix sid="transform">1 0 0 0 0 7.54979e-8 -1 0 0 1 7.54979e-8 0 0 0 0 1</matrix>
         <instance_geometry url="#link1_00-mesh" name="link1_00">
@@ -168,6 +168,6 @@
     </visual_scene>
   </library_visual_scenes>
   <scene>
-    <instance_visual_scene url="#Scene" />
+    <instance_visual_scene url="#link1-scene" />
   </scene>
 </COLLADA>

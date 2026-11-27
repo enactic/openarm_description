@@ -166,7 +166,7 @@
     </material>
   </library_materials>
   <library_visual_scenes>
-    <visual_scene id="scene">
+    <visual_scene id="zed_mount-scene">
       <node id="zed_mount_00" name="zed_mount_00">
         <instance_geometry url="#zed_mount_00-mesh">
           <bind_material>
@@ -188,6 +188,6 @@
     </visual_scene>
   </library_visual_scenes>
   <scene>
-    <instance_visual_scene url="#scene" />
+    <instance_visual_scene url="#zed_mount-scene" />
   </scene>
 </COLLADA>
