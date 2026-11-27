@@ -6,7 +6,7 @@
     <up_axis>Z_UP</up_axis>
   </asset>
   <library_effects>
-    <effect id="3071eb5fd9314940b22b963e96d886ab" name="3071eb5fd9314940b22b963e96d886ab">
+    <effect id="matte_black_3f3f3f-effect" name="matte_black_3f3f3f-effect">
       <profile_COMMON>
         <technique sid="common">
           <lambert>
@@ -28,87 +28,7 @@
         </extra>
       </profile_COMMON>
     </effect>
-    <effect id="d887a8b5933b4059aac024bd4f15d523" name="d887a8b5933b4059aac024bd4f15d523">
-      <profile_COMMON>
-        <technique sid="common">
-          <phong>
-            <emission>
-              <color>0.0 0.0 0.0 1.0</color>
-            </emission>
-            <ambient>
-              <color>1.0 0.9490196078431372 0.9098039215686274 1.0</color>
-            </ambient>
-            <diffuse>
-              <color>1.0 0.9490196078431372 0.9098039215686274 1.0</color>
-            </diffuse>
-            <specular>
-              <color>0.0 0.0 0.0 1.0</color>
-            </specular>
-            <shininess>
-              <float>0.0</float>
-            </shininess>
-            <reflective>
-              <color>0.0 0.0 0.0 1.0</color>
-            </reflective>
-            <reflectivity>
-              <float>0.0</float>
-            </reflectivity>
-            <transparent>
-              <color>0.0 0.0 0.0 1.0</color>
-            </transparent>
-            <transparency>
-              <float>1.0</float>
-            </transparency>
-          </phong>
-        </technique>
-        <extra>
-          <technique profile="GOOGLEEARTH">
-            <double_sided>0</double_sided>
-          </technique>
-        </extra>
-      </profile_COMMON>
-    </effect>
-    <effect id="d854dd12d5ca4e0081381a51e3b05e85" name="d854dd12d5ca4e0081381a51e3b05e85">
-      <profile_COMMON>
-        <technique sid="common">
-          <phong>
-            <emission>
-              <color>0.0 0.0 0.0 1.0</color>
-            </emission>
-            <ambient>
-              <color>1.0 0.9490196078431372 0.9098039215686274 1.0</color>
-            </ambient>
-            <diffuse>
-              <color>1.0 0.9490196078431372 0.9098039215686274 1.0</color>
-            </diffuse>
-            <specular>
-              <color>0.0 0.0 0.0 1.0</color>
-            </specular>
-            <shininess>
-              <float>0.0</float>
-            </shininess>
-            <reflective>
-              <color>0.0 0.0 0.0 1.0</color>
-            </reflective>
-            <reflectivity>
-              <float>0.0</float>
-            </reflectivity>
-            <transparent>
-              <color>0.0 0.0 0.0 1.0</color>
-            </transparent>
-            <transparency>
-              <float>1.0</float>
-            </transparency>
-          </phong>
-        </technique>
-        <extra>
-          <technique profile="GOOGLEEARTH">
-            <double_sided>0</double_sided>
-          </technique>
-        </extra>
-      </profile_COMMON>
-    </effect>
-    <effect id="3f27ec742a3e404eb918a23590255aa1" name="3f27ec742a3e404eb918a23590255aa1">
+    <effect id="warm_white_fff2e8-effect" name="warm_white_fff2e8-effect">
       <profile_COMMON>
         <technique sid="common">
           <phong>
@@ -238,17 +158,11 @@
     </geometry>
   </library_geometries>
   <library_materials>
-    <material id="9629bbffc3644d23afb0f1879c051aee" name="defaultmaterial">
-      <instance_effect url="#3071eb5fd9314940b22b963e96d886ab" />
+    <material id="matte_black_3f3f3f-material" name="matte_black_3f3f3f">
+      <instance_effect url="#matte_black_3f3f3f-effect" />
     </material>
-    <material id="a8e513ce222d4867a9bb808697a1a2fd" name="defaultmaterial">
-      <instance_effect url="#d887a8b5933b4059aac024bd4f15d523" />
-    </material>
-    <material id="6fce9f67eabe4bb5801a8c1fd9142087" name="defaultmaterial">
-      <instance_effect url="#d854dd12d5ca4e0081381a51e3b05e85" />
-    </material>
-    <material id="24a3bfda2fe14cc79106ef885180fb16" name="defaultmaterial">
-      <instance_effect url="#3f27ec742a3e404eb918a23590255aa1" />
+    <material id="warm_white_fff2e8-material" name="warm_white_fff2e8">
+      <instance_effect url="#warm_white_fff2e8-effect" />
     </material>
   </library_materials>
   <library_visual_scenes>
@@ -257,7 +171,7 @@
         <instance_geometry url="#zed_mount_00-mesh">
           <bind_material>
             <technique_common>
-              <instance_material symbol="material0" target="#9629bbffc3644d23afb0f1879c051aee" />
+              <instance_material symbol="material0" target="#matte_black_3f3f3f-material" />
             </technique_common>
           </bind_material>
         </instance_geometry>
@@ -266,7 +180,7 @@
         <instance_geometry url="#zed_mount_01-mesh">
           <bind_material>
             <technique_common>
-              <instance_material symbol="material3" target="#24a3bfda2fe14cc79106ef885180fb16" />
+              <instance_material symbol="material3" target="#warm_white_fff2e8-material" />
             </technique_common>
           </bind_material>
         </instance_geometry>
