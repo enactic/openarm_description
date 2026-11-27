@@ -140,10 +140,10 @@
             </accessor>
           </technique_common>
         </source>
-        <source id="steering_fork_00-normals">
-          <float_array count="36" id="steering_fork_00-normals-array">-1 0 0 0 -1 0 -1 0 0 0 0 -1 0 0 1 0 -1 0 0 0 1 0 1 0 0 0 -1 0 1 0 1 0 0 1 0 0</float_array>
+        <source id="steering_fork_00-mesh-normals">
+          <float_array count="36" id="steering_fork_00-mesh-normals-array">-1 0 0 0 -1 0 -1 0 0 0 0 -1 0 0 1 0 -1 0 0 0 1 0 1 0 0 0 -1 0 1 0 1 0 0 1 0 0</float_array>
           <technique_common>
-            <accessor count="12" source="#steering_fork_00-normals-array" stride="3">
+            <accessor count="12" source="#steering_fork_00-mesh-normals-array" stride="3">
               <param type="float" name="X" />
               <param type="float" name="Y" />
               <param type="float" name="Z" />
@@ -155,7 +155,7 @@
         </vertices>
         <triangles count="12" material="material">
           <input offset="0" semantic="VERTEX" source="#steering_fork_00-positions-vertices" />
-          <input offset="1" semantic="NORMAL" source="#steering_fork_00-normals" />
+          <input offset="1" semantic="NORMAL" source="#steering_fork_00-mesh-normals" />
           <p>1 0 3 0 0 0 4 1 1 1 0 1 0 2 3 2 2 2 2 3 4 3 0 3 1 4 7 4 3 4 5 5 1 5 4 5 5 6 7 6 1 6 3 7 7 7 2 7 6 8 4 8 2 8 2 9 7 9 6 9 6 10 5 10 4 10 7 11 5 11 6 11</p>
         </triangles>
       </mesh>
@@ -172,10 +172,10 @@
             </accessor>
           </technique_common>
         </source>
-        <source id="steering_fork_01-normals">
-          <float_array count="36" id="steering_fork_01-normals-array">-1 0 0 0 -1 0 -1 0 0 0 0 -1 0 0 1 0 -1 0 0 0 1 0 1 0 0 0 -1 0 1 0 1 0 0 1 0 0</float_array>
+        <source id="steering_fork_01-mesh-normals">
+          <float_array count="36" id="steering_fork_01-mesh-normals-array">-1 0 0 0 -1 0 -1 0 0 0 0 -1 0 0 1 0 -1 0 0 0 1 0 1 0 0 0 -1 0 1 0 1 0 0 1 0 0</float_array>
           <technique_common>
-            <accessor count="12" source="#steering_fork_01-normals-array" stride="3">
+            <accessor count="12" source="#steering_fork_01-mesh-normals-array" stride="3">
               <param type="float" name="X" />
               <param type="float" name="Y" />
               <param type="float" name="Z" />
@@ -187,7 +187,7 @@
         </vertices>
         <triangles count="12" material="material">
           <input offset="0" semantic="VERTEX" source="#steering_fork_01-positions-vertices" />
-          <input offset="1" semantic="NORMAL" source="#steering_fork_01-normals" />
+          <input offset="1" semantic="NORMAL" source="#steering_fork_01-mesh-normals" />
           <p>1 0 3 0 0 0 4 1 1 1 0 1 0 2 3 2 2 2 2 3 4 3 0 3 1 4 7 4 3 4 5 5 1 5 4 5 5 6 7 6 1 6 3 7 7 7 2 7 6 8 4 8 2 8 2 9 7 9 6 9 6 10 5 10 4 10 7 11 5 11 6 11</p>
         </triangles>
       </mesh>
@@ -204,10 +204,10 @@
             </accessor>
           </technique_common>
         </source>
-        <source id="steering_fork_02-normals">
-          <float_array count="36" id="steering_fork_02-normals-array">-1 0 0 0 -1 0 -1 0 0 0 0 -1 0 0 1 0 -1 0 0 0 1 0 1 0 0 0 -1 0 1 0 1 0 0 1 0 0</float_array>
+        <source id="steering_fork_02-mesh-normals">
+          <float_array count="36" id="steering_fork_02-mesh-normals-array">-1 0 0 0 -1 0 -1 0 0 0 0 -1 0 0 1 0 -1 0 0 0 1 0 1 0 0 0 -1 0 1 0 1 0 0 1 0 0</float_array>
           <technique_common>
-            <accessor count="12" source="#steering_fork_02-normals-array" stride="3">
+            <accessor count="12" source="#steering_fork_02-mesh-normals-array" stride="3">
               <param type="float" name="X" />
               <param type="float" name="Y" />
               <param type="float" name="Z" />
@@ -219,7 +219,7 @@
         </vertices>
         <triangles count="12" material="material">
           <input offset="0" semantic="VERTEX" source="#steering_fork_02-positions-vertices" />
-          <input offset="1" semantic="NORMAL" source="#steering_fork_02-normals" />
+          <input offset="1" semantic="NORMAL" source="#steering_fork_02-mesh-normals" />
           <p>1 0 3 0 0 0 4 1 1 1 0 1 0 2 3 2 2 2 2 3 4 3 0 3 1 4 7 4 3 4 5 5 1 5 4 5 5 6 7 6 1 6 3 7 7 7 2 7 6 8 4 8 2 8 2 9 7 9 6 9 6 10 5 10 4 10 7 11 5 11 6 11</p>
         </triangles>
       </mesh>
@@ -237,7 +237,7 @@
     </material>
   </library_materials>
   <library_visual_scenes>
-    <visual_scene id="scene">
+    <visual_scene id="steering_fork-scene">
       <node id="steering_fork_00" name="steering_fork_00">
         <instance_geometry url="#steering_fork_00-mesh">
           <bind_material>
@@ -268,6 +268,6 @@
     </visual_scene>
   </library_visual_scenes>
   <scene>
-    <instance_visual_scene url="#scene" />
+    <instance_visual_scene url="#steering_fork-scene" />
   </scene>
 </COLLADA>
